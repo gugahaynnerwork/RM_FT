@@ -1159,11 +1159,55 @@ async function restoreBackup(e){
 function migrateRecord(r){
   if(r.id===undefined||r.id===null)r.id=Date.now().toString()+Math.random();
   r.id=String(r.id);
-  if(r.lancamento)r.lancamento=r.lancamento.split(' ')[0];else r.lancamento='';
-  if(!r.lancamentoISO){if(r.lancamento&&r.lancamento.includes('/')){const[d,m,y]=r.lancamento.split('/');if(d&&m&&y)r.lancamentoISO=`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`}if(!r.lancamentoISO)r.lancamentoISO=r.data||''}
-  r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';r.faltante=r.faltante||r.funcFaltante||'';
-  r.obs=r.obs||r.observacoes||'';r.posto=r.posto||r.postoFixo||'';r.func=r.func||r.funcionario||'';
-  r.motivo=r.motivo||'';r.hi=r.hi||'';r.hf=r.hf||'';r.valor=r.valor||'';
+
+  // ✅ Converte datas que vieram como objeto Date ou string estranha
+  function fixDate(val){
+    if(!val)return'';
+    if(typeof val==='string'&&val.match(/^\d{4}-\d{2}-\d{2}$/))return val;
+    if(typeof val==='string'&&val.includes('/')){
+      const[d,m,y]=val.split('/');
+      if(d&&m&&y)return`${y.trim()}-${m.trim().padStart(2,'0')}-${d.trim().padStart(2,'0')}`;
+    }
+    const d=new Date(val);
+    if(!isNaN(d.getTime())){
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,'0');
+      const dia=String(d.getDate()).padStart(2,'0');
+      return`${y}-${m}-${dia}`;
+    }
+    return'';
+  }
+
+  // ✅ Converte horários que vieram como objeto Date
+  function fixTime(val){
+    if(!val)return'';
+    if(typeof val==='string'&&val.match(/^\d{2}:\d{2}$/))return val;
+    const d=new Date(val);
+    if(!isNaN(d.getTime())){
+      return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    }
+    return String(val).slice(0,5)||'';
+  }
+
+  r.data=fixDate(r.data);
+  r.lancamentoISO=fixDate(r.lancamentoISO||r.data);
+
+  if(r.lancamento)r.lancamento=r.lancamento.split(' ')[0];
+  if(!r.lancamento&&r.lancamentoISO){
+    const[y,m,d]=r.lancamentoISO.split('-');
+    if(y&&m&&d)r.lancamento=`${d}/${m}/${y}`;
+  }
+
+  r.hi=fixTime(r.hi);
+  r.hf=fixTime(r.hf);
+
+  r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';
+  r.faltante=r.faltante||r.funcFaltante||'';
+  r.obs=r.obs||r.observacoes||'';
+  r.posto=r.posto||r.postoFixo||'';
+  r.func=r.func||r.funcionario||'';
+  r.motivo=r.motivo||'';
+  r.valor=r.valor||'';
   return r;
 }
 
