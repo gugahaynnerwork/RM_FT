@@ -703,7 +703,7 @@ function hideErr(){document.getElementById('login-err').classList.remove('show')
 
 async function doLogin(){
   const user=document.getElementById('l-user').value.trim();
-  const pass=document.getElementById('l-pass').value;
+  const pass=document.getElementById('l-pass').value.trim();
   hideErr();
   if(!user||!pass){showErr('Preencha usuário e senha.');return}
   const btn=document.getElementById('btn-login');btn.textContent='⏳ Verificando...';btn.disabled=true;
