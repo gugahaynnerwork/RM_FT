@@ -442,8 +442,7 @@ tbody td:last-child{border-right:none}
             <option>Falta</option><option>Falta na programada</option>
             <option>Falta nas férias</option><option>Férias</option>
             <option>Programação FDS</option><option>Programação de feriado</option>
-            <option>Programação contratual</option><option>Solicitação extra</option>
-            <option>Reembolso</option><option>Troca de escala</option>
+            <option>Programação contratual</option><option>Troca de escala</option>
             <option>Evento</option><option>Pendente contratação</option>
             <option>Apoio FDS</option><option>Folga</option>
             <option>Processo admissional</option><option>Outros</option>
@@ -636,6 +635,7 @@ tbody td:last-child{border-right:none}
 <script>
 /* ══════ CONFIG ══════ */
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzzhFh7sQG1q5Kh05sdz2EZl14iwKnsg2wVHOaG5gnUe_K4C0C0JG3NZTCjbln8N5er/exec';
+const PLACEHOLDER_URL='COLE_A_URL_DO_APPS_SCRIPT_AQUI';
 
 /* ══════ INDEXEDDB ══════ */
 const DB_NAME='FT_v5',DB_VERSION=1;
@@ -657,7 +657,7 @@ let resetTargetUser='';
 /* ══════ PERMISSÕES ══════ */
 const PERMS={
   Admin:        {form:true,edit:true,delete:true,dup:true,backup:true,log:true,usuarios:true},
-  Operador:     {form:true,edit:true,delete:false,dup:true,backup:true,log:true,usuarios:false},
+  Operador:     {form:true,edit:false,delete:false,dup:false,backup:false,log:false,usuarios:false},
   Visualizador: {form:false,edit:false,delete:false,dup:false,backup:false,log:false,usuarios:false},
 };
 function can(a){return !!(PERMS[currentPerfil]&&PERMS[currentPerfil][a])}
@@ -707,14 +707,14 @@ async function doLogin(){
   hideErr();
   if(!user||!pass){showErr('Preencha usuário e senha.');return}
   const btn=document.getElementById('btn-login');btn.textContent='⏳ Verificando...';btn.disabled=true;
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='https://script.google.com/macros/s/AKfycbzzhFh7sQG1q5Kh05sdz2EZl14iwKnsg2wVHOaG5gnUe_K4C0C0JG3NZTCjbln8N5er/exec'){
+  // ✅ CORRIGIDO: compara com o placeholder, não com a URL real
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!==PLACEHOLDER_URL){
     try{
       const res=await apiPost({acao:'login',usuario:user,senha:pass});
       if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
       await loginSuccess(res.nome||user,res.perfil);
     }catch(e){showErr('Sem conexão. Tente novamente.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
   }else{
-    // modo local de teste
     const demo={admin:{p:'Admin'},operador:{p:'Operador'},visualizador:{p:'Visualizador'}};
     const k=Object.keys(demo).find(k=>k===user.toLowerCase());
     if(!k){showErr('Modo local: usuários demo são admin/operador/visualizador.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
@@ -756,7 +756,8 @@ async function loginSuccess(user,perfil){
   names=cachedNam.map(n=>n.name).sort();
   postos=cachedPos.map(p=>p.name).sort();
   renderAll();
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='https://script.google.com/macros/s/AKfycbzzhFh7sQG1q5Kh05sdz2EZl14iwKnsg2wVHOaG5gnUe_K4C0C0JG3NZTCjbln8N5er/exec')await syncFromSheets();
+  // ✅ CORRIGIDO: compara com o placeholder, não com a URL real
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!==PLACEHOLDER_URL)await syncFromSheets();
   else setDbStatus('local');
   toast(`Bem-vindo, ${user}! 👋`);
 }
@@ -960,8 +961,12 @@ async function addRecord(){
   if(editingId)records=records.map(r=>r.id===editingId?rec:r);else records.push(rec);
   if(isOnline){
     setSyncBar(true,editingId?'Atualizando...':'Salvando...');
-    try{const acao=editingId?'editar':'inserir';const payload=editingId?{acao,record:rec,old:oldRecord}:{acao,record:rec};const res=await apiPost(payload);if(!res.ok)throw new Error(res.error);}
-    catch(e){toast('Salvo local. Falha ao sincronizar.','warn');}
+    try{
+      const acao=editingId?'editar':'inserir';
+      const payload=editingId?{acao,record:rec,old:oldRecord}:{acao,record:rec};
+      const res=await apiPost(payload);
+      if(!res.ok)throw new Error(res.error);
+    }catch(e){toast('Salvo local. Falha ao sincronizar.','warn');}
     setSyncBar(false);
   }
   toast(editingId?'Registro atualizado!':'Registro adicionado!');
