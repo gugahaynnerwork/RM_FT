@@ -1095,33 +1095,40 @@ function migrateRecord(r){
 
   // ✅ Normaliza data ISO (aceita dd/mm/yyyy e yyyy-mm-dd, ignora objetos Date)
   function toISO(val){
-    if(!val)return'';
-    const s=String(val);
-    // já está em yyyy-mm-dd
-    if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
-    // formato dd/mm/yyyy
-    if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){
-      const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
-    }
-    // formato dd/mm/yyyy HH:MM:SS (vindo do Sheets como texto)
-    if(/^\d{2}\/\d{2}\/\d{4}\s/.test(s)){
-      const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
-    }
-    return'';
+  if(!val)return'';
+  const s=String(val);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){
+    const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
   }
-
-  // ✅ Normaliza horário (aceita HH:MM, ignora objetos Date e strings longas)
-  function toTime(val){
-    if(!val)return'';
-    const s=String(val);
-    // já está em HH:MM
-    if(/^\d{2}:\d{2}$/.test(s))return s;
-    // HH:MM:SS
-    if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
-    // qualquer outra coisa (objeto Date serializado, etc) — descarta
-    return'';
+  if(/^\d{2}\/\d{2}\/\d{4}\s/.test(s)){
+    const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
   }
+  // ✅ NOVO: aceita formato longo do Sheets (Wed Dec 31 2025 21:00:00 GMT...)
+  const d=new Date(s);
+  if(!isNaN(d)){
+    const y=d.getFullYear();
+    const m=String(d.getMonth()+1).padStart(2,'0');
+    const dia=String(d.getDate()).padStart(2,'0');
+    return`${y}-${m}-${dia}`;
+  }
+  return'';
+}
 
+function toTime(val){
+  if(!val)return'';
+  const s=String(val);
+  if(/^\d{2}:\d{2}$/.test(s))return s;
+  if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
+  // ✅ NOVO: aceita formato longo do Sheets (Sat Dec 30 1899 04:53:32 GMT...)
+  const d=new Date(s);
+  if(!isNaN(d)){
+    const h=String(d.getHours()).padStart(2,'0');
+    const min=String(d.getMinutes()).padStart(2,'0');
+    return`${h}:${min}`;
+  }
+  return'';
+}
   r.data=toISO(r.data);
 
   if(r.lancamento)r.lancamento=r.lancamento.split(' ')[0];else r.lancamento='';
