@@ -694,17 +694,23 @@ async function loginSuccess(user,perfil){
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   applyPermissions();
-  db=await openDB();
-  updateLancamento();setInterval(updateLancamento,60000);
-  const cachedRec=await dbGetAll(STORE_REC);
-  const cachedNam=await dbGetAll(STORE_NAM);
-  const cachedPos=await dbGetAll(STORE_POST);
-  records=cachedRec;
-  names=cachedNam.map(n=>n.name).sort();
-  postos=cachedPos.map(p=>p.name).sort();
-  renderAll();
-  if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.includes('script.google.com'))await syncFromSheets();
-else setDbStatus('local');
+  try{
+    db=await openDB();
+    updateLancamento();setInterval(updateLancamento,60000);
+    const cachedRec=await dbGetAll(STORE_REC);
+    const cachedNam=await dbGetAll(STORE_NAM);
+    const cachedPos=await dbGetAll(STORE_POST);
+    records=cachedRec;
+    names=cachedNam.map(n=>n.name).sort();
+    postos=cachedPos.map(p=>p.name).sort();
+    renderAll();
+    if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.includes('script.google.com'))await syncFromSheets();
+    else setDbStatus('local');
+  }catch(err){
+    console.error('Erro loginSuccess:',err);
+    setDbStatus('err');
+    toast('Erro ao inicializar banco local.','err');
+  }
   toast(`Bem-vindo, ${user}! 👋`);
 }
 
