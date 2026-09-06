@@ -196,7 +196,7 @@ tbody td:last-child{border-right:none}
 
 <div id="login-screen" class="login-screen">
   <div class="login-box">
-    <div class="login-logo"><img src="" alt="Logo"/></div>
+    <div class="login-logo"><img src="" alt="Logot"/></div>
     <div class="login-title">Planilha FT Diária</div>
     <div class="login-sub">Acesse com suas credenciais</div>
     <div id="login-err" class="login-err">⚠️ <span id="login-err-msg"></span></div>
@@ -677,7 +677,7 @@ async function doLogin(){
   const btn=document.getElementById('btn-login');btn.textContent='⏳ Verificando...';btn.disabled=true;
   if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){
     try{
-      const res=await apiPost({acao:'login',usuario:user,senha:pass});
+      const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:pass})}).then(r=>r.json());
       if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
       await loginSuccess(res.nome||user,res.perfil);
     }catch(e){showErr('Sem conexão. Tente novamente.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
@@ -701,7 +701,7 @@ async function doChangePw(){
   if(nw.length<6){showErr('Nova senha muito curta (mínimo 6 caracteres).');return}
   const btn=document.getElementById('btn-change-pw');btn.disabled=true;btn.textContent='⏳ Salvando...';
   try{
-    const res=await apiPost({acao:'trocarSenha',usuario:user,senhaAtual:old,novaSenha:nw});
+    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'trocarSenha',usuario:user,senhaAtual:old,novaSenha:nw})}).then(r=>r.json());
     if(res.ok){toast('Senha alterada com sucesso! Faça login.');hideChangePw();['cp-user','cp-old','cp-new','cp-conf'].forEach(id=>document.getElementById(id).value='')}
     else showErr(res.error||'Erro ao alterar senha.');
   }catch(e){showErr('Sem conexão com o servidor.')}
