@@ -704,8 +704,8 @@ async function loginSuccess(user,perfil){
   names=cachedNam.map(n=>n.name).sort();
   postos=cachedPos.map(p=>p.name).sort();
   renderAll();
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!==PLACEHOLDER_URL)await syncFromSheets();
-  else setDbStatus('local');
+  if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.includes('script.google.com'))await syncFromSheets();
+else setDbStatus('local');
   toast(`Bem-vindo, ${user}! 👋`);
 }
 
