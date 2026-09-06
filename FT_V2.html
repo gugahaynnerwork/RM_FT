@@ -733,7 +733,7 @@ function setDbStatus(state){
 async function syncFromSheets(){
   setSyncBar(true,'Sincronizando...');setDbStatus('sync');
   try{
-    const data=await apiGet({acao:'getAll'});if(!data.ok)throw new Error(data.error);
+    const data=await apiGet({acao:'getAll'});if(!data.ok && data.ok!=='true')throw new Error(data.error);
     records=data.records.map(migrateRecord);
     names=[...new Set([...data.names,...names])].sort();
     postos=[...new Set([...data.postos,...postos])].sort();
