@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -592,8 +592,28 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzzhFh7sQG1q5Kh05
 const DB_NAME='FT_v5',DB_VERSION=1;
 const STORE_REC='records',STORE_NAM='names',STORE_POST='postos';
 let db=null;
-function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=e=>{const d=e.target.result;['records','names','postos'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='records'?'id':'name'})})};r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e.target.error)})}
-function tx(store,mode='readonly'){return db.transaction(store,mode).objectStore(store)}
+
+/* ══════ IndexedDB ══════ */
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VERSION);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      ['records','names','postos'].forEach(s=>{
+        if(!d.objectStoreNames.contains(s))
+          d.createObjectStore(s,{keyPath:s==='records'?'id':'name'})
+      });
+    };
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=e=>rej(e.target.error);
+    r.onblocked=()=>rej(new Error('IndexedDB bloqueado'));
+  });
+}
+function getDb(){
+  if(!db)throw new Error('DB não inicializado');
+  return db;
+}
+function tx(store,mode='readonly'){return getDb().transaction(store,mode).objectStore(store)}
 function dbGetAll(store){return new Promise((res,rej)=>{const r=tx(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 function dbPut(store,obj){return new Promise((res,rej)=>{const r=tx(store,'readwrite').put(obj);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
 function dbDelete(store,key){return new Promise((res,rej)=>{const r=tx(store,'readwrite').delete(key);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
@@ -655,7 +675,7 @@ async function doLogin(){
   hideErr();
   if(!user||!pass){showErr('Preencha usuário e senha.');return}
   const btn=document.getElementById('btn-login');btn.textContent='⏳ Verificando...';btn.disabled=true;
-  if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.includes('script.google.com')){
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){
     try{
       const res=await apiPost({acao:'login',usuario:user,senha:pass});
       if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.textContent='🔐 Entrar';btn.disabled=false;return}
@@ -688,15 +708,32 @@ async function doChangePw(){
   btn.disabled=false;btn.textContent='💾 Salvar Nova Senha';
 }
 
+/* ══════ LOGIN SUCCESS — CORRIGIDO ══════ */
 async function loginSuccess(user,perfil){
-  currentUser=user;currentPerfil=perfil;
-  sessionStorage.setItem('ft_user',user);sessionStorage.setItem('ft_perfil',perfil);
+  currentUser=user;
+  currentPerfil=perfil;
+  sessionStorage.setItem('ft_user',user);
+  sessionStorage.setItem('ft_perfil',perfil);
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   applyPermissions();
+  setDbStatus('sync');
+
+  /* ── Abre o DB e aguarda completamente antes de qualquer operação ── */
   try{
     db=await openDB();
-    updateLancamento();setInterval(updateLancamento,60000);
+  }catch(err){
+    console.error('Falha ao abrir IndexedDB:',err);
+    setDbStatus('err');
+    toast('Erro ao abrir banco local. Tente recarregar.','err');
+    return;
+  }
+
+  updateLancamento();
+  setInterval(updateLancamento,60000);
+
+  /* ── Carrega cache local ── */
+  try{
     const cachedRec=await dbGetAll(STORE_REC);
     const cachedNam=await dbGetAll(STORE_NAM);
     const cachedPos=await dbGetAll(STORE_POST);
@@ -704,19 +741,25 @@ async function loginSuccess(user,perfil){
     names=cachedNam.map(n=>n.name).sort();
     postos=cachedPos.map(p=>p.name).sort();
     renderAll();
-    if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.includes('script.google.com'))await syncFromSheets();
-    else setDbStatus('local');
   }catch(err){
-    console.error('Erro loginSuccess:',err);
-    setDbStatus('err');
-    toast('Erro ao inicializar banco local.','err');
+    console.warn('Cache local vazio ou erro:',err);
+    records=[];names=[];postos=[];
+    renderAll();
   }
-  toast(`Bem-vindo, ${user}! 👋`);
+
+  /* ── Sincroniza com Sheets ── */
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){
+    await syncFromSheets();
+  }else{
+    setDbStatus('local');
+  }
+
+  toast('Bem-vindo, '+user+'! 👋');
 }
 
 function doLogout(){
   if(!confirm('Deseja sair?'))return;
-  sessionStorage.clear();currentUser='';currentPerfil='';
+  sessionStorage.clear();currentUser='';currentPerfil='';isOnline=false;db=null;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('l-user').value='';document.getElementById('l-pass').value='';
@@ -724,7 +767,8 @@ function doLogout(){
 }
 
 window.addEventListener('load',async()=>{
-  const u=sessionStorage.getItem('ft_user');const p=sessionStorage.getItem('ft_perfil');
+  const u=sessionStorage.getItem('ft_user');
+  const p=sessionStorage.getItem('ft_perfil');
   if(u&&p)await loginSuccess(u,p);
 });
 
@@ -736,18 +780,33 @@ function setDbStatus(state){
   const s={ok:{cls:'ok',txt:'Sheets conectado'},sync:{cls:'sync',txt:'Sincronizando...'},offline:{cls:'err',txt:'Offline (cache)'},local:{cls:'ok',txt:'Modo local'},err:{cls:'err',txt:'Erro'}}[state]||{cls:'err',txt:'Erro'};
   dot.className='db-dot '+s.cls;lbl.textContent=s.txt;
 }
+
+/* ══════ SYNC — CORRIGIDO ══════ */
 async function syncFromSheets(){
-  setSyncBar(true,'Sincronizando...');setDbStatus('sync');
+  if(!db){console.warn('syncFromSheets: db ainda null, abortando');setDbStatus('offline');return}
+  setSyncBar(true,'Sincronizando...');
+  setDbStatus('sync');
   try{
-    const data=await apiGet({acao:'getAll'});if(!data.ok && data.ok!=='true')throw new Error(data.error);
+    const data=await apiGet({acao:'getAll'});
+    if(!data.ok)throw new Error(data.error||'Resposta inválida');
     records=data.records.map(migrateRecord);
     names=[...new Set([...data.names,...names])].sort();
     postos=[...new Set([...data.postos,...postos])].sort();
-    await dbClear(STORE_REC);for(const r of records)await dbPut(STORE_REC,r);
-    await dbClear(STORE_NAM);for(const n of names)await dbPut(STORE_NAM,{name:n});
-    await dbClear(STORE_POST);for(const p of postos)await dbPut(STORE_POST,{name:p});
-    isOnline=true;setDbStatus('ok');renderAll();
-  }catch(e){isOnline=false;setDbStatus('offline');toast('Offline — usando cache local','warn');}
+    await dbClear(STORE_REC);
+    for(const r of records)await dbPut(STORE_REC,r);
+    await dbClear(STORE_NAM);
+    for(const n of names)await dbPut(STORE_NAM,{name:n});
+    await dbClear(STORE_POST);
+    for(const p of postos)await dbPut(STORE_POST,{name:p});
+    isOnline=true;
+    setDbStatus('ok');
+    renderAll();
+  }catch(e){
+    console.error('syncFromSheets erro:',e);
+    isOnline=false;
+    setDbStatus('offline');
+    toast('Offline — usando cache local','warn');
+  }
   setSyncBar(false);
 }
 
@@ -1001,7 +1060,7 @@ async function loadUsuarios(){
 async function changePerfilUsuario(user,perfil){
   if(!isOnline){toast('Sem conexão.','err');return}
   const res=await apiPost({acao:'editUsuario',novoUsuario:user,novoPerfil:perfil,novoAtivo:'sim'});
-  if(res.ok)toast(`Perfil de "${user}" atualizado para ${perfil}.`);
+  if(res.ok)toast('Perfil de "'+user+'" atualizado para '+perfil+'.');
   else toast(res.error||'Erro.','err');
 }
 async function addUsuario(){
@@ -1011,14 +1070,14 @@ async function addUsuario(){
   if(!user||!pass){toast('Informe nome e senha inicial.','err');return}
   if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
   const res=await apiPost({acao:'addUsuario',novoUsuario:user,novaSenha:pass,novoPerfil:perfil});
-  if(res.ok){toast(`"${user}" adicionado como ${perfil}!`);document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';await loadUsuarios()}
+  if(res.ok){toast('"'+user+'" adicionado como '+perfil+'!');document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';await loadUsuarios()}
   else toast(res.error||'Erro.','err');
 }
 async function removeUsuario(user){
   if(user===currentUser){toast('Não pode remover seu próprio acesso.','err');return}
-  if(!confirm(`Remover "${user}"? Esta ação não pode ser desfeita.`))return;
+  if(!confirm('Remover "'+user+'"? Esta ação não pode ser desfeita.'))return;
   const res=await apiPost({acao:'deleteUsuario',novoUsuario:user});
-  if(res.ok){toast(`"${user}" removido.`);await loadUsuarios()}
+  if(res.ok){toast('"'+user+'" removido.');await loadUsuarios()}
   else toast(res.error||'Erro.','err');
 }
 
@@ -1028,7 +1087,7 @@ async function doResetSenha(){
   const pw=document.getElementById('reset-pw').value.trim();
   if(!pw){toast('Informe a nova senha.','err');return}
   const res=await apiPost({acao:'resetSenha',novoUsuario:resetTargetUser,novaSenha:pw});
-  if(res.ok){toast(`Senha de "${resetTargetUser}" resetada com sucesso!`);closeResetModal()}
+  if(res.ok){toast('Senha de "'+resetTargetUser+'" resetada com sucesso!');closeResetModal()}
   else toast(res.error||'Erro.','err');
 }
 
@@ -1087,7 +1146,7 @@ async function restoreBackup(e){
       if(nms.length){await dbClear(STORE_NAM);for(const n of nms)await dbPut(STORE_NAM,{name:n});names=nms.sort()}
       if(pts.length){await dbClear(STORE_POST);for(const p of pts)await dbPut(STORE_POST,{name:p});postos=pts.sort()}
       if(isOnline){setSyncBar(true,'Enviando backup...');await apiPost({acao:'importBackup',records:recs,names:nms,postos:pts}).catch(()=>{});setSyncBar(false);}
-      renderAll();toast(`Backup restaurado! ${recs.length} registro(s).`);closeSaveModal();
+      renderAll();toast('Backup restaurado! '+recs.length+' registro(s).');closeSaveModal();
     }catch(err){toast('Arquivo inválido.','err')}
   };
   reader.readAsText(file);
@@ -1097,64 +1156,40 @@ async function restoreBackup(e){
 function migrateRecord(r){
   if(r.id===undefined||r.id===null)r.id=Date.now().toString()+Math.random();
   r.id=String(r.id);
-
-  // ✅ Normaliza data ISO (aceita dd/mm/yyyy e yyyy-mm-dd, ignora objetos Date)
   function toISO(val){
-  if(!val)return'';
-  const s=String(val);
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){
-    const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
+    if(!val)return'';
+    const s=String(val);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+    if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){const[d,m,y]=s.split('/');return y+'-'+m+'-'+d}
+    if(/^\d{2}\/\d{2}\/\d{4}\s/.test(s)){const[d,m,y]=s.split('/');return y+'-'+m+'-'+d}
+    const d=new Date(s);
+    if(!isNaN(d)){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const dia=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dia}
+    return'';
   }
-  if(/^\d{2}\/\d{2}\/\d{4}\s/.test(s)){
-    const[d,m,y]=s.split('/');return`${y}-${m}-${d}`;
+  function toTime(val){
+    if(!val)return'';
+    const s=String(val);
+    if(/^\d{2}:\d{2}$/.test(s))return s;
+    if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
+    const d=new Date(s);
+    if(!isNaN(d)){const h=String(d.getHours()).padStart(2,'0');const min=String(d.getMinutes()).padStart(2,'0');return h+':'+min}
+    return'';
   }
-  // ✅ NOVO: aceita formato longo do Sheets (Wed Dec 31 2025 21:00:00 GMT...)
-  const d=new Date(s);
-  if(!isNaN(d)){
-    const y=d.getFullYear();
-    const m=String(d.getMonth()+1).padStart(2,'0');
-    const dia=String(d.getDate()).padStart(2,'0');
-    return`${y}-${m}-${dia}`;
-  }
-  return'';
-}
-
-function toTime(val){
-  if(!val)return'';
-  const s=String(val);
-  if(/^\d{2}:\d{2}$/.test(s))return s;
-  if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
-  // ✅ NOVO: aceita formato longo do Sheets (Sat Dec 30 1899 04:53:32 GMT...)
-  const d=new Date(s);
-  if(!isNaN(d)){
-    const h=String(d.getHours()).padStart(2,'0');
-    const min=String(d.getMinutes()).padStart(2,'0');
-    return`${h}:${min}`;
-  }
-  return'';
-}
   r.data=toISO(r.data);
-
   if(r.lancamento)r.lancamento=r.lancamento.split(' ')[0];else r.lancamento='';
-  // reconstrói lancamento em pt-BR se vier quebrado
   if(r.lancamento&&!/^\d{2}\/\d{2}\/\d{4}$/.test(r.lancamento)){
     const iso=toISO(r.lancamento);
-    if(iso){const[y,m,d]=iso.split('-');r.lancamento=`${d}/${m}/${y}`}
+    if(iso){const[y,m,d]=iso.split('-');r.lancamento=d+'/'+m+'/'+y}
     else r.lancamento='';
   }
-
   if(!r.lancamentoISO){
-    if(r.lancamento&&/^\d{2}\/\d{2}\/\d{4}$/.test(r.lancamento)){
-      const[d,m,y]=r.lancamento.split('/');r.lancamentoISO=`${y}-${m}-${d}`;
-    }else{r.lancamentoISO=r.data||''}
+    if(r.lancamento&&/^\d{2}\/\d{2}\/\d{4}$/.test(r.lancamento)){const[d,m,y]=r.lancamento.split('/');r.lancamentoISO=y+'-'+m+'-'+d}
+    else r.lancamentoISO=r.data||'';
   }else{
     r.lancamentoISO=toISO(r.lancamentoISO)||r.data||'';
   }
-
   r.hi=toTime(r.hi);
   r.hf=toTime(r.hf);
-
   r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';
   r.faltante=r.faltante||r.funcFaltante||'';
   r.obs=r.obs||r.observacoes||'';
@@ -1167,12 +1202,13 @@ function toTime(val){
 
 function download(filename,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();URL.revokeObjectURL(a.href)}
 let toastTimer=null;
-function toast(msg,type='ok'){
+function toast(msg,type){
+  type=type||'ok';
   const el=document.getElementById('toast');el.textContent=msg;
   el.style.borderLeftColor=type==='err'?'#ff4444':type==='warn'?'#f5a623':'var(--primary)';
   el.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3400);
 }
-function fmtDate(d){if(!d)return'—';const[y,m,dia]=d.split('-');if(!y||!m||!dia)return d;return`${dia}/${m}/${y}`}
+function fmtDate(d){if(!d)return'—';const[y,m,dia]=d.split('-');if(!y||!m||!dia)return d;return dia+'/'+m+'/'+y}
 </script>
 </body>
 </html>
