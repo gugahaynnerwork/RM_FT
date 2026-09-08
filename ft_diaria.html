@@ -226,7 +226,7 @@ tbody td:last-child{border-right:none}
 
 <div id="login-screen" class="login-screen">
   <div class="login-box">
-    <div class="login-logo"><img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Grupo RM"/></div>
+    <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Grupo RM"/>
     <div class="login-title">Planilha FT Diária</div>
     <div class="login-sub">Acesse com suas credenciais</div>
     <div id="login-err" class="login-err">⚠️ <span id="login-err-msg"></span></div>
@@ -824,13 +824,19 @@ function populatePostoFilter(){
 }
 
 function applyFilters(){
-  var de=document.getElementById('fil-de').value,ate=document.getElementById('fil-ate').value;
-  var lDe=document.getElementById('fil-lanc-de').value,lAte=document.getElementById('fil-lanc-ate').value;
-  var mes=document.getElementById('fil-mes').value,ano=document.getElementById('fil-ano').value;
-  var mot=document.getElementById('fil-motivo').value,posto=document.getElementById('fil-posto').value;
+  var de  = getDateInputISO('fil-de');        // ✅
+  var ate = getDateInputISO('fil-ate');        // ✅
+  var lDe = getDateInputISO('fil-lanc-de');   // ✅
+  var lAte= getDateInputISO('fil-lanc-ate');  // ✅
+  var mes=document.getElementById('fil-mes').value;
+  var ano=document.getElementById('fil-ano').value;
+  var mot=document.getElementById('fil-motivo').value;
+  var posto=document.getElementById('fil-posto').value;
   var busca=document.getElementById('fil-busca').value.toLowerCase().trim();
+
   filtered=records.filter(function(r){
-    if(de&&r.data<de)return false;if(ate&&r.data>ate)return false;
+    if(de&&r.data<de)return false;
+    if(ate&&r.data>ate)return false;
     if(lDe||lAte){var l=r.lancamentoISO||'';if(lDe&&l<lDe)return false;if(lAte&&l>lAte)return false}
     if(mes&&parseInt((r.data||'').split('-')[1]||0)!==parseInt(mes))return false;
     if(ano&&(r.data||'').split('-')[0]!==ano)return false;
@@ -840,7 +846,12 @@ function applyFilters(){
     if(busca){var blob=[r.func,r.posto,r.postoft,r.faltante,r.motivo,r.obs,r.lancadoPor].join(' ').toLowerCase();if(!blob.includes(busca))return false}
     return true;
   });
-  filtered.sort(function(a,b){var la=a.lancamentoISO||'',lb=b.lancamentoISO||'';if(lb!==la)return lb.localeCompare(la);return b.id.localeCompare(a.id)});
+
+  filtered.sort(function(a,b){
+    var la=a.lancamentoISO||'',lb=b.lancamentoISO||'';
+    if(lb!==la)return lb.localeCompare(la);
+    return b.id.localeCompare(a.id);
+  });
   currentPage=1;renderStats();renderTable();
 }
 
@@ -1016,7 +1027,7 @@ function editRecord(id){
   editingId=id;duplicatingId=null;
   document.getElementById('f-func').value=r.func||'';
   document.getElementById('f-posto').value=r.posto||'';
-  document.getElementById('f-data').value=r.data||'';
+  setDateInput('f-data', r.data||'');                    // ✅ sem "document."
   document.getElementById('f-hi').value=r.hi||'';
   document.getElementById('f-hf').value=r.hf||'';
   document.getElementById('f-postoft').value=r.postoft||'';
