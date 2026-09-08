@@ -243,6 +243,18 @@ tbody td:last-child{border-right:none}
       <button class="btn-login-main" onclick="doLogin()" id="btn-login">🔐 Entrar</button>
       <div class="login-change-pw"><button onclick="showChangePw()">🔑 Trocar minha senha</button></div>
     </div>
+    <div id="change-pw-form" class="change-pw-box">
+      <button class="login-back" onclick="hideChangePw()">← Voltar ao login</button>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">🔑 Alterar Senha</div>
+      <div class="login-field"><label>Usuário</label><input type="text" id="cp-user" placeholder="Seu usuário" autocomplete="username"/></div>
+      <div class="login-field"><label>Senha Atual</label><div class="pw-wrap"><input type="password" id="cp-old" placeholder="Senha atual"/><button class="pw-toggle" type="button" onclick="togglePw('cp-old',this)">👁️</button></div></div>
+      <div class="login-field"><label>Nova Senha</label><div class="pw-wrap"><input type="password" id="cp-new" placeholder="Nova senha" oninput="checkStrength(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('cp-new',this)">👁️</button></div><div class="strength-bar" id="strength-bar"></div><div class="strength-label" id="strength-label" style="color:var(--muted)"></div></div>
+      <div class="login-field"><label>Confirmar Nova Senha</label><div class="pw-wrap"><input type="password" id="cp-conf" placeholder="Confirme a nova senha"/><button class="pw-toggle" type="button" onclick="togglePw('cp-conf',this)">👁️</button></div></div>
+      <button class="btn-login-main" onclick="doChangePw()" id="btn-change-pw">💾 Salvar Nova Senha</button>
+    </div>
+    <div class="login-tip">💡 Primeiro acesso? Solicite suas credenciais ao administrador.</div>
+  </div>
+</div>
 
 <div id="app" class="hidden">
   <div class="header">
