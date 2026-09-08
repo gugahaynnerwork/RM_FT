@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -155,9 +155,6 @@ tbody td:last-child{border-right:none}
 .pg-info{font-size:12px;color:var(--muted);margin:0 4px;font-weight:600}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:12px}
 .modal-overlay.open{display:flex}
-/* Modal primeiro acesso — não fecha com clique fora */
-.modal-overlay.bloqueado{pointer-events:none}
-.modal-overlay.bloqueado .modal{pointer-events:all}
 .modal{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18)}
 .modal-title{font-size:15px;font-weight:700;color:var(--primary);margin-bottom:14px;border-bottom:2px solid var(--primary);padding-bottom:8px}
 .modal-close{margin-top:14px;text-align:right}
@@ -165,10 +162,15 @@ tbody td:last-child{border-right:none}
 .modal-opt{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px;gap:10px}
 .modal-opt-info strong{display:block;font-size:13px;font-weight:700;color:var(--text)}
 .modal-opt-info span{font-size:11px;color:var(--muted)}
+
+/* ── Tabela usuários ── */
 .usr-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
-.usr-table thead th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase}
+.usr-table thead th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;white-space:nowrap}
 .usr-table tbody tr:nth-child(even){background:#f9f9f9}
-.usr-table tbody td{padding:7px 10px;border-bottom:1px solid #eee;vertical-align:middle}
+.usr-table tbody td{padding:7px 10px;border-bottom:1px solid #eee;vertical-align:middle;white-space:nowrap}
+.badge-pa-sim{background:#fff3cd;border:1px solid #f5a623;color:#7a5800;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700}
+.badge-pa-nao{background:#e6f7ee;border:1px solid #1a7a4a;color:#1a7a4a;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700}
+
 .usr-form-grid{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-top:14px;align-items:end}
 .usr-form-grid input,.usr-form-grid select{border:1.5px solid var(--border);border-radius:var(--rsm);padding:7px 9px;font-size:12px;width:100%}
 .pw-change-grid{display:grid;gap:10px;margin-top:10px}
@@ -190,25 +192,26 @@ tbody td:last-child{border-right:none}
 .strength-bar.medium{background:#f5a623;width:66%}
 .strength-bar.strong{background:#1a7a4a;width:100%}
 .strength-label{font-size:10px;margin-top:3px;font-weight:600}
-/* Primeiro acesso — banner especial */
 .primeiro-acesso-alert{background:linear-gradient(135deg,#fff0f1,#ffe0e2);border:2px solid var(--primary);border-radius:var(--rsm);padding:14px 16px;margin-bottom:16px;font-size:12px;color:var(--primary);font-weight:600;text-align:center;line-height:1.6}
 .primeiro-acesso-alert .pa-icon{font-size:28px;display:block;margin-bottom:6px}
+
+/* ══ MODAL PRIMEIRO ACESSO ══ */
+#pa-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9990;align-items:center;justify-content:center;padding:16px}
+#pa-overlay.show{display:flex}
+#pa-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:440px;box-shadow:0 8px 32px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+
 @media(max-width:640px){
-  .header{padding:10px 12px;gap:8px}
-  .header-title{font-size:12px}
+  .header{padding:10px 12px;gap:8px}.header-title{font-size:12px}
   .db-status{display:none}.last-sync{display:none}
   .user-name{max-width:70px;font-size:10px}
-  .form-grid{grid-template-columns:1fr}
-  .span2{grid-column:span 1}
+  .form-grid{grid-template-columns:1fr}.span2{grid-column:span 1}
   .stats-row{grid-template-columns:1fr 1fr}
   .filter-grid .fg{flex:1 1 100%}
   .table-header{flex-direction:column;align-items:flex-start}
   .export-row{width:100%;justify-content:flex-start}
   .usr-form-grid{grid-template-columns:1fr 1fr}
-  .modal{padding:14px}
-  .modal-opt{flex-direction:column;align-items:flex-start}
-  .btn-row{gap:7px}
-  .btn{font-size:12px;padding:8px 12px}
+  .modal{padding:14px}.modal-opt{flex-direction:column;align-items:flex-start}
+  .btn-row{gap:7px}.btn{font-size:12px;padding:8px 12px}
 }
 @media(max-width:380px){.stats-row{grid-template-columns:1fr}}
 </style>
@@ -224,9 +227,7 @@ tbody td:last-child{border-right:none}
 <!-- LOGIN -->
 <div id="login-screen" class="login-screen">
   <div class="login-box">
-    <div class="login-logo">
-      <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Logo" onerror="this.style.display='none'"/>
-    </div>
+    <div class="login-logo"><img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Logo" onerror="this.style.display='none'"/></div>
     <div class="login-title">Planilha FT Diária</div>
     <div class="login-sub">Acesse com suas credenciais</div>
     <div id="login-err" class="login-err">⚠️ <span id="login-err-msg"></span></div>
@@ -274,53 +275,18 @@ tbody td:last-child{border-right:none}
       <div class="card-title">📝 Registrar FT</div>
       <div class="dup-banner" id="dup-banner">📋 Modo duplicação — informe a nova data e confirme para salvar como novo registro.</div>
       <div class="form-grid">
-        <div class="fg">
-          <label>👤 Funcionário <span class="req">*</span></label>
-          <div class="ac-wrap"><select class="ac-select" id="f-func"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
+        <div class="fg"><label>👤 Funcionário <span class="req">*</span></label><div class="ac-wrap"><select class="ac-select" id="f-func"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div></div>
+        <div class="fg"><label>📍 Posto Fixo <span class="req">*</span></label><div class="ac-wrap"><select class="ac-select" id="f-posto"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div></div>
+        <div class="fg"><label>📅 Data <span class="req">*</span></label><input type="date" id="f-data" style="width:100%"/></div>
+        <div class="fg"><label>🗓️ Lançamento</label><div class="auto-badge"><span class="badge-auto">AUTO</span><span id="lancamento-display">—</span></div></div>
+        <div class="fg"><label>⏰ Horário <span class="req">*</span></label><div class="row2"><input type="time" id="f-hi"/><span>às</span><input type="time" id="f-hf"/></div></div>
+        <div class="fg"><label>🔄 Posto da FT <span class="req">*</span></label><div class="ac-wrap"><select class="ac-select" id="f-postoft"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div></div>
+        <div class="fg"><label>💰 Valor <span class="req">*</span></label><div class="row2"><span style="font-weight:700;color:var(--primary);flex-shrink:0">R$</span><input type="number" id="f-valor" step="0.01" min="0" placeholder="0,00"/></div></div>
+        <div class="fg"><label>📋 Motivo <span class="req">*</span></label>
+          <select id="f-motivo"><option value="">— Selecione —</option><option>Falta</option><option>Falta na programada</option><option>Falta nas férias</option><option>Férias</option><option>Programação FDS</option><option>Programação de feriado</option><option>Programação contratual</option><option>Solicitação extra</option><option>Reembolso</option><option>Troca de escala</option><option>Evento</option><option>Pendente contratação</option><option>Apoio FDS</option><option>Folga</option><option>Processo admissional</option><option>Outros</option></select>
         </div>
-        <div class="fg">
-          <label>📍 Posto Fixo <span class="req">*</span></label>
-          <div class="ac-wrap"><select class="ac-select" id="f-posto"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
-        </div>
-        <div class="fg">
-          <label>📅 Data <span class="req">*</span></label>
-          <input type="date" id="f-data" style="width:100%"/>
-        </div>
-        <div class="fg">
-          <label>🗓️ Lançamento</label>
-          <div class="auto-badge"><span class="badge-auto">AUTO</span><span id="lancamento-display">—</span></div>
-        </div>
-        <div class="fg">
-          <label>⏰ Horário <span class="req">*</span></label>
-          <div class="row2"><input type="time" id="f-hi"/><span>às</span><input type="time" id="f-hf"/></div>
-        </div>
-        <div class="fg">
-          <label>🔄 Posto da FT <span class="req">*</span></label>
-          <div class="ac-wrap"><select class="ac-select" id="f-postoft"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
-        </div>
-        <div class="fg">
-          <label>💰 Valor <span class="req">*</span></label>
-          <div class="row2"><span style="font-weight:700;color:var(--primary);flex-shrink:0">R$</span><input type="number" id="f-valor" step="0.01" min="0" placeholder="0,00"/></div>
-        </div>
-        <div class="fg">
-          <label>📋 Motivo <span class="req">*</span></label>
-          <select id="f-motivo">
-            <option value="">— Selecione —</option>
-            <option>Falta</option><option>Falta na programada</option><option>Falta nas férias</option>
-            <option>Férias</option><option>Programação FDS</option><option>Programação de feriado</option>
-            <option>Programação contratual</option><option>Solicitação extra</option><option>Reembolso</option>
-            <option>Troca de escala</option><option>Evento</option><option>Pendente contratação</option>
-            <option>Apoio FDS</option><option>Folga</option><option>Processo admissional</option><option>Outros</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label>🚫 Func. Faltante</label>
-          <div class="ac-wrap"><select class="ac-select" id="f-faltante"><option value="">— Nenhum —</option></select><span class="ac-arrow">▼</span></div>
-        </div>
-        <div class="fg span2">
-          <label>📝 Observações</label>
-          <textarea id="f-obs" rows="2" placeholder="Observações adicionais..."></textarea>
-        </div>
+        <div class="fg"><label>🚫 Func. Faltante</label><div class="ac-wrap"><select class="ac-select" id="f-faltante"><option value="">— Nenhum —</option></select><span class="ac-arrow">▼</span></div></div>
+        <div class="fg span2"><label>📝 Observações</label><textarea id="f-obs" rows="2" placeholder="Observações adicionais..."></textarea></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" id="btn-add" onclick="addRecord()">➕ Adicionar Registro</button>
@@ -339,18 +305,10 @@ tbody td:last-child{border-right:none}
           <div class="fg"><label>📅 Data Até</label><input type="date" id="fil-ate" onchange="applyFilters()"/></div>
           <div class="fg"><label>🗓️ Lanç. De</label><input type="date" id="fil-lanc-de" onchange="applyFilters()"/></div>
           <div class="fg"><label>🗓️ Lanç. Até</label><input type="date" id="fil-lanc-ate" onchange="applyFilters()"/></div>
-          <div class="fg"><label>📆 Mês</label>
-            <select id="fil-mes" onchange="applyFilters()"><option value="">Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select>
-          </div>
-          <div class="fg"><label>🗓️ Ano</label>
-            <select id="fil-ano" onchange="applyFilters()"><option value="">Todos</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option></select>
-          </div>
-          <div class="fg"><label>📋 Motivo</label>
-            <select id="fil-motivo" onchange="applyFilters()"><option value="">Todos</option><option>Falta</option><option>Falta na programada</option><option>Falta nas férias</option><option>Férias</option><option>Programação FDS</option><option>Programação de feriado</option><option>Programação contratual</option><option>Solicitação extra</option><option>Reembolso</option><option>Troca de escala</option><option>Evento</option><option>Pendente contratação</option><option>Apoio FDS</option><option>Folga</option><option>Processo admissional</option><option>Outros</option></select>
-          </div>
-          <div class="fg"><label>📍 Posto</label>
-            <select id="fil-posto" onchange="applyFilters()"><option value="">Todos</option><option value="__exceto_free__">⛔ Exceto Free</option></select>
-          </div>
+          <div class="fg"><label>📆 Mês</label><select id="fil-mes" onchange="applyFilters()"><option value="">Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
+          <div class="fg"><label>🗓️ Ano</label><select id="fil-ano" onchange="applyFilters()"><option value="">Todos</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option></select></div>
+          <div class="fg"><label>📋 Motivo</label><select id="fil-motivo" onchange="applyFilters()"><option value="">Todos</option><option>Falta</option><option>Falta na programada</option><option>Falta nas férias</option><option>Férias</option><option>Programação FDS</option><option>Programação de feriado</option><option>Programação contratual</option><option>Solicitação extra</option><option>Reembolso</option><option>Troca de escala</option><option>Evento</option><option>Pendente contratação</option><option>Apoio FDS</option><option>Folga</option><option>Processo admissional</option><option>Outros</option></select></div>
+          <div class="fg"><label>📍 Posto</label><select id="fil-posto" onchange="applyFilters()"><option value="">Todos</option><option value="__exceto_free__">⛔ Exceto Free</option></select></div>
           <div class="fg"><label>🔍 Buscar</label><input type="text" id="fil-busca" placeholder="Nome, posto, obs..." oninput="applyFilters()"/></div>
           <div class="fg" style="justify-content:flex-end"><label style="visibility:hidden">.</label><button class="btn btn-ghost" onclick="clearFilters()">✖ Limpar</button></div>
         </div>
@@ -377,13 +335,7 @@ tbody td:last-child{border-right:none}
       </div>
       <div class="table-wrap">
         <table id="main-table">
-          <thead>
-            <tr>
-              <th id="th-acoes">Ações</th><th>#</th><th>Funcionário</th><th>Posto Fixo</th>
-              <th>Data</th><th>Dt. Lançamento</th><th>Horário</th><th>Posto FT</th>
-              <th>Valor</th><th>Motivo</th><th>Func. Faltante</th><th>Lançado por</th><th>Observações</th>
-            </tr>
-          </thead>
+          <thead><tr><th id="th-acoes">Ações</th><th>#</th><th>Funcionário</th><th>Posto Fixo</th><th>Data</th><th>Dt. Lançamento</th><th>Horário</th><th>Posto FT</th><th>Valor</th><th>Motivo</th><th>Func. Faltante</th><th>Lançado por</th><th>Observações</th></tr></thead>
           <tbody id="table-body"></tbody>
         </table>
         <div id="empty-state" class="empty-state" style="display:none"><div class="icon">📋</div><div>Nenhum registro encontrado.</div></div>
@@ -394,9 +346,9 @@ tbody td:last-child{border-right:none}
   <div class="footer">© 2026 · Planilha FT Diária</div>
 </div>
 
-<!-- MODAL PRIMEIRO ACESSO — bloqueante, sem fechar -->
-<div class="modal-overlay bloqueado open hidden" id="modal-primeiro-acesso">
-  <div class="modal" style="max-width:440px">
+<!-- ══ MODAL PRIMEIRO ACESSO ══ -->
+<div id="pa-overlay">
+  <div id="pa-box">
     <div class="primeiro-acesso-alert">
       <span class="pa-icon">🔐</span>
       <strong>Bem-vindo! Este é seu primeiro acesso.</strong><br/>
@@ -404,8 +356,16 @@ tbody td:last-child{border-right:none}
     </div>
     <div class="modal-title">Criar Senha Pessoal</div>
     <div class="pw-change-grid">
-      <div class="fg"><label>Nova Senha <span class="req">*</span></label><div class="pw-wrap"><input type="password" id="pa-new" placeholder="Mínimo 8 caracteres" oninput="checkStrengthPA(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('pa-new',this)">👁️</button></div><div class="strength-bar" id="strength-bar-pa"></div><div class="strength-label" id="strength-label-pa" style="color:var(--muted)"></div></div>
-      <div class="fg"><label>Confirmar Senha <span class="req">*</span></label><div class="pw-wrap"><input type="password" id="pa-conf" placeholder="Confirme a nova senha"/><button class="pw-toggle" type="button" onclick="togglePw('pa-conf',this)">👁️</button></div></div>
+      <div class="fg">
+        <label>Nova Senha <span class="req">*</span></label>
+        <div class="pw-wrap"><input type="password" id="pa-new" placeholder="Mínimo 8 caracteres" oninput="checkStrengthPA(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('pa-new',this)">👁️</button></div>
+        <div class="strength-bar" id="strength-bar-pa"></div>
+        <div class="strength-label" id="strength-label-pa" style="color:var(--muted)"></div>
+      </div>
+      <div class="fg">
+        <label>Confirmar Senha <span class="req">*</span></label>
+        <div class="pw-wrap"><input type="password" id="pa-conf" placeholder="Confirme a nova senha"/><button class="pw-toggle" type="button" onclick="togglePw('pa-conf',this)">👁️</button></div>
+      </div>
     </div>
     <div style="margin-top:16px">
       <button class="btn btn-primary" style="width:100%;justify-content:center" id="btn-pa" onclick="doFirstAccessPw()">🔐 Definir Senha e Entrar</button>
@@ -432,7 +392,7 @@ tbody td:last-child{border-right:none}
 
 <!-- MODAL USUÁRIOS -->
 <div class="modal-overlay" id="modal-usuarios">
-  <div class="modal" style="max-width:700px">
+  <div class="modal" style="max-width:760px">
     <div class="modal-title">👥 Gerenciar Usuários</div>
     <div id="usuarios-content"></div>
     <hr class="modal-sep"/>
@@ -440,7 +400,7 @@ tbody td:last-child{border-right:none}
     <div class="usr-form-grid">
       <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Usuário</label><input type="text" id="nu-user" placeholder="Nome do usuário"/></div>
       <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Senha inicial</label><input type="text" id="nu-pass" placeholder="Mín. 8 caracteres"/></div>
-      <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Perfil</label><select id="nu-perfil"><option>Admin</option><option>Operador</option><option>Visualizador</option></select></div>
+      <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Perfil</label><select id="nu-perfil"><option>Admin</option><option selected>Operador</option><option>Visualizador</option></select></div>
       <button class="btn btn-primary" onclick="addUsuario()" style="margin-top:18px">Adicionar</button>
     </div>
     <div class="modal-close"><button class="btn btn-ghost" onclick="closeUsuariosModal()">Fechar</button></div>
@@ -495,30 +455,16 @@ let db=null,records=[],names=[],postos=[],filtered=[],editingId=null,duplicating
 const PAGE_SIZE=10;
 let currentUser='',currentPerfil='',currentToken='',isOnline=false,isSubmitting=false,isUserTyping=false;
 let autoRefreshTimer=null,lastSyncTime=null,filterVisible=false,resetTargetUser='';
-let primeiroAcessoSenhaAtual=''; // guarda a senha temporária durante o fluxo de primeiro acesso
+let primeiroAcessoSenhaAtual='';
 
-/* ══ LOADING ══ */
-function showLoading(msg,sub){
-  document.getElementById('loading-msg').textContent=msg||'Carregando...';
-  document.getElementById('loading-sub').textContent=sub||'';
-  document.getElementById('loading-overlay').classList.add('show');
-}
+function showLoading(msg,sub){document.getElementById('loading-msg').textContent=msg||'Carregando...';document.getElementById('loading-sub').textContent=sub||'';document.getElementById('loading-overlay').classList.add('show')}
 function hideLoading(){document.getElementById('loading-overlay').classList.remove('show')}
 
-/* ══ IndexedDB ══ */
 function openDB(){
   return new Promise(function(res,rej){
     var r=indexedDB.open(DB_NAME,DB_VERSION);
-    r.onupgradeneeded=function(e){
-      var d=e.target.result;
-      ['records','names','postos'].forEach(function(s){
-        if(!d.objectStoreNames.contains(s))
-          d.createObjectStore(s,{keyPath:s==='records'?'id':'name'});
-      });
-    };
-    r.onsuccess=function(e){res(e.target.result)};
-    r.onerror=function(e){rej(e.target.error)};
-    r.onblocked=function(){rej(new Error('IndexedDB bloqueado'))};
+    r.onupgradeneeded=function(e){var d=e.target.result;['records','names','postos'].forEach(function(s){if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='records'?'id':'name'})})};
+    r.onsuccess=function(e){res(e.target.result)};r.onerror=function(e){rej(e.target.error)};r.onblocked=function(){rej(new Error('IndexedDB bloqueado'))};
   });
 }
 function getDb(){if(!db)throw new Error('DB não inicializado');return db}
@@ -528,12 +474,7 @@ function dbPut(store,obj){return new Promise(function(res,rej){var r=tx(store,'r
 function dbDelete(store,key){return new Promise(function(res,rej){var r=tx(store,'readwrite').delete(key);r.onsuccess=function(){res()};r.onerror=function(){rej(r.error)}})}
 function dbClear(store){return new Promise(function(res,rej){var r=tx(store,'readwrite').clear();r.onsuccess=function(){res()};r.onerror=function(){rej(r.error)}})}
 
-/* ══ Permissões ══ */
-var PERMS={
-  Admin:{form:true,edit:true,delete:true,dup:true,backup:true,log:true,usuarios:true},
-  Operador:{form:true,edit:false,delete:false,dup:true,backup:false,log:false,usuarios:false},
-  Visualizador:{form:false,edit:false,delete:false,dup:false,backup:false,log:false,usuarios:false}
-};
+var PERMS={Admin:{form:true,edit:true,delete:true,dup:true,backup:true,log:true,usuarios:true},Operador:{form:true,edit:false,delete:false,dup:true,backup:false,log:false,usuarios:false},Visualizador:{form:false,edit:false,delete:false,dup:false,backup:false,log:false,usuarios:false}};
 function can(a){return!!(PERMS[currentPerfil]&&PERMS[currentPerfil][a])}
 function applyPermissions(){
   document.getElementById('form-card').classList.toggle('hidden',!can('form'));
@@ -548,130 +489,49 @@ function applyPermissions(){
   document.getElementById('header-user-name').textContent=currentUser;
 }
 
-/* ══ Selects ══ */
 function populateFormSelects(){
-  function buildOptions(list,currentVal){
-    var opts='<option value="">— Selecione —</option>';
-    list.forEach(function(n){opts+='<option value="'+n+'"'+(n===currentVal?' selected':'')+'>'+n+'</option>'});
-    return opts;
-  }
-  function buildOptionalOptions(list,currentVal){
-    var opts='<option value="">— Nenhum —</option>';
-    list.forEach(function(n){opts+='<option value="'+n+'"'+(n===currentVal?' selected':'')+'>'+n+'</option>'});
-    return opts;
-  }
+  function buildOptions(list,cur){var o='<option value="">— Selecione —</option>';list.forEach(function(n){o+='<option value="'+n+'"'+(n===cur?' selected':'')+'>'+n+'</option>'});return o}
+  function buildOpt(list,cur){var o='<option value="">— Nenhum —</option>';list.forEach(function(n){o+='<option value="'+n+'"'+(n===cur?' selected':'')+'>'+n+'</option>'});return o}
   var cv={func:document.getElementById('f-func').value,posto:document.getElementById('f-posto').value,postoft:document.getElementById('f-postoft').value,faltante:document.getElementById('f-faltante').value};
   document.getElementById('f-func').innerHTML=buildOptions(names,cv.func);
   document.getElementById('f-posto').innerHTML=buildOptions(postos,cv.posto);
   document.getElementById('f-postoft').innerHTML=buildOptions(postos,cv.postoft);
-  document.getElementById('f-faltante').innerHTML=buildOptionalOptions(names,cv.faltante);
+  document.getElementById('f-faltante').innerHTML=buildOpt(names,cv.faltante);
 }
 
-/* ══ UI helpers ══ */
 function togglePw(id,btn){var el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁️':'🙈'}
 function showChangePw(){document.getElementById('login-form').style.display='none';document.getElementById('change-pw-form').classList.add('show');hideErr()}
 function hideChangePw(){document.getElementById('change-pw-form').classList.remove('show');document.getElementById('login-form').style.display='block';hideErr()}
 function showErr(msg){var e=document.getElementById('login-err');document.getElementById('login-err-msg').textContent=msg;e.classList.add('show')}
 function hideErr(){document.getElementById('login-err').classList.remove('show')}
-function toggleFilters(){
-  filterVisible=!filterVisible;
-  document.getElementById('filter-body').classList.toggle('hidden',!filterVisible);
-  document.getElementById('btn-toggle-filter').textContent=filterVisible?'▲ Ocultar Filtros':'▼ Mostrar Filtros';
-}
+function toggleFilters(){filterVisible=!filterVisible;document.getElementById('filter-body').classList.toggle('hidden',!filterVisible);document.getElementById('btn-toggle-filter').textContent=filterVisible?'▲ Ocultar Filtros':'▼ Mostrar Filtros'}
 
-/* ══ Force strength ══ */
-function _strength(pw){
-  if(!pw)return null;
-  var s=pw.length>=8&&/[A-Z]/.test(pw)&&/[0-9]/.test(pw)&&/[^A-Za-z0-9]/.test(pw);
-  var m=pw.length>=6&&(/[A-Z]/.test(pw)||/[0-9]/.test(pw));
-  return s?'strong':m?'medium':'weak';
-}
-function _applyStrength(barId,lblId,pw){
-  var bar=document.getElementById(barId),lbl=document.getElementById(lblId);
-  var lvl=_strength(pw);
-  if(!lvl){bar.className='strength-bar';lbl.textContent='';return}
-  var map={strong:{cls:'strong',color:'#1a7a4a',txt:'Forte ✅'},medium:{cls:'medium',color:'#c07800',txt:'Média ⚠️'},weak:{cls:'weak',color:'#c0303a',txt:'Fraca ❌'}};
-  bar.className='strength-bar '+map[lvl].cls;lbl.style.color=map[lvl].color;lbl.textContent=map[lvl].txt;
-}
+function _strength(pw){if(!pw)return null;var s=pw.length>=8&&/[A-Z]/.test(pw)&&/[0-9]/.test(pw)&&/[^A-Za-z0-9]/.test(pw);var m=pw.length>=6&&(/[A-Z]/.test(pw)||/[0-9]/.test(pw));return s?'strong':m?'medium':'weak'}
+function _applyStrength(barId,lblId,pw){var bar=document.getElementById(barId),lbl=document.getElementById(lblId);var lvl=_strength(pw);if(!lvl){bar.className='strength-bar';lbl.textContent='';return}var map={strong:{cls:'strong',color:'#1a7a4a',txt:'Forte ✅'},medium:{cls:'medium',color:'#c07800',txt:'Média ⚠️'},weak:{cls:'weak',color:'#c0303a',txt:'Fraca ❌'}};bar.className='strength-bar '+map[lvl].cls;lbl.style.color=map[lvl].color;lbl.textContent=map[lvl].txt}
 function checkStrength(pw){_applyStrength('strength-bar','strength-label',pw)}
 function checkStrength2(pw){_applyStrength('strength-bar2','strength-label2',pw)}
 function checkStrengthPA(pw){_applyStrength('strength-bar-pa','strength-label-pa',pw)}
 
-/* ══ Data helpers ══ */
 function getTodayStr(){var n=new Date();return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()}
 function getTodayISO(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
 function updateLancamento(){document.getElementById('lancamento-display').textContent=getTodayStr()}
-function getDateInputISO(id){
-  var val=document.getElementById(id).value;if(!val)return'';val=val.trim();
-  if(/^\d{4}-\d{2}-\d{2}$/.test(val))return val;
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){var p=val.split('/');return p[2]+'-'+p[1]+'-'+p[0]}
-  var d=new Date(val+'T12:00:00');
-  if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  return val;
-}
-function setDateInput(id,isoVal){
-  var el=document.getElementById(id);if(!isoVal){el.value='';return}
-  var iso=isoVal;
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(isoVal)){var p=isoVal.split('/');iso=p[2]+'-'+p[1]+'-'+p[0]}
-  el.value=iso;
-}
+function getDateInputISO(id){var val=document.getElementById(id).value;if(!val)return'';val=val.trim();if(/^\d{4}-\d{2}-\d{2}$/.test(val))return val;if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){var p=val.split('/');return p[2]+'-'+p[1]+'-'+p[0]}var d=new Date(val+'T12:00:00');if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return val}
+function setDateInput(id,isoVal){var el=document.getElementById(id);if(!isoVal){el.value='';return}var iso=isoVal;if(/^\d{2}\/\d{2}\/\d{4}$/.test(isoVal)){var p=isoVal.split('/');iso=p[2]+'-'+p[1]+'-'+p[0]}el.value=iso}
 
-/* ══ Auto-refresh ══ */
-function startAutoRefresh(){
-  stopAutoRefresh();
-  autoRefreshTimer=setInterval(async function(){
-    if(isUserTyping||isSubmitting)return;
-    if(isOnline)await syncFromSheets(true);
-  },AUTO_REFRESH_MS);
-}
+function startAutoRefresh(){stopAutoRefresh();autoRefreshTimer=setInterval(async function(){if(isUserTyping||isSubmitting)return;if(isOnline)await syncFromSheets(true)},AUTO_REFRESH_MS)}
 function stopAutoRefresh(){if(autoRefreshTimer){clearInterval(autoRefreshTimer);autoRefreshTimer=null}}
-function updateLastSyncLabel(){
-  if(!lastSyncTime){document.getElementById('last-sync-label').textContent='';return}
-  var diff=Math.floor((Date.now()-lastSyncTime)/1000);
-  var t=diff<60?'Atualizado agora':diff<3600?'Atualizado há '+Math.floor(diff/60)+'min':'Atualizado há '+Math.floor(diff/3600)+'h';
-  document.getElementById('last-sync-label').textContent=t;
-}
-document.addEventListener('visibilitychange',async function(){
-  if(!document.hidden&&isOnline&&!isUserTyping&&!isSubmitting)await syncFromSheets(true);
-});
-async function manualSync(){
-  if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
-  var btn=document.getElementById('btn-sync');btn.disabled=true;btn.textContent='⏳';
-  await syncFromSheets();btn.disabled=false;btn.textContent='🔄';toast('Sincronizado! ✅');
-}
+function updateLastSyncLabel(){if(!lastSyncTime){document.getElementById('last-sync-label').textContent='';return}var diff=Math.floor((Date.now()-lastSyncTime)/1000);var t=diff<60?'Atualizado agora':diff<3600?'Atualizado há '+Math.floor(diff/60)+'min':'Atualizado há '+Math.floor(diff/3600)+'h';document.getElementById('last-sync-label').textContent=t}
+document.addEventListener('visibilitychange',async function(){if(!document.hidden&&isOnline&&!isUserTyping&&!isSubmitting)await syncFromSheets(true)});
+async function manualSync(){if(!isOnline){toast('Sem conexão ao Sheets.','err');return}var btn=document.getElementById('btn-sync');btn.disabled=true;btn.textContent='⏳';await syncFromSheets();btn.disabled=false;btn.textContent='🔄';toast('Sincronizado! ✅')}
 
-/* ══ API ══ */
-async function apiGet(params){
-  params=params||{};
-  if(currentToken)params.token=currentToken;
-  var url=new URL(APPS_SCRIPT_URL);
-  Object.entries(params).forEach(function(e){url.searchParams.set(e[0],e[1])});
-  var res=await fetch(url.toString());
-  var json=await res.json();
-  if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}
-  return json;
-}
-async function apiPost(body){
-  var payload=Object.assign({},body);
-  if(currentToken)payload.token=currentToken;
-  delete payload.usuario;
-  var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
-  var json=await res.json();
-  if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}
-  return json;
-}
+async function apiGet(params){params=params||{};if(currentToken)params.token=currentToken;var url=new URL(APPS_SCRIPT_URL);Object.entries(params).forEach(function(e){url.searchParams.set(e[0],e[1])});var res=await fetch(url.toString());var json=await res.json();if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}return json}
+async function apiPost(body){var payload=Object.assign({},body);if(currentToken)payload.token=currentToken;delete payload.usuario;var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});var json=await res.json();if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}return json}
 function setSyncBar(show,msg){document.getElementById('sync-bar').classList.toggle('show',show);if(msg)document.getElementById('sync-msg').textContent=msg}
-function setDbStatus(state){
-  var dot=document.getElementById('db-dot'),lbl=document.getElementById('db-label');
-  var map={ok:{cls:'ok',txt:'Sheets conectado'},sync:{cls:'sync',txt:'Sincronizando...'},offline:{cls:'err',txt:'Offline (cache)'},local:{cls:'ok',txt:'Modo local'},err:{cls:'err',txt:'Erro'}};
-  var s=map[state]||{cls:'err',txt:'Erro'};
-  dot.className='db-dot '+s.cls;lbl.textContent=s.txt;
-}
+function setDbStatus(state){var dot=document.getElementById('db-dot'),lbl=document.getElementById('db-label');var map={ok:{cls:'ok',txt:'Sheets conectado'},sync:{cls:'sync',txt:'Sincronizando...'},offline:{cls:'err',txt:'Offline (cache)'},local:{cls:'ok',txt:'Modo local'},err:{cls:'err',txt:'Erro'}};var s=map[state]||{cls:'err',txt:'Erro'};dot.className='db-dot '+s.cls;lbl.textContent=s.txt}
 
-/* ══ LOGIN ══ */
 async function doLogin(){
   var user=document.getElementById('l-user').value.trim();
-  var pass=document.getElementById('l-pass').value.trim();
+  var pass=document.getElementById('l-pass').value;
   hideErr();
   if(!user||!pass){showErr('Preencha usuário e senha.');return}
   var btn=document.getElementById('btn-login');
@@ -679,31 +539,25 @@ async function doLogin(){
   try{
     var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:pass})}).then(function(r){return r.json()});
     if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.innerHTML='🔐 Entrar';btn.disabled=false;return}
-    /* ✅ Verifica primeiro acesso */
-    if(res.primeiroAcesso){
-      currentToken=res.token;
-      currentUser=res.nome||user;
-      currentPerfil=res.perfil;
-      primeiroAcessoSenhaAtual=pass;
+    if(res.primeiroAcesso===true){
+      currentToken=res.token;currentUser=res.nome||user;currentPerfil=res.perfil;primeiroAcessoSenhaAtual=pass;
       btn.innerHTML='🔐 Entrar';btn.disabled=false;
-      abrirPrimeiroAcesso();
-      return;
+      abrirPrimeiroAcesso();return;
     }
-    currentToken=res.token;
-    sessionStorage.setItem('ft_token',res.token);
+    currentToken=res.token;sessionStorage.setItem('ft_token',res.token);
     await loginSuccess(res.nome||user,res.perfil,res.token);
   }catch(e){showErr('Sem conexão. Tente novamente.')}
   btn.innerHTML='🔐 Entrar';btn.disabled=false;
 }
 
-/* ══ PRIMEIRO ACESSO ══ */
 function abrirPrimeiroAcesso(){
   document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('modal-primeiro-acesso').classList.remove('hidden');
   document.getElementById('pa-new').value='';
   document.getElementById('pa-conf').value='';
   document.getElementById('strength-bar-pa').className='strength-bar';
   document.getElementById('strength-label-pa').textContent='';
+  document.getElementById('pa-overlay').classList.add('show');
+  setTimeout(function(){document.getElementById('pa-new').focus()},100);
 }
 
 async function doFirstAccessPw(){
@@ -716,34 +570,19 @@ async function doFirstAccessPw(){
   var btn=document.getElementById('btn-pa');
   btn.disabled=true;btn.innerHTML='<span class="btn-spinner"></span> Salvando...';
   try{
-    /* Usa o token já obtido no login */
-    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({
-      acao:'trocarSenha',
-      token:currentToken,
-      senhaAtual:primeiroAcessoSenhaAtual,
-      novaSenha:nw
-    })}).then(function(r){return r.json()});
+    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'trocarSenha',token:currentToken,senhaAtual:primeiroAcessoSenhaAtual,novaSenha:nw})}).then(function(r){return r.json()});
     if(!res.ok){toast(res.error||'Erro ao salvar senha.','err');btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';return}
-    /* Senha trocada — faz login novamente com a nova senha para obter token fresco */
     var res2=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:currentUser,senha:nw})}).then(function(r){return r.json()});
-    if(!res2.ok){
-      toast('Senha definida! Faça login novamente.','ok');
-      document.getElementById('modal-primeiro-acesso').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-      primeiroAcessoSenhaAtual='';currentToken='';
-      btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';
-      return;
-    }
-    currentToken=res2.token;
-    sessionStorage.setItem('ft_token',res2.token);
+    document.getElementById('pa-overlay').classList.remove('show');
     primeiroAcessoSenhaAtual='';
-    document.getElementById('modal-primeiro-acesso').classList.add('hidden');
+    if(!res2.ok){toast('Senha definida! Faça login novamente.');document.getElementById('login-screen').classList.remove('hidden');currentToken='';btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';return}
+    currentToken=res2.token;sessionStorage.setItem('ft_token',res2.token);
+    toast('Senha criada! Bem-vindo! 🎉');
     await loginSuccess(res2.nome||currentUser,res2.perfil,res2.token);
   }catch(e){toast('Erro de conexão.','err')}
   btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';
 }
 
-/* ══ TROCAR SENHA — tela de login (sem estar logado) ══ */
 async function doChangePwLogin(){
   var user=document.getElementById('cp-user').value.trim();
   var old=document.getElementById('cp-old').value;
@@ -756,109 +595,67 @@ async function doChangePwLogin(){
   var btn=document.getElementById('btn-change-pw');
   btn.innerHTML='<span class="btn-spinner"></span> Salvando...';btn.disabled=true;
   try{
-    /* 1. faz login para obter token */
     var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:old})}).then(function(r){return r.json()});
     if(!res.ok){showErr(res.error||'Usuário ou senha atual inválidos.');btn.innerHTML='💾 Salvar Nova Senha';btn.disabled=false;return}
-    /* 2. troca senha com o token obtido */
     var res2=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'trocarSenha',token:res.token,senhaAtual:old,novaSenha:nw})}).then(function(r){return r.json()});
-    if(res2.ok){
-      toast('Senha alterada! Faça login com a nova senha.');
-      hideChangePw();
-      ['cp-user','cp-old','cp-new','cp-conf'].forEach(function(id){document.getElementById(id).value=''});
-    }else{showErr(res2.error||'Erro ao alterar senha.')}
+    if(res2.ok){toast('Senha alterada! Faça login com a nova senha.');hideChangePw();['cp-user','cp-old','cp-new','cp-conf'].forEach(function(id){document.getElementById(id).value=''})}
+    else{showErr(res2.error||'Erro ao alterar senha.')}
   }catch(e){showErr('Sem conexão.')}
   btn.innerHTML='💾 Salvar Nova Senha';btn.disabled=false;
 }
 
-/* ══ LOGIN SUCCESS ══ */
 async function loginSuccess(user,perfil,token){
   currentUser=user;currentPerfil=perfil;currentToken=token||currentToken;
-  sessionStorage.setItem('ft_user',user);
-  sessionStorage.setItem('ft_perfil',perfil);
-  sessionStorage.setItem('ft_token',currentToken);
+  sessionStorage.setItem('ft_user',user);sessionStorage.setItem('ft_perfil',perfil);sessionStorage.setItem('ft_token',currentToken);
   showLoading('Iniciando sistema...','Abrindo banco de dados local');
   document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('pa-overlay').classList.remove('show');
   document.getElementById('app').classList.remove('hidden');
   applyPermissions();setDbStatus('sync');
   try{db=await openDB()}catch(err){hideLoading();setDbStatus('err');toast('Erro ao abrir banco local.','err');return}
-  updateLancamento();
-  setInterval(updateLancamento,60000);
-  setInterval(updateLastSyncLabel,30000);
+  updateLancamento();setInterval(updateLancamento,60000);setInterval(updateLastSyncLabel,30000);
   showLoading('Carregando dados...','Lendo cache local');
-  try{
-    var cachedRec=await dbGetAll(STORE_REC);
-    var cachedNam=await dbGetAll(STORE_NAM);
-    var cachedPos=await dbGetAll(STORE_POST);
-    records=cachedRec;
-    names=cachedNam.map(function(n){return n.name}).sort();
-    postos=cachedPos.map(function(p){return p.name}).sort();
-    renderAll();
-  }catch(err){records=[];names=[];postos=[];renderAll()}
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){
-    showLoading('Sincronizando com Sheets...','Buscando registros atualizados');
-    await syncFromSheets();
-    startAutoRefresh();
-  }else{setDbStatus('local')}
-  hideLoading();
-  toast('Bem-vindo, '+user+'! 👋');
+  try{var cachedRec=await dbGetAll(STORE_REC);var cachedNam=await dbGetAll(STORE_NAM);var cachedPos=await dbGetAll(STORE_POST);records=cachedRec;names=cachedNam.map(function(n){return n.name}).sort();postos=cachedPos.map(function(p){return p.name}).sort();renderAll()}
+  catch(err){records=[];names=[];postos=[];renderAll()}
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){showLoading('Sincronizando com Sheets...','Buscando registros atualizados');await syncFromSheets();startAutoRefresh()}else{setDbStatus('local')}
+  hideLoading();toast('Bem-vindo, '+user+'! 👋');
 }
 
-/* ══ LOGOUT ══ */
 async function doLogout(){
-  if(!confirm('Deseja sair?'))return;
-  stopAutoRefresh();
-  if(isOnline&&currentToken){
-    try{await apiPost({acao:'logout'})}catch(e){}
-  }
+  if(!confirm('Deseja sair?'))return;stopAutoRefresh();
+  if(isOnline&&currentToken){try{await apiPost({acao:'logout'})}catch(e){}}
   _limparSessao();
 }
-function forceLogout(){
-  toast('Sessão expirada. Faça login novamente.','warn');
-  stopAutoRefresh();_limparSessao();
-}
+function forceLogout(){toast('Sessão expirada. Faça login novamente.','warn');stopAutoRefresh();_limparSessao()}
 function _limparSessao(){
-  sessionStorage.clear();
-  currentUser='';currentPerfil='';currentToken='';isOnline=false;db=null;
-  isSubmitting=false;isUserTyping=false;editingId=null;duplicatingId=null;
+  sessionStorage.clear();currentUser='';currentPerfil='';currentToken='';isOnline=false;db=null;isSubmitting=false;isUserTyping=false;editingId=null;duplicatingId=null;
   document.getElementById('app').classList.add('hidden');
+  document.getElementById('pa-overlay').classList.remove('show');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('l-user').value='';document.getElementById('l-pass').value='';
   hideErr();hideChangePw();
 }
 
-/* ══ Restaurar sessão ao recarregar ══ */
 window.addEventListener('load',async function(){
-  var u=sessionStorage.getItem('ft_user');
-  var p=sessionStorage.getItem('ft_perfil');
-  var t=sessionStorage.getItem('ft_token');
+  var u=sessionStorage.getItem('ft_user'),p=sessionStorage.getItem('ft_perfil'),t=sessionStorage.getItem('ft_token');
   if(u&&p&&t){currentToken=t;await loginSuccess(u,p,t)}
 });
 
-/* ══ Sync ══ */
 async function syncFromSheets(silent){
-  silent=silent||false;
-  if(!db){setDbStatus('offline');return}
-  if(!silent)setSyncBar(true,'Sincronizando...');
-  setDbStatus('sync');
+  silent=silent||false;if(!db){setDbStatus('offline');return}
+  if(!silent)setSyncBar(true,'Sincronizando...');setDbStatus('sync');
   try{
-    var data=await apiGet({acao:'getAll'});
-    if(!data.ok)throw new Error(data.error||'Resposta inválida');
+    var data=await apiGet({acao:'getAll'});if(!data.ok)throw new Error(data.error||'Resposta inválida');
     records=data.records.map(migrateRecord);
-    names=[...new Set([...data.names,...names])].sort();
-    postos=[...new Set([...data.postos,...postos])].sort();
+    names=[...new Set([...data.names,...names])].sort();postos=[...new Set([...data.postos,...postos])].sort();
     await dbClear(STORE_REC);for(var r of records)await dbPut(STORE_REC,r);
     await dbClear(STORE_NAM);for(var n of names)await dbPut(STORE_NAM,{name:n});
     await dbClear(STORE_POST);for(var p of postos)await dbPut(STORE_POST,{name:p});
     isOnline=true;lastSyncTime=Date.now();updateLastSyncLabel();setDbStatus('ok');renderAll();
-  }catch(e){
-    console.error('syncFromSheets:',e);
-    isOnline=false;setDbStatus('offline');
-    if(!silent)toast('Offline — usando cache local','warn');
-  }
+  }catch(e){console.error('syncFromSheets:',e);isOnline=false;setDbStatus('offline');if(!silent)toast('Offline — usando cache local','warn')}
   if(!silent)setSyncBar(false);
 }
 
-/* ══ Render ══ */
 function renderAll(){populateFormSelects();populatePostoFilter();applyFilters()}
 
 function populatePostoFilter(){
@@ -897,34 +694,17 @@ function clearFilters(){
 }
 
 function renderTable(){
-  var tbody=document.getElementById('table-body'),empty=document.getElementById('empty-state');
-  tbody.innerHTML='';
+  var tbody=document.getElementById('table-body'),empty=document.getElementById('empty-state');tbody.innerHTML='';
   if(!filtered.length){empty.style.display='block';document.getElementById('pagination').innerHTML='';return}
   empty.style.display='none';
-  var totalPages=Math.ceil(filtered.length/PAGE_SIZE);
-  if(currentPage>totalPages)currentPage=totalPages;
+  var totalPages=Math.ceil(filtered.length/PAGE_SIZE);if(currentPage>totalPages)currentPage=totalPages;
   var start=(currentPage-1)*PAGE_SIZE;var page=filtered.slice(start,start+PAGE_SIZE);
-  var showAct=can('edit')||can('delete')||can('dup');
-  var frag=document.createDocumentFragment();
+  var showAct=can('edit')||can('delete')||can('dup');var frag=document.createDocumentFragment();
   page.forEach(function(r,i){
     var gi=start+i+1;var tr=document.createElement('tr');
-    if(showAct){
-      var tdA=document.createElement('td');var btns='<div class="act">';
-      if(can('edit'))btns+='<button class="bi bi-edit" onclick="editRecord(\''+r.id+'\')">✏️ Editar</button>';
-      if(can('dup'))btns+='<button class="bi bi-dup" onclick="duplicateRecord(\''+r.id+'\')">📋 Duplicar</button>';
-      if(can('delete'))btns+='<button class="bi bi-del" onclick="deleteRecord(\''+r.id+'\')">🗑️</button>';
-      btns+='</div>';tdA.innerHTML=btns;tr.appendChild(tdA);
-    }
+    if(showAct){var tdA=document.createElement('td');var btns='<div class="act">';if(can('edit'))btns+='<button class="bi bi-edit" onclick="editRecord(\''+r.id+'\')">✏️ Editar</button>';if(can('dup'))btns+='<button class="bi bi-dup" onclick="duplicateRecord(\''+r.id+'\')">📋 Duplicar</button>';if(can('delete'))btns+='<button class="bi bi-del" onclick="deleteRecord(\''+r.id+'\')">🗑️</button>';btns+='</div>';tdA.innerHTML=btns;tr.appendChild(tdA)}
     var cols=[gi,r.func||'—',r.posto||'—',fmtDate(r.data),r.lancamento||'—',r.hi&&r.hf?(r.hi+'–'+r.hf):(r.hi||r.hf||'—'),r.postoft||'—',r.valor?'R$ '+parseFloat(r.valor).toFixed(2).replace('.',','):'—',r.motivo||'—',r.faltante||'—',r.lancadoPor||'—',r.obs||'—'];
-    cols.forEach(function(c,ci){
-      var td=document.createElement('td');
-      if(ci===7&&r.valor)td.innerHTML='<span class="valor-cell">'+c+'</span>';
-      else if(ci===8&&r.motivo)td.innerHTML='<span class="tag">'+c+'</span>';
-      else if(ci===10)td.innerHTML='<span class="lancadopor-cell">'+c+'</span>';
-      else if(ci===11){td.className='obs-cell';td.title=String(c);td.textContent=c}
-      else td.textContent=c;
-      tr.appendChild(td);
-    });
+    cols.forEach(function(c,ci){var td=document.createElement('td');if(ci===7&&r.valor)td.innerHTML='<span class="valor-cell">'+c+'</span>';else if(ci===8&&r.motivo)td.innerHTML='<span class="tag">'+c+'</span>';else if(ci===10)td.innerHTML='<span class="lancadopor-cell">'+c+'</span>';else if(ci===11){td.className='obs-cell';td.title=String(c);td.textContent=c}else td.textContent=c;tr.appendChild(td)});
     frag.appendChild(tr);
   });
   tbody.appendChild(frag);renderPagination(totalPages);
@@ -941,169 +721,62 @@ function renderPagination(totalPages){
 }
 
 function renderStats(){
-  document.getElementById('stat-total').textContent=records.length;
-  document.getElementById('stat-exib').textContent=filtered.length;
+  document.getElementById('stat-total').textContent=records.length;document.getElementById('stat-exib').textContent=filtered.length;
   var freq={};filtered.forEach(function(r){if(r.motivo)freq[r.motivo]=(freq[r.motivo]||0)+1});
-  var top=Object.entries(freq).sort(function(a,b){return b[1]-a[1]})[0];
-  document.getElementById('stat-motivo').textContent=top?top[0]:'—';
+  var top=Object.entries(freq).sort(function(a,b){return b[1]-a[1]})[0];document.getElementById('stat-motivo').textContent=top?top[0]:'—';
   var total=filtered.reduce(function(s,r){return s+(parseFloat(r.valor)||0)},0);
   document.getElementById('stat-valor').textContent='R$ '+total.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 }
 
-/* ══ Validação ══ */
 function validateForm(){
   var errors=[];
   var fields=[{id:'f-func',label:'Funcionário'},{id:'f-posto',label:'Posto Fixo'},{id:'f-data',label:'Data'},{id:'f-postoft',label:'Posto da FT'},{id:'f-valor',label:'Valor'},{id:'f-motivo',label:'Motivo'}];
   var hi=document.getElementById('f-hi').value,hf=document.getElementById('f-hf').value;
-  fields.forEach(function(f){
-    var el=document.getElementById(f.id);
-    if(!el.value||el.value.trim()===''){el.classList.add('field-error');errors.push(f.label)}
-    else{el.classList.remove('field-error')}
-  });
-  if(!hi||!hf){
-    document.getElementById('f-hi').classList.add('field-error');
-    document.getElementById('f-hf').classList.add('field-error');
-    errors.push('Horário (início e fim)');
-  }else{
-    document.getElementById('f-hi').classList.remove('field-error');
-    document.getElementById('f-hf').classList.remove('field-error');
-  }
+  fields.forEach(function(f){var el=document.getElementById(f.id);if(!el.value||el.value.trim()===''){el.classList.add('field-error');errors.push(f.label)}else{el.classList.remove('field-error')}});
+  if(!hi||!hf){document.getElementById('f-hi').classList.add('field-error');document.getElementById('f-hf').classList.add('field-error');errors.push('Horário (início e fim)')}
+  else{document.getElementById('f-hi').classList.remove('field-error');document.getElementById('f-hf').classList.remove('field-error')}
   return errors;
 }
 
-/* ══ CRUD ══ */
 async function addRecord(){
-  if(!can('form'))return;
-  if(isSubmitting){toast('Aguarde, processando...','warn');return}
-  var errors=validateForm();
-  if(errors.length){toast('Preencha: '+errors.join(', '),'err');return}
-  isSubmitting=true;
-  var isDup=!!duplicatingId,isEditing=!!editingId&&!isDup;
-  var btn=document.getElementById('btn-add');
-  btn.disabled=true;
+  if(!can('form'))return;if(isSubmitting){toast('Aguarde, processando...','warn');return}
+  var errors=validateForm();if(errors.length){toast('Preencha: '+errors.join(', '),'err');return}
+  isSubmitting=true;var isDup=!!duplicatingId,isEditing=!!editingId&&!isDup;
+  var btn=document.getElementById('btn-add');btn.disabled=true;
   btn.innerHTML='<span class="btn-spinner"></span> '+(isEditing?'Salvando edição...':(isDup?'Salvando duplicata...':'Adicionando...'));
   try{
     var lancamento,lancamentoISO;
-    if(isEditing){
-      var old=records.find(function(r){return r.id===editingId});
-      lancamento=old?old.lancamento||getTodayStr():getTodayStr();
-      lancamentoISO=old?old.lancamentoISO||getTodayISO():getTodayISO();
-    }else{lancamento=getTodayStr();lancamentoISO=getTodayISO()}
+    if(isEditing){var old=records.find(function(r){return r.id===editingId});lancamento=old?old.lancamento||getTodayStr():getTodayStr();lancamentoISO=old?old.lancamentoISO||getTodayISO():getTodayISO()}
+    else{lancamento=getTodayStr();lancamentoISO=getTodayISO()}
     var oldRecord=isEditing?records.find(function(r){return r.id===editingId}):null;
-    var rec={
-      id:isEditing?editingId:Date.now().toString(),
-      func:document.getElementById('f-func').value,
-      posto:document.getElementById('f-posto').value,
-      data:getDateInputISO('f-data'),
-      lancamento:lancamento,lancamentoISO:lancamentoISO,
-      hi:document.getElementById('f-hi').value,
-      hf:document.getElementById('f-hf').value,
-      postoft:document.getElementById('f-postoft').value,
-      valor:document.getElementById('f-valor').value,
-      motivo:document.getElementById('f-motivo').value,
-      faltante:document.getElementById('f-faltante').value,
-      obs:document.getElementById('f-obs').value,
-      lancadoPor:currentUser
-    };
+    var rec={id:isEditing?editingId:Date.now().toString(),func:document.getElementById('f-func').value,posto:document.getElementById('f-posto').value,data:getDateInputISO('f-data'),lancamento:lancamento,lancamentoISO:lancamentoISO,hi:document.getElementById('f-hi').value,hf:document.getElementById('f-hf').value,postoft:document.getElementById('f-postoft').value,valor:document.getElementById('f-valor').value,motivo:document.getElementById('f-motivo').value,faltante:document.getElementById('f-faltante').value,obs:document.getElementById('f-obs').value,lancadoPor:currentUser};
     await dbPut(STORE_REC,rec);
-    if(isEditing)records=records.map(function(r){return r.id===editingId?rec:r});
-    else records.push(rec);
-    if(isOnline){
-      setSyncBar(true,isEditing?'Atualizando...':'Salvando...');
-      try{
-        var acao=isEditing?'editar':'inserir';
-        var payload=isEditing?{acao:acao,record:rec,old:oldRecord}:{acao:acao,record:rec};
-        var res=await apiPost(payload);
-        if(!res.ok)throw new Error(res.error);
-      }catch(e){toast('Salvo local. Falha ao sincronizar.','warn')}
-      setSyncBar(false);
-    }
+    if(isEditing)records=records.map(function(r){return r.id===editingId?rec:r});else records.push(rec);
+    if(isOnline){setSyncBar(true,isEditing?'Atualizando...':'Salvando...');try{var acao=isEditing?'editar':'inserir';var payload=isEditing?{acao:acao,record:rec,old:oldRecord}:{acao:acao,record:rec};var res=await apiPost(payload);if(!res.ok)throw new Error(res.error)}catch(e){toast('Salvo local. Falha ao sincronizar.','warn')}setSyncBar(false)}
     toast(isEditing?'Registro atualizado! ✅':(isDup?'Duplicata salva! ✅':'Registro adicionado! ✅'));
     editingId=null;duplicatingId=null;clearForm();renderAll();
-  }finally{
-    isSubmitting=false;btn.disabled=false;btn.innerHTML='➕ Adicionar Registro';
-  }
+  }finally{isSubmitting=false;btn.disabled=false;btn.innerHTML='➕ Adicionar Registro'}
 }
 
 function clearForm(){
   ['f-func','f-posto','f-hi','f-hf','f-postoft','f-valor','f-motivo','f-faltante','f-obs'].forEach(function(id){document.getElementById(id).value=''});
   setDateInput('f-data','');
   ['f-func','f-posto','f-data','f-hi','f-hf','f-postoft','f-valor','f-motivo'].forEach(function(id){document.getElementById(id).classList.remove('field-error')});
-  editingId=null;duplicatingId=null;
-  var btn=document.getElementById('btn-add');
-  btn.innerHTML='➕ Adicionar Registro';btn.disabled=false;btn.className='btn btn-primary';
+  editingId=null;duplicatingId=null;var btn=document.getElementById('btn-add');btn.innerHTML='➕ Adicionar Registro';btn.disabled=false;btn.className='btn btn-primary';
   document.getElementById('dup-banner').classList.remove('show');
 }
 
-function editRecord(id){
-  if(!can('edit'))return;
-  var r=records.find(function(x){return x.id===id});if(!r)return;
-  editingId=id;duplicatingId=null;
-  document.getElementById('f-func').value=r.func||'';
-  document.getElementById('f-posto').value=r.posto||'';
-  setDateInput('f-data',r.data||'');
-  document.getElementById('f-hi').value=r.hi||'';
-  document.getElementById('f-hf').value=r.hf||'';
-  document.getElementById('f-postoft').value=r.postoft||'';
-  document.getElementById('f-valor').value=r.valor||'';
-  document.getElementById('f-motivo').value=r.motivo||'';
-  document.getElementById('f-faltante').value=r.faltante||'';
-  document.getElementById('f-obs').value=r.obs||'';
-  document.getElementById('btn-add').innerHTML='💾 Salvar Edição';
-  document.getElementById('btn-add').className='btn btn-primary';
-  document.getElementById('dup-banner').classList.remove('show');
-  window.scrollTo({top:0,behavior:'smooth'});
-  toast('Registro carregado para edição.');
-}
+function editRecord(id){if(!can('edit'))return;var r=records.find(function(x){return x.id===id});if(!r)return;editingId=id;duplicatingId=null;document.getElementById('f-func').value=r.func||'';document.getElementById('f-posto').value=r.posto||'';setDateInput('f-data',r.data||'');document.getElementById('f-hi').value=r.hi||'';document.getElementById('f-hf').value=r.hf||'';document.getElementById('f-postoft').value=r.postoft||'';document.getElementById('f-valor').value=r.valor||'';document.getElementById('f-motivo').value=r.motivo||'';document.getElementById('f-faltante').value=r.faltante||'';document.getElementById('f-obs').value=r.obs||'';document.getElementById('btn-add').innerHTML='💾 Salvar Edição';document.getElementById('btn-add').className='btn btn-primary';document.getElementById('dup-banner').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});toast('Registro carregado para edição.')}
+function duplicateRecord(id){if(!can('dup'))return;var r=records.find(function(x){return x.id===id});if(!r)return;editingId=null;duplicatingId=id;document.getElementById('f-func').value=r.func||'';document.getElementById('f-posto').value=r.posto||'';setDateInput('f-data','');document.getElementById('f-hi').value=r.hi||'';document.getElementById('f-hf').value=r.hf||'';document.getElementById('f-postoft').value=r.postoft||'';document.getElementById('f-valor').value=r.valor||'';document.getElementById('f-motivo').value=r.motivo||'';document.getElementById('f-faltante').value=r.faltante||'';document.getElementById('f-obs').value=r.obs||'';document.getElementById('btn-add').innerHTML='📋 Salvar Duplicata';document.getElementById('btn-add').className='btn btn-blue';document.getElementById('dup-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'});toast('Dados carregados — informe a nova data e salve.')}
+async function deleteRecord(id){if(!can('delete'))return;if(!confirm('Confirma a exclusão?'))return;var r=records.find(function(x){return x.id===id});await dbDelete(STORE_REC,id);records=records.filter(function(x){return x.id!==id});if(isOnline){setSyncBar(true,'Excluindo...');await apiPost({acao:'excluir',id:id,record:r}).catch(function(){});setSyncBar(false)}renderAll();toast('Registro excluído.')}
 
-function duplicateRecord(id){
-  if(!can('dup'))return;
-  var r=records.find(function(x){return x.id===id});if(!r)return;
-  editingId=null;duplicatingId=id;
-  document.getElementById('f-func').value=r.func||'';
-  document.getElementById('f-posto').value=r.posto||'';
-  setDateInput('f-data','');
-  document.getElementById('f-hi').value=r.hi||'';
-  document.getElementById('f-hf').value=r.hf||'';
-  document.getElementById('f-postoft').value=r.postoft||'';
-  document.getElementById('f-valor').value=r.valor||'';
-  document.getElementById('f-motivo').value=r.motivo||'';
-  document.getElementById('f-faltante').value=r.faltante||'';
-  document.getElementById('f-obs').value=r.obs||'';
-  document.getElementById('btn-add').innerHTML='📋 Salvar Duplicata';
-  document.getElementById('btn-add').className='btn btn-blue';
-  document.getElementById('dup-banner').classList.add('show');
-  window.scrollTo({top:0,behavior:'smooth'});
-  toast('Dados carregados — informe a nova data e salve.');
-}
-
-async function deleteRecord(id){
-  if(!can('delete'))return;if(!confirm('Confirma a exclusão?'))return;
-  var r=records.find(function(x){return x.id===id});
-  await dbDelete(STORE_REC,id);records=records.filter(function(x){return x.id!==id});
-  if(isOnline){setSyncBar(true,'Excluindo...');await apiPost({acao:'excluir',id:id,record:r}).catch(function(){});setSyncBar(false)}
-  renderAll();toast('Registro excluído.');
-}
-
-/* ══ Modais ══ */
 function openMyPwModal(){document.getElementById('modal-mypw').classList.add('open')}
-function closeMyPwModal(){
-  document.getElementById('modal-mypw').classList.remove('open');
-  ['mypw-old','mypw-new','mypw-conf'].forEach(function(id){document.getElementById(id).value=''});
-  document.getElementById('strength-bar2').className='strength-bar';
-  document.getElementById('strength-label2').textContent='';
-}
+function closeMyPwModal(){document.getElementById('modal-mypw').classList.remove('open');['mypw-old','mypw-new','mypw-conf'].forEach(function(id){document.getElementById(id).value=''});document.getElementById('strength-bar2').className='strength-bar';document.getElementById('strength-label2').textContent=''}
 async function doMyPwChange(){
   var old=document.getElementById('mypw-old').value,nw=document.getElementById('mypw-new').value,conf=document.getElementById('mypw-conf').value;
-  if(!old||!nw||!conf){toast('Preencha todos os campos.','err');return}
-  if(nw!==conf){toast('As senhas não coincidem.','err');return}
-  if(nw.length<8){toast('Mínimo 8 caracteres.','err');return}
-  if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
-  showLoading('Alterando senha...','');
-  var res=await apiPost({acao:'trocarSenha',senhaAtual:old,novaSenha:nw});
-  hideLoading();
-  if(res.ok){toast('Senha alterada! Faça login novamente.');closeMyPwModal();setTimeout(forceLogout,1500)}
-  else toast(res.error||'Erro.','err');
+  if(!old||!nw||!conf){toast('Preencha todos os campos.','err');return}if(nw!==conf){toast('As senhas não coincidem.','err');return}if(nw.length<8){toast('Mínimo 8 caracteres.','err');return}if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
+  showLoading('Alterando senha...','');var res=await apiPost({acao:'trocarSenha',senhaAtual:old,novaSenha:nw});hideLoading();
+  if(res.ok){toast('Senha alterada! Faça login novamente.');closeMyPwModal();setTimeout(forceLogout,1500)}else toast(res.error||'Erro.','err');
 }
 
 async function openUsuariosModal(){
@@ -1121,64 +794,61 @@ async function loadUsuarios(){
     var res=await apiGet({acao:'getUsuarios'});if(!res.ok)throw new Error();
     if(!res.users.length){el.innerHTML='<div style="color:var(--muted);padding:10px">Nenhum usuário.</div>';return}
     var rows=res.users.map(function(u){
-      return'<tr><td><strong>'+u.usuario+'</strong></td><td><span class="perfil-badge perfil-'+u.perfil+'">'+u.perfil+'</span></td><td>'+(u.ativo==='sim'?'✅':'❌')+'</td><td><div class="act"><select onchange="changePerfilUsuario(\''+u.usuario+'\',this.value)" style="border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-size:11px"><option '+(u.perfil==='Admin'?'selected':'')+'>Admin</option><option '+(u.perfil==='Operador'?'selected':'')+'>Operador</option><option '+(u.perfil==='Visualizador'?'selected':'')+'>Visualizador</option></select><button class="bi bi-edit" onclick="openResetModal(\''+u.usuario+'\')">🔄 Senha</button><button class="bi bi-del" onclick="removeUsuario(\''+u.usuario+'\')">🗑️</button></div></td></tr>';
+      var paBadge=u.primeiroAcesso==='sim'
+        ?'<span class="badge-pa-sim">⏳ Pendente</span>'
+        :'<span class="badge-pa-nao">✅ Concluído</span>';
+      return'<tr>'
+        +'<td><strong>'+u.usuario+'</strong></td>'
+        +'<td><span class="perfil-badge perfil-'+u.perfil+'">'+u.perfil+'</span></td>'
+        +'<td style="text-align:center">'+(u.ativo==='sim'?'✅':'❌')+'</td>'
+        +'<td>'+paBadge+'</td>'
+        +'<td><div class="act">'
+        +'<select onchange="changePerfilUsuario(\''+u.usuario+'\',this.value)" style="border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-size:11px">'
+        +'<option '+(u.perfil==='Admin'?'selected':'')+'>Admin</option>'
+        +'<option '+(u.perfil==='Operador'?'selected':'')+'>Operador</option>'
+        +'<option '+(u.perfil==='Visualizador'?'selected':'')+'>Visualizador</option>'
+        +'</select>'
+        +'<button class="bi bi-edit" onclick="openResetModal(\''+u.usuario+'\')">🔄 Senha</button>'
+        +'<button class="bi bi-del" onclick="removeUsuario(\''+u.usuario+'\')">🗑️</button>'
+        +'</div></td>'
+        +'</tr>';
     }).join('');
-    el.innerHTML='<table class="usr-table"><thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    el.innerHTML='<div style="overflow-x:auto"><table class="usr-table">'
+      +'<thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>1º Acesso</th><th>Ações</th></tr></thead>'
+      +'<tbody>'+rows+'</tbody>'
+      +'</table></div>';
   }catch(e){el.innerHTML='<div style="color:var(--primary);padding:10px">Erro ao carregar.</div>'}
 }
 
-async function changePerfilUsuario(user,perfil){
-  if(!isOnline){toast('Sem conexão.','err');return}
-  var res=await apiPost({acao:'editUsuario',novoUsuario:user,novoPerfil:perfil,novoAtivo:'sim'});
-  if(res.ok)toast('Perfil atualizado!');else toast(res.error||'Erro.','err');
-}
+async function changePerfilUsuario(user,perfil){if(!isOnline){toast('Sem conexão.','err');return}var res=await apiPost({acao:'editUsuario',novoUsuario:user,novoPerfil:perfil,novoAtivo:'sim'});if(res.ok)toast('Perfil atualizado!');else toast(res.error||'Erro.','err')}
 
 async function addUsuario(){
-  var user=document.getElementById('nu-user').value.trim();
-  var pass=document.getElementById('nu-pass').value.trim();
-  var perfil=document.getElementById('nu-perfil').value;
-  if(!user||!pass){toast('Informe nome e senha.','err');return}
-  if(pass.length<8){toast('Senha mínimo 8 caracteres.','err');return}
-  if(!isOnline){toast('Sem conexão.','err');return}
-  showLoading('Criando usuário...','');
-  var res=await apiPost({acao:'addUsuario',novoUsuario:user,novaSenha:pass,novoPerfil:perfil});
-  hideLoading();
-  if(res.ok){toast('"'+user+'" adicionado!');document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';await loadUsuarios()}
-  else toast(res.error||'Erro.','err');
+  var user=document.getElementById('nu-user').value.trim();var pass=document.getElementById('nu-pass').value.trim();var perfil=document.getElementById('nu-perfil').value;
+  if(!user||!pass){toast('Informe nome e senha.','err');return}if(pass.length<8){toast('Senha mínimo 8 caracteres.','err');return}if(!isOnline){toast('Sem conexão.','err');return}
+  showLoading('Criando usuário...','');var res=await apiPost({acao:'addUsuario',novoUsuario:user,novaSenha:pass,novoPerfil:perfil});hideLoading();
+  if(res.ok){toast('"'+user+'" adicionado!');document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';await loadUsuarios()}else toast(res.error||'Erro.','err');
 }
 
 async function removeUsuario(user){
-  if(user===currentUser){toast('Não pode remover seu próprio acesso.','err');return}
-  if(!confirm('Remover "'+user+'"?'))return;
-  showLoading('Removendo...','');
-  var res=await apiPost({acao:'deleteUsuario',novoUsuario:user});
-  hideLoading();
+  if(user===currentUser){toast('Não pode remover seu próprio acesso.','err');return}if(!confirm('Remover "'+user+'"?'))return;
+  showLoading('Removendo...','');var res=await apiPost({acao:'deleteUsuario',novoUsuario:user});hideLoading();
   if(res.ok){toast('"'+user+'" removido.');await loadUsuarios()}else toast(res.error||'Erro.','err');
 }
 
 function openResetModal(user){resetTargetUser=user;document.getElementById('reset-username').textContent=user;document.getElementById('reset-pw').value='';document.getElementById('modal-reset').classList.add('open')}
 function closeResetModal(){document.getElementById('modal-reset').classList.remove('open');resetTargetUser=''}
-
 async function doResetSenha(){
-  var pw=document.getElementById('reset-pw').value.trim();
-  if(!pw){toast('Informe a nova senha.','err');return}
-  if(pw.length<8){toast('Mínimo 8 caracteres.','err');return}
-  showLoading('Resetando senha...','');
-  var res=await apiPost({acao:'resetSenha',novoUsuario:resetTargetUser,novaSenha:pw});
-  hideLoading();
-  if(res.ok){toast('Senha resetada! Usuário deverá trocar no próximo acesso.');closeResetModal()}
-  else toast(res.error||'Erro.','err');
+  var pw=document.getElementById('reset-pw').value.trim();if(!pw){toast('Informe a nova senha.','err');return}if(pw.length<8){toast('Mínimo 8 caracteres.','err');return}
+  showLoading('Resetando senha...','');var res=await apiPost({acao:'resetSenha',novoUsuario:resetTargetUser,novaSenha:pw});hideLoading();
+  if(res.ok){toast('Senha resetada! Usuário deverá trocar no próximo acesso.');closeResetModal();await loadUsuarios()}else toast(res.error||'Erro.','err');
 }
 
-/* ══ Log ══ */
 async function openLogModal(){
-  if(!can('log'))return;
-  document.getElementById('modal-log').classList.add('open');
+  if(!can('log'))return;document.getElementById('modal-log').classList.add('open');
   document.getElementById('log-content').innerHTML='<div class="skeleton" style="height:12px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div>';
   if(!isOnline){document.getElementById('log-content').innerHTML='<div style="color:var(--muted);padding:20px;text-align:center">⚠️ Disponível apenas com conexão.</div>';return}
   try{
-    var data=await apiGet({acao:'getLog'});
-    var logFiltrado=(data.log||[]).filter(function(l){return l.acao!=='LOGIN'});
+    var data=await apiGet({acao:'getLog'});var logFiltrado=(data.log||[]).filter(function(l){return l.acao!=='LOGIN'});
     if(!data.ok||!logFiltrado.length){document.getElementById('log-content').innerHTML='<div style="color:var(--muted);padding:20px;text-align:center">Nenhum registro ainda.</div>';return}
     var log=logFiltrado.slice().reverse();
     var clsMap={INSERIU:'log-ins',EDITOU:'log-edi',EXCLUIU:'log-del','IMPORTOU BACKUP':'log-imp','CRIOU USUÁRIO':'log-ins','REMOVEU USUÁRIO':'log-del','TROCOU SENHA':'log-edi','RESETOU SENHA':'log-edi'};
@@ -1188,40 +858,18 @@ async function openLogModal(){
 }
 function closeLogModal(){document.getElementById('modal-log').classList.remove('open')}
 
-/* ══ Excel / CSV ══ */
 function getHeaders(){return['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações']}
-function recToRow(r,i){
-  return[i+1,r.func||'—',r.posto||'—',fmtDate(r.data),r.lancamento||'—',r.hi&&r.hf?(r.hi+'–'+r.hf):(r.hi||r.hf||'—'),r.postoft||'—',r.valor?parseFloat(r.valor):'',r.motivo||'—',r.faltante||'—',r.lancadoPor||'—',r.obs||'—'];
-}
+function recToRow(r,i){return[i+1,r.func||'—',r.posto||'—',fmtDate(r.data),r.lancamento||'—',r.hi&&r.hf?(r.hi+'–'+r.hf):(r.hi||r.hf||'—'),r.postoft||'—',r.valor?parseFloat(r.valor):'',r.motivo||'—',r.faltante||'—',r.lancadoPor||'—',r.obs||'—']}
 function buildExcelHTML(data,title){
-  var now=new Date().toLocaleString('pt-BR');
-  var totalVal=data.reduce(function(s,r){return s+(parseFloat(r.valor)||0)},0);
+  var now=new Date().toLocaleString('pt-BR');var totalVal=data.reduce(function(s,r){return s+(parseFloat(r.valor)||0)},0);
   var headerCells=getHeaders().map(function(h){return'<td style="padding:12px 14px;border:1px solid #7a0015;color:#fff;font-weight:700;font-size:10pt;background:#c0303a;">'+h+'</td>'}).join('');
-  var rows='';
-  data.forEach(function(r,i){
-    var row=recToRow(r,i);var bg=i%2===0?'#111111':'#1a1a1a';
-    var cells=row.map(function(val,ci){
-      var style='padding:10px 14px;border:1px solid #2a2a2a;color:#ffffff;font-size:9.5pt;';
-      if(ci===0)style+='color:#666;text-align:center;';
-      if(ci===7)style+='text-align:right;font-weight:700;color:#ff5b76;';
-      if(ci===1)style+='font-weight:700;';
-      return'<td style="'+style+'">'+(val===''?'':val)+'</td>';
-    }).join('');
-    rows+='<tr style="background:'+bg+';">'+cells+'</tr>';
-  });
-  return'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="0" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;width:100%;"><tr style="background:#0a0a0a;"><td colspan="12" style="padding:22px;text-align:center;color:#fff;font-weight:800;font-size:16pt;border:1px solid #2a2a2a;">📋 '+title+'<div style="font-size:9pt;margin-top:6px;color:#777;font-weight:400;">Gestão de Folgas e Trocas · FT Diária</div></td></tr><tr style="background:#0a0a0a;"><td colspan="12" style="padding:8px 22px 16px;text-align:center;color:#555;font-size:9pt;border:1px solid #2a2a2a;border-top:none;">Gerado em: '+now+' · Total: '+data.length+' registro(s)</td></tr><tr style="background:#c0303a;">'+headerCells+'</tr>'+rows+'<tr style="background:#0f0f0f;"><td colspan="7" style="padding:13px 14px;color:#aaa;font-weight:700;border:1px solid #2a2a2a;font-size:9pt;">TOTAL: '+data.length+' registro(s)</td><td style="padding:13px 14px;text-align:right;color:#ff5b76;font-weight:800;border:1px solid #2a2a2a;font-size:10pt;">'+totalVal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td colspan="4" style="border:1px solid #2a2a2a;"></td></tr><tr style="background:#0a0a0a;"><td colspan="12" style="padding:10px;text-align:center;color:#444;font-size:8pt;border:none;">Exportado via FT Diária · '+now+'</td></tr></table></body></html>';
+  var rows='';data.forEach(function(r,i){var row=recToRow(r,i);var bg=i%2===0?'#111111':'#1a1a1a';var cells=row.map(function(val,ci){var style='padding:10px 14px;border:1px solid #2a2a2a;color:#ffffff;font-size:9.5pt;';if(ci===0)style+='color:#666;text-align:center;';if(ci===7)style+='text-align:right;font-weight:700;color:#ff5b76;';if(ci===1)style+='font-weight:700;';return'<td style="'+style+'">'+(val===''?'':val)+'</td>'}).join('');rows+='<tr style="background:'+bg+';">'+cells+'</tr>'});
+  return'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="0" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;width:100%;"><tr style="background:#0a0a0a;"><td colspan="12" style="padding:22px;text-align:center;color:#fff;font-weight:800;font-size:16pt;border:1px solid #2a2a2a;">📋 '+title+'</td></tr><tr style="background:#c0303a;">'+headerCells+'</tr>'+rows+'<tr style="background:#0f0f0f;"><td colspan="7" style="padding:13px 14px;color:#aaa;font-weight:700;border:1px solid #2a2a2a;">TOTAL: '+data.length+' registro(s)</td><td style="padding:13px 14px;text-align:right;color:#ff5b76;font-weight:800;border:1px solid #2a2a2a;">'+totalVal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td colspan="4" style="border:1px solid #2a2a2a;"></td></tr></table></body></html>';
 }
-function _downloadExcel(data,filename,title){
-  var blob=new Blob([buildExcelHTML(data,title)],{type:'application/vnd.ms-excel;charset=utf-8;'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
-}
+function _downloadExcel(data,filename,title){var blob=new Blob([buildExcelHTML(data,title)],{type:'application/vnd.ms-excel;charset=utf-8;'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href)}
 function exportExcelView(){_downloadExcel(filtered,'FT_exibicao_'+new Date().toISOString().slice(0,10)+'.xls','FT Diária — Filtrados')}
 function exportExcelAll(){_downloadExcel(records,'FT_completo_'+new Date().toISOString().slice(0,10)+'.xls','FT Diária — Base Completa');closeSaveModal()}
-function exportCSV(data){
-  var rows=[getHeaders()].concat(data.map(function(r,i){return recToRow(r,i)}));
-  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c==null?'':c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
-  download('FT_exportacao.csv',csv,'text/csv');
-}
+function exportCSV(data){var rows=[getHeaders()].concat(data.map(function(r,i){return recToRow(r,i)}));var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c==null?'':c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');download('FT_exportacao.csv',csv,'text/csv')}
 function exportCSVAll(){exportCSV(records);closeSaveModal()}
 function openSaveModal(){document.getElementById('modal-save').classList.add('open')}
 function closeSaveModal(){document.getElementById('modal-save').classList.remove('open')}
@@ -1232,8 +880,7 @@ async function restoreBackup(e){
   var reader=new FileReader();
   reader.onload=async function(ev){
     try{
-      showLoading('Restaurando backup...','');
-      var obj=JSON.parse(ev.target.result);
+      showLoading('Restaurando backup...','');var obj=JSON.parse(ev.target.result);
       var recs=(obj.records||[]).map(migrateRecord);
       var nms=Array.isArray(obj.names)?obj.names.map(function(n){return typeof n==='string'?n:n.name}).filter(Boolean):[];
       var pts=Array.isArray(obj.postos)?obj.postos.map(function(p){return typeof p==='string'?p:p.name}).filter(Boolean):[];
@@ -1247,64 +894,21 @@ async function restoreBackup(e){
   reader.readAsText(file);
 }
 
-/* ══ Migrate ══ */
 function migrateRecord(r){
-  if(r.id===undefined||r.id===null)r.id=Date.now().toString()+Math.random();
-  r.id=String(r.id);
-  function toISO(val){
-    if(!val)return'';var s=String(val).trim();
-    if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
-    if(/^\d{2}\/\d{2}\/\d{4}/.test(s)){var p=s.split('/');return p[2].slice(0,4)+'-'+p[1]+'-'+p[0]}
-    var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
-    var m=s.match(/\w{3}\s(\w{3})\s(\d{2})\s(\d{4})/);
-    if(m&&months[m[1]])return m[3]+'-'+months[m[1]]+'-'+m[2];
-    var d=new Date(s+'T12:00:00');
-    if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    return'';
-  }
-  function toTime(val){
-    if(!val)return'';var s=String(val);
-    if(/^\d{2}:\d{2}$/.test(s))return s;
-    if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
-    var d=new Date(s);
-    if(!isNaN(d))return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-    return'';
-  }
-  r.data=toISO(r.data);
-  if(r.lancamentoISO)r.lancamentoISO=toISO(String(r.lancamentoISO));
-  if(r.lancamento){
-    var lStr=String(r.lancamento).trim();
-    if(/^\d{2}\/\d{2}\/\d{4}$/.test(lStr)){
-      r.lancamento=lStr;
-      if(!r.lancamentoISO||r.lancamentoISO===''){var lp=lStr.split('/');r.lancamentoISO=lp[2]+'-'+lp[1]+'-'+lp[0]}
-    }else{
-      var liso=toISO(lStr);
-      if(liso){var lparts=liso.split('-');r.lancamento=lparts[2]+'/'+lparts[1]+'/'+lparts[0];if(!r.lancamentoISO)r.lancamentoISO=liso}
-      else{r.lancamento=''}
-    }
-  }else{r.lancamento=''}
+  if(r.id===undefined||r.id===null)r.id=Date.now().toString()+Math.random();r.id=String(r.id);
+  function toISO(val){if(!val)return'';var s=String(val).trim();if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;if(/^\d{2}\/\d{2}\/\d{4}/.test(s)){var p=s.split('/');return p[2].slice(0,4)+'-'+p[1]+'-'+p[0]}var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};var m=s.match(/\w{3}\s(\w{3})\s(\d{2})\s(\d{4})/);if(m&&months[m[1]])return m[3]+'-'+months[m[1]]+'-'+m[2];var d=new Date(s+'T12:00:00');if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return''}
+  function toTime(val){if(!val)return'';var s=String(val);if(/^\d{2}:\d{2}$/.test(s))return s;if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);var d=new Date(s);if(!isNaN(d))return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return''}
+  r.data=toISO(r.data);if(r.lancamentoISO)r.lancamentoISO=toISO(String(r.lancamentoISO));
+  if(r.lancamento){var lStr=String(r.lancamento).trim();if(/^\d{2}\/\d{2}\/\d{4}$/.test(lStr)){r.lancamento=lStr;if(!r.lancamentoISO||r.lancamentoISO===''){var lp=lStr.split('/');r.lancamentoISO=lp[2]+'-'+lp[1]+'-'+lp[0]}}else{var liso=toISO(lStr);if(liso){var lparts=liso.split('-');r.lancamento=lparts[2]+'/'+lparts[1]+'/'+lparts[0];if(!r.lancamentoISO)r.lancamentoISO=liso}else{r.lancamento=''}}}else{r.lancamento=''}
   if(!r.lancamentoISO)r.lancamentoISO=r.data||'';
-  r.hi=toTime(r.hi);r.hf=toTime(r.hf);
-  r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';
-  r.faltante=r.faltante||r.funcFaltante||'';
-  r.obs=r.obs||r.observacoes||'';
-  r.posto=r.posto||r.postoFixo||'';
-  r.func=r.func||r.funcionario||'';
-  r.motivo=r.motivo||'';r.valor=r.valor||'';r.lancadoPor=r.lancadoPor||'';
+  r.hi=toTime(r.hi);r.hf=toTime(r.hf);r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';r.faltante=r.faltante||r.funcFaltante||'';r.obs=r.obs||r.observacoes||'';r.posto=r.posto||r.postoFixo||'';r.func=r.func||r.funcionario||'';r.motivo=r.motivo||'';r.valor=r.valor||'';r.lancadoPor=r.lancadoPor||'';
   return r;
 }
 
-/* ══ Utils ══ */
 function download(filename,content,type){var blob=new Blob([content],{type:type});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();URL.revokeObjectURL(a.href)}
 var toastTimer=null;
-function toast(msg,type){
-  type=type||'ok';var el=document.getElementById('toast');el.textContent=msg;
-  el.style.borderLeftColor=type==='err'?'#ff4444':type==='warn'?'#f5a623':'var(--primary)';
-  el.classList.add('show');if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){el.classList.remove('show')},3400);
-}
+function toast(msg,type){type=type||'ok';var el=document.getElementById('toast');el.textContent=msg;el.style.borderLeftColor=type==='err'?'#ff4444':type==='warn'?'#f5a623':'var(--primary)';el.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show')},3400)}
 function fmtDate(d){if(!d)return'—';var p=d.split('-');if(!p[0]||!p[1]||!p[2])return d;return p[2]+'/'+p[1]+'/'+p[0]}
 </script>
 </body>
 </html>
-    
