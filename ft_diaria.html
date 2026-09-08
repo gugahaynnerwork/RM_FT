@@ -4,7 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
 <title>Planilha FT Diária</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{max-width:100%;overflow-x:hidden}
@@ -16,8 +15,6 @@ html,body{max-width:100%;overflow-x:hidden}
   --shadow:0 1px 4px rgba(0,0,0,.10);
 }
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh}
-
-/* LOADING */
 .loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(3px)}
 .loading-overlay.show{display:flex}
 .loading-spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
@@ -27,15 +24,12 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .btn-spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
 .skeleton{background:linear-gradient(90deg,#e0e0e0 25%,#f0f0f0 50%,#e0e0e0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;height:14px;margin:4px 0}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* DUP BANNER */
 .dup-banner{background:#e8f4fd;border:1.5px solid #2196f3;border-radius:var(--rsm);padding:10px 14px;font-size:12px;color:#1565c0;display:none;align-items:center;gap:8px;margin-bottom:12px;font-weight:600}
 .dup-banner.show{display:flex}
-
 .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:20px}
 .login-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:420px;box-shadow:0 4px 24px rgba(0,0,0,.12)}
 .login-logo{text-align:center;margin-bottom:16px}
-.login-logo img{height:26px;filter:brightness(0)}
+.login-logo img{height:48px;object-fit:contain}
 .login-title{font-size:20px;font-weight:800;color:var(--primary);text-align:center;margin-bottom:4px}
 .login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px}
 .login-err{background:#fff0f1;border:1.5px solid var(--primary);border-radius:var(--rsm);padding:10px 14px;font-size:12px;color:var(--primary);font-weight:600;margin-bottom:14px;display:none;align-items:center;gap:8px}
@@ -99,14 +93,11 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .span2{grid-column:span 2}
 .auto-badge{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rsm);padding:8px 10px;font-size:13px;color:var(--text);font-weight:600;width:100%;min-width:0}
 .badge-auto{background:var(--primary);color:#fff;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;letter-spacing:.4px;flex-shrink:0}
-
-/* AUTOCOMPLETE — somente seleção, sem digitação livre */
 .ac-wrap{position:relative;width:100%;min-width:0}
 .ac-select{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rsm);color:var(--text);padding:8px 10px;font-size:13px;transition:border-color .15s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none}
 .ac-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(192,48,58,.15)}
 .ac-select.field-error{border-color:#c0303a!important;box-shadow:0 0 0 2px rgba(192,48,58,.2)!important}
 .ac-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:11px}
-
 .btn-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
 .btn{border:1.5px solid transparent;border-radius:var(--rsm);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
@@ -164,6 +155,9 @@ tbody td:last-child{border-right:none}
 .pg-info{font-size:12px;color:var(--muted);margin:0 4px;font-weight:600}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:12px}
 .modal-overlay.open{display:flex}
+/* Modal primeiro acesso — não fecha com clique fora */
+.modal-overlay.bloqueado{pointer-events:none}
+.modal-overlay.bloqueado .modal{pointer-events:all}
 .modal{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18)}
 .modal-title{font-size:15px;font-weight:700;color:var(--primary);margin-bottom:14px;border-bottom:2px solid var(--primary);padding-bottom:8px}
 .modal-close{margin-top:14px;text-align:right}
@@ -196,6 +190,9 @@ tbody td:last-child{border-right:none}
 .strength-bar.medium{background:#f5a623;width:66%}
 .strength-bar.strong{background:#1a7a4a;width:100%}
 .strength-label{font-size:10px;margin-top:3px;font-weight:600}
+/* Primeiro acesso — banner especial */
+.primeiro-acesso-alert{background:linear-gradient(135deg,#fff0f1,#ffe0e2);border:2px solid var(--primary);border-radius:var(--rsm);padding:14px 16px;margin-bottom:16px;font-size:12px;color:var(--primary);font-weight:600;text-align:center;line-height:1.6}
+.primeiro-acesso-alert .pa-icon{font-size:28px;display:block;margin-bottom:6px}
 @media(max-width:640px){
   .header{padding:10px 12px;gap:8px}
   .header-title{font-size:12px}
@@ -224,16 +221,12 @@ tbody td:last-child{border-right:none}
   <div class="loading-sub" id="loading-sub"></div>
 </div>
 
-      <div id="login-screen" class="login-screen">
+<!-- LOGIN -->
+<div id="login-screen" class="login-screen">
   <div class="login-box">
-
-    <!-- ✅ Adiciona a div.login-logo que centraliza + aplica o CSS correto -->
     <div class="login-logo">
-      <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Grupo RM"
-           style="height:48px;object-fit:contain;"
-           onerror="this.style.display='none'"/>
+      <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Logo" onerror="this.style.display='none'"/>
     </div>
-
     <div class="login-title">Planilha FT Diária</div>
     <div class="login-sub">Acesse com suas credenciais</div>
     <div id="login-err" class="login-err">⚠️ <span id="login-err-msg"></span></div>
@@ -248,17 +241,18 @@ tbody td:last-child{border-right:none}
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">🔑 Alterar Senha</div>
       <div class="login-field"><label>Usuário</label><input type="text" id="cp-user" placeholder="Seu usuário" autocomplete="username"/></div>
       <div class="login-field"><label>Senha Atual</label><div class="pw-wrap"><input type="password" id="cp-old" placeholder="Senha atual"/><button class="pw-toggle" type="button" onclick="togglePw('cp-old',this)">👁️</button></div></div>
-      <div class="login-field"><label>Nova Senha</label><div class="pw-wrap"><input type="password" id="cp-new" placeholder="Nova senha" oninput="checkStrength(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('cp-new',this)">👁️</button></div><div class="strength-bar" id="strength-bar"></div><div class="strength-label" id="strength-label" style="color:var(--muted)"></div></div>
+      <div class="login-field"><label>Nova Senha</label><div class="pw-wrap"><input type="password" id="cp-new" placeholder="Nova senha (mín. 8 caracteres)" oninput="checkStrength(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('cp-new',this)">👁️</button></div><div class="strength-bar" id="strength-bar"></div><div class="strength-label" id="strength-label" style="color:var(--muted)"></div></div>
       <div class="login-field"><label>Confirmar Nova Senha</label><div class="pw-wrap"><input type="password" id="cp-conf" placeholder="Confirme a nova senha"/><button class="pw-toggle" type="button" onclick="togglePw('cp-conf',this)">👁️</button></div></div>
-      <button class="btn-login-main" onclick="doChangePw()" id="btn-change-pw">💾 Salvar Nova Senha</button>
+      <button class="btn-login-main" onclick="doChangePwLogin()" id="btn-change-pw">💾 Salvar Nova Senha</button>
     </div>
     <div class="login-tip">💡 Primeiro acesso? Solicite suas credenciais ao administrador.</div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
   <div class="header">
-    <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Grupo RM"/>
+    <img src="https://www.gruporm.online/uploads/sistema/logo_principal.png" alt="Logo" onerror="this.style.display='none'"/>
     <span class="header-title">FT Diária</span>
     <div class="header-right">
       <span class="last-sync" id="last-sync-label"></span>
@@ -280,67 +274,34 @@ tbody td:last-child{border-right:none}
       <div class="card-title">📝 Registrar FT</div>
       <div class="dup-banner" id="dup-banner">📋 Modo duplicação — informe a nova data e confirme para salvar como novo registro.</div>
       <div class="form-grid">
-
-        <!-- Funcionário — select restrito ao banco -->
         <div class="fg">
           <label>👤 Funcionário <span class="req">*</span></label>
-          <div class="ac-wrap">
-            <select class="ac-select" id="f-func">
-              <option value="">— Selecione —</option>
-            </select>
-            <span class="ac-arrow">▼</span>
-          </div>
+          <div class="ac-wrap"><select class="ac-select" id="f-func"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
         </div>
-
-        <!-- Posto Fixo — select restrito ao banco -->
         <div class="fg">
           <label>📍 Posto Fixo <span class="req">*</span></label>
-          <div class="ac-wrap">
-            <select class="ac-select" id="f-posto">
-              <option value="">— Selecione —</option>
-            </select>
-            <span class="ac-arrow">▼</span>
-          </div>
+          <div class="ac-wrap"><select class="ac-select" id="f-posto"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
         </div>
-
         <div class="fg">
           <label>📅 Data <span class="req">*</span></label>
           <input type="date" id="f-data" style="width:100%"/>
         </div>
-
         <div class="fg">
           <label>🗓️ Lançamento</label>
           <div class="auto-badge"><span class="badge-auto">AUTO</span><span id="lancamento-display">—</span></div>
         </div>
-
         <div class="fg">
           <label>⏰ Horário <span class="req">*</span></label>
-          <div class="row2">
-            <input type="time" id="f-hi"/>
-            <span>às</span>
-            <input type="time" id="f-hf"/>
-          </div>
+          <div class="row2"><input type="time" id="f-hi"/><span>às</span><input type="time" id="f-hf"/></div>
         </div>
-
-        <!-- Posto da FT — select restrito ao banco -->
         <div class="fg">
           <label>🔄 Posto da FT <span class="req">*</span></label>
-          <div class="ac-wrap">
-            <select class="ac-select" id="f-postoft">
-              <option value="">— Selecione —</option>
-            </select>
-            <span class="ac-arrow">▼</span>
-          </div>
+          <div class="ac-wrap"><select class="ac-select" id="f-postoft"><option value="">— Selecione —</option></select><span class="ac-arrow">▼</span></div>
         </div>
-
         <div class="fg">
           <label>💰 Valor <span class="req">*</span></label>
-          <div class="row2">
-            <span style="font-weight:700;color:var(--primary);flex-shrink:0">R$</span>
-            <input type="number" id="f-valor" step="0.01" min="0" placeholder="0,00"/>
-          </div>
+          <div class="row2"><span style="font-weight:700;color:var(--primary);flex-shrink:0">R$</span><input type="number" id="f-valor" step="0.01" min="0" placeholder="0,00"/></div>
         </div>
-
         <div class="fg">
           <label>📋 Motivo <span class="req">*</span></label>
           <select id="f-motivo">
@@ -352,18 +313,10 @@ tbody td:last-child{border-right:none}
             <option>Apoio FDS</option><option>Folga</option><option>Processo admissional</option><option>Outros</option>
           </select>
         </div>
-
-        <!-- Func. Faltante — select restrito ao banco (opcional) -->
         <div class="fg">
           <label>🚫 Func. Faltante</label>
-          <div class="ac-wrap">
-            <select class="ac-select" id="f-faltante">
-              <option value="">— Nenhum —</option>
-            </select>
-            <span class="ac-arrow">▼</span>
-          </div>
+          <div class="ac-wrap"><select class="ac-select" id="f-faltante"><option value="">— Nenhum —</option></select><span class="ac-arrow">▼</span></div>
         </div>
-
         <div class="fg span2">
           <label>📝 Observações</label>
           <textarea id="f-obs" rows="2" placeholder="Observações adicionais..."></textarea>
@@ -375,7 +328,6 @@ tbody td:last-child{border-right:none}
       </div>
     </div>
 
-    <!-- FILTROS — inicia oculto -->
     <div class="card">
       <div class="card-title-row">
         <span class="card-title-text">🔍 Filtros</span>
@@ -442,7 +394,27 @@ tbody td:last-child{border-right:none}
   <div class="footer">© 2026 · Planilha FT Diária</div>
 </div>
 
-<!-- MODAIS -->
+<!-- MODAL PRIMEIRO ACESSO — bloqueante, sem fechar -->
+<div class="modal-overlay bloqueado open hidden" id="modal-primeiro-acesso">
+  <div class="modal" style="max-width:440px">
+    <div class="primeiro-acesso-alert">
+      <span class="pa-icon">🔐</span>
+      <strong>Bem-vindo! Este é seu primeiro acesso.</strong><br/>
+      Por segurança, você precisa criar uma senha pessoal antes de continuar.
+    </div>
+    <div class="modal-title">Criar Senha Pessoal</div>
+    <div class="pw-change-grid">
+      <div class="fg"><label>Nova Senha <span class="req">*</span></label><div class="pw-wrap"><input type="password" id="pa-new" placeholder="Mínimo 8 caracteres" oninput="checkStrengthPA(this.value)"/><button class="pw-toggle" type="button" onclick="togglePw('pa-new',this)">👁️</button></div><div class="strength-bar" id="strength-bar-pa"></div><div class="strength-label" id="strength-label-pa" style="color:var(--muted)"></div></div>
+      <div class="fg"><label>Confirmar Senha <span class="req">*</span></label><div class="pw-wrap"><input type="password" id="pa-conf" placeholder="Confirme a nova senha"/><button class="pw-toggle" type="button" onclick="togglePw('pa-conf',this)">👁️</button></div></div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" style="width:100%;justify-content:center" id="btn-pa" onclick="doFirstAccessPw()">🔐 Definir Senha e Entrar</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center">Sua senha anterior era temporária e não pode ser reutilizada.</div>
+  </div>
+</div>
+
+<!-- MODAL ALTERAR MINHA SENHA -->
 <div class="modal-overlay" id="modal-mypw">
   <div class="modal" style="max-width:400px">
     <div class="modal-title">🔑 Alterar Minha Senha</div>
@@ -458,6 +430,7 @@ tbody td:last-child{border-right:none}
   </div>
 </div>
 
+<!-- MODAL USUÁRIOS -->
 <div class="modal-overlay" id="modal-usuarios">
   <div class="modal" style="max-width:700px">
     <div class="modal-title">👥 Gerenciar Usuários</div>
@@ -466,7 +439,7 @@ tbody td:last-child{border-right:none}
     <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:10px">➕ Novo Usuário</div>
     <div class="usr-form-grid">
       <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Usuário</label><input type="text" id="nu-user" placeholder="Nome do usuário"/></div>
-      <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Senha inicial</label><input type="text" id="nu-pass" placeholder="Ex: Temp@123"/></div>
+      <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Senha inicial</label><input type="text" id="nu-pass" placeholder="Mín. 8 caracteres"/></div>
       <div><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px">Perfil</label><select id="nu-perfil"><option>Admin</option><option>Operador</option><option>Visualizador</option></select></div>
       <button class="btn btn-primary" onclick="addUsuario()" style="margin-top:18px">Adicionar</button>
     </div>
@@ -474,11 +447,12 @@ tbody td:last-child{border-right:none}
   </div>
 </div>
 
+<!-- MODAL RESET SENHA -->
 <div class="modal-overlay" id="modal-reset">
   <div class="modal" style="max-width:380px">
     <div class="modal-title">🔄 Resetar Senha</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Senha temporária para <strong id="reset-username"></strong>.</p>
-    <div class="fg" style="margin-bottom:14px"><label>Nova Senha</label><input type="text" id="reset-pw" placeholder="Ex: Temp@123"/></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Senha temporária para <strong id="reset-username"></strong>. O usuário será obrigado a trocar no próximo acesso.</p>
+    <div class="fg" style="margin-bottom:14px"><label>Nova Senha</label><input type="text" id="reset-pw" placeholder="Mín. 8 caracteres"/></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeResetModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="doResetSenha()">Resetar</button>
@@ -486,6 +460,7 @@ tbody td:last-child{border-right:none}
   </div>
 </div>
 
+<!-- MODAL LOG -->
 <div class="modal-overlay" id="modal-log">
   <div class="modal" style="max-width:900px">
     <div class="modal-title">📜 Histórico de Alterações</div>
@@ -494,6 +469,7 @@ tbody td:last-child{border-right:none}
   </div>
 </div>
 
+<!-- MODAL BACKUP -->
 <div class="modal-overlay" id="modal-save">
   <div class="modal">
     <div class="modal-title">💾 Exportar / Backup</div>
@@ -511,14 +487,15 @@ tbody td:last-child{border-right:none}
 
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzzhFh7sQG1q5Kh05sdz2EZl14iwKnsg2wVHOaG5gnUe_K4C0C0JG3NZTCjbln8N5er/exec';
-const DB_NAME='FT_v5',DB_VERSION=1;
+const DB_NAME='FT_v6',DB_VERSION=1;
 const STORE_REC='records',STORE_NAM='names',STORE_POST='postos';
 const AUTO_REFRESH_MS=5*60*1000;
 
 let db=null,records=[],names=[],postos=[],filtered=[],editingId=null,duplicatingId=null,currentPage=1;
 const PAGE_SIZE=10;
-let currentUser='',currentPerfil='',isOnline=false,isSubmitting=false,isUserTyping=false;
+let currentUser='',currentPerfil='',currentToken='',isOnline=false,isSubmitting=false,isUserTyping=false;
 let autoRefreshTimer=null,lastSyncTime=null,filterVisible=false,resetTargetUser='';
+let primeiroAcessoSenhaAtual=''; // guarda a senha temporária durante o fluxo de primeiro acesso
 
 /* ══ LOADING ══ */
 function showLoading(msg,sub){
@@ -534,7 +511,10 @@ function openDB(){
     var r=indexedDB.open(DB_NAME,DB_VERSION);
     r.onupgradeneeded=function(e){
       var d=e.target.result;
-      ['records','names','postos'].forEach(function(s){if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='records'?'id':'name'})});
+      ['records','names','postos'].forEach(function(s){
+        if(!d.objectStoreNames.contains(s))
+          d.createObjectStore(s,{keyPath:s==='records'?'id':'name'});
+      });
     };
     r.onsuccess=function(e){res(e.target.result)};
     r.onerror=function(e){rej(e.target.error)};
@@ -568,7 +548,7 @@ function applyPermissions(){
   document.getElementById('header-user-name').textContent=currentUser;
 }
 
-/* ══ Selects do formulário — populados com dados do banco ══ */
+/* ══ Selects ══ */
 function populateFormSelects(){
   function buildOptions(list,currentVal){
     var opts='<option value="">— Selecione —</option>';
@@ -587,84 +567,55 @@ function populateFormSelects(){
   document.getElementById('f-faltante').innerHTML=buildOptionalOptions(names,cv.faltante);
 }
 
-/* ══ UI ══ */
+/* ══ UI helpers ══ */
 function togglePw(id,btn){var el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁️':'🙈'}
 function showChangePw(){document.getElementById('login-form').style.display='none';document.getElementById('change-pw-form').classList.add('show');hideErr()}
 function hideChangePw(){document.getElementById('change-pw-form').classList.remove('show');document.getElementById('login-form').style.display='block';hideErr()}
 function showErr(msg){var e=document.getElementById('login-err');document.getElementById('login-err-msg').textContent=msg;e.classList.add('show')}
 function hideErr(){document.getElementById('login-err').classList.remove('show')}
-
-/* Filtros — inicia OCULTO */
 function toggleFilters(){
   filterVisible=!filterVisible;
   document.getElementById('filter-body').classList.toggle('hidden',!filterVisible);
   document.getElementById('btn-toggle-filter').textContent=filterVisible?'▲ Ocultar Filtros':'▼ Mostrar Filtros';
 }
 
-function checkStrength(pw){
-  var bar=document.getElementById('strength-bar'),lbl=document.getElementById('strength-label');
-  if(!pw){bar.className='strength-bar';lbl.textContent='';return}
+/* ══ Force strength ══ */
+function _strength(pw){
+  if(!pw)return null;
   var s=pw.length>=8&&/[A-Z]/.test(pw)&&/[0-9]/.test(pw)&&/[^A-Za-z0-9]/.test(pw);
   var m=pw.length>=6&&(/[A-Z]/.test(pw)||/[0-9]/.test(pw));
-  if(s){bar.className='strength-bar strong';lbl.style.color='#1a7a4a';lbl.textContent='Forte ✅'}
-  else if(m){bar.className='strength-bar medium';lbl.style.color='#c07800';lbl.textContent='Média ⚠️'}
-  else{bar.className='strength-bar weak';lbl.style.color='#c0303a';lbl.textContent='Fraca ❌'}
+  return s?'strong':m?'medium':'weak';
 }
-function checkStrength2(pw){
-  var bar=document.getElementById('strength-bar2'),lbl=document.getElementById('strength-label2');
-  if(!pw){bar.className='strength-bar';lbl.textContent='';return}
-  var s=pw.length>=8&&/[A-Z]/.test(pw)&&/[0-9]/.test(pw)&&/[^A-Za-z0-9]/.test(pw);
-  var m=pw.length>=6&&(/[A-Z]/.test(pw)||/[0-9]/.test(pw));
-  if(s){bar.className='strength-bar strong';lbl.style.color='#1a7a4a';lbl.textContent='Forte ✅'}
-  else if(m){bar.className='strength-bar medium';lbl.style.color='#c07800';lbl.textContent='Média ⚠️'}
-  else{bar.className='strength-bar weak';lbl.style.color='#c0303a';lbl.textContent='Fraca ❌'}
+function _applyStrength(barId,lblId,pw){
+  var bar=document.getElementById(barId),lbl=document.getElementById(lblId);
+  var lvl=_strength(pw);
+  if(!lvl){bar.className='strength-bar';lbl.textContent='';return}
+  var map={strong:{cls:'strong',color:'#1a7a4a',txt:'Forte ✅'},medium:{cls:'medium',color:'#c07800',txt:'Média ⚠️'},weak:{cls:'weak',color:'#c0303a',txt:'Fraca ❌'}};
+  bar.className='strength-bar '+map[lvl].cls;lbl.style.color=map[lvl].color;lbl.textContent=map[lvl].txt;
 }
+function checkStrength(pw){_applyStrength('strength-bar','strength-label',pw)}
+function checkStrength2(pw){_applyStrength('strength-bar2','strength-label2',pw)}
+function checkStrengthPA(pw){_applyStrength('strength-bar-pa','strength-label-pa',pw)}
 
-/* ══ Data helpers — 100% local, sem UTC ══ */
-function getTodayStr(){
-  var n=new Date();
-  return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear();
-}
-function getTodayISO(){
-  var n=new Date();
-  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
-}
+/* ══ Data helpers ══ */
+function getTodayStr(){var n=new Date();return String(n.getDate()).padStart(2,'0')+'/'+String(n.getMonth()+1).padStart(2,'0')+'/'+n.getFullYear()}
+function getTodayISO(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
 function updateLancamento(){document.getElementById('lancamento-display').textContent=getTodayStr()}
-
-/* ══ ✅ Normaliza valor de input[type=date] — cross-browser/mobile ══ */
 function getDateInputISO(id){
-  var val = document.getElementById(id).value;
-  if(!val) return '';
-  val = val.trim();
-  // yyyy-mm-dd — padrão HTML5 (desktop e Android)
-  if(/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
-  // dd/mm/yyyy — alguns browsers mobile antigos
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){
-    var p=val.split('/'); return p[2]+'-'+p[1]+'-'+p[0];
-  }
-  // mm/dd/yyyy — Safari iOS em algumas regiões
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){
-    var p=val.split('/'); return p[2]+'-'+p[0]+'-'+p[1];
-  }
-  // Fallback: tenta parsear com hora do meio-dia para evitar UTC
+  var val=document.getElementById(id).value;if(!val)return'';val=val.trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val))return val;
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){var p=val.split('/');return p[2]+'-'+p[1]+'-'+p[0]}
   var d=new Date(val+'T12:00:00');
-  if(!isNaN(d)) return d.getFullYear()+'-'+
-    String(d.getMonth()+1).padStart(2,'0')+'-'+
-    String(d.getDate()).padStart(2,'0');
+  if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   return val;
 }
-
-/* ══ ✅ Preenche input[type=date] de forma segura ══ */
-function setDateInput(id, isoVal){
-  var el = document.getElementById(id);
-  if(!isoVal){ el.value=''; return; }
-  // Garante formato yyyy-mm-dd para o input
-  var iso = isoVal;
-  if(/^\d{2}\/\d{2}\/\d{4}$/.test(isoVal)){
-    var p=isoVal.split('/'); iso=p[2]+'-'+p[1]+'-'+p[0];
-  }
-  el.value = iso;
+function setDateInput(id,isoVal){
+  var el=document.getElementById(id);if(!isoVal){el.value='';return}
+  var iso=isoVal;
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(isoVal)){var p=isoVal.split('/');iso=p[2]+'-'+p[1]+'-'+p[0]}
+  el.value=iso;
 }
+
 /* ══ Auto-refresh ══ */
 function startAutoRefresh(){
   stopAutoRefresh();
@@ -686,12 +637,38 @@ document.addEventListener('visibilitychange',async function(){
 async function manualSync(){
   if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
   var btn=document.getElementById('btn-sync');btn.disabled=true;btn.textContent='⏳';
-  await syncFromSheets();
-  btn.disabled=false;btn.textContent='🔄';
-  toast('Sincronizado! ✅');
+  await syncFromSheets();btn.disabled=false;btn.textContent='🔄';toast('Sincronizado! ✅');
 }
 
-/* ══ Login ══ */
+/* ══ API ══ */
+async function apiGet(params){
+  params=params||{};
+  if(currentToken)params.token=currentToken;
+  var url=new URL(APPS_SCRIPT_URL);
+  Object.entries(params).forEach(function(e){url.searchParams.set(e[0],e[1])});
+  var res=await fetch(url.toString());
+  var json=await res.json();
+  if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}
+  return json;
+}
+async function apiPost(body){
+  var payload=Object.assign({},body);
+  if(currentToken)payload.token=currentToken;
+  delete payload.usuario;
+  var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
+  var json=await res.json();
+  if(!json.ok&&json.error&&json.error.toLowerCase().includes('sessão')){forceLogout();return{ok:false,error:json.error}}
+  return json;
+}
+function setSyncBar(show,msg){document.getElementById('sync-bar').classList.toggle('show',show);if(msg)document.getElementById('sync-msg').textContent=msg}
+function setDbStatus(state){
+  var dot=document.getElementById('db-dot'),lbl=document.getElementById('db-label');
+  var map={ok:{cls:'ok',txt:'Sheets conectado'},sync:{cls:'sync',txt:'Sincronizando...'},offline:{cls:'err',txt:'Offline (cache)'},local:{cls:'ok',txt:'Modo local'},err:{cls:'err',txt:'Erro'}};
+  var s=map[state]||{cls:'err',txt:'Erro'};
+  dot.className='db-dot '+s.cls;lbl.textContent=s.txt;
+}
+
+/* ══ LOGIN ══ */
 async function doLogin(){
   var user=document.getElementById('l-user').value.trim();
   var pass=document.getElementById('l-pass').value.trim();
@@ -699,40 +676,106 @@ async function doLogin(){
   if(!user||!pass){showErr('Preencha usuário e senha.');return}
   var btn=document.getElementById('btn-login');
   btn.innerHTML='<span class="btn-spinner"></span> Verificando...';btn.disabled=true;
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL.includes('script.google.com')){
-    try{
-      var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:pass})}).then(function(r){return r.json()});
-      if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.innerHTML='🔐 Entrar';btn.disabled=false;return}
-      await loginSuccess(res.nome||user,res.perfil);
-    }catch(e){showErr('Sem conexão. Tente novamente.');btn.innerHTML='🔐 Entrar';btn.disabled=false;return}
-  }else{
-    var demo={admin:{p:'Admin'},operador:{p:'Operador'},visualizador:{p:'Visualizador'}};
-    var k=Object.keys(demo).find(function(k){return k===user.toLowerCase()});
-    if(!k){showErr('Usuários demo: admin/operador/visualizador.');btn.innerHTML='🔐 Entrar';btn.disabled=false;return}
-    await loginSuccess(user,demo[k].p);
-  }
+  try{
+    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:pass})}).then(function(r){return r.json()});
+    if(!res.ok){showErr(res.error||'Usuário ou senha inválidos.');btn.innerHTML='🔐 Entrar';btn.disabled=false;return}
+    /* ✅ Verifica primeiro acesso */
+    if(res.primeiroAcesso){
+      currentToken=res.token;
+      currentUser=res.nome||user;
+      currentPerfil=res.perfil;
+      primeiroAcessoSenhaAtual=pass;
+      btn.innerHTML='🔐 Entrar';btn.disabled=false;
+      abrirPrimeiroAcesso();
+      return;
+    }
+    currentToken=res.token;
+    sessionStorage.setItem('ft_token',res.token);
+    await loginSuccess(res.nome||user,res.perfil,res.token);
+  }catch(e){showErr('Sem conexão. Tente novamente.')}
   btn.innerHTML='🔐 Entrar';btn.disabled=false;
 }
 
-async function doChangePw(){
-  var user=document.getElementById('cp-user').value.trim(),old=document.getElementById('cp-old').value,nw=document.getElementById('cp-new').value,conf=document.getElementById('cp-conf').value;
+/* ══ PRIMEIRO ACESSO ══ */
+function abrirPrimeiroAcesso(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('modal-primeiro-acesso').classList.remove('hidden');
+  document.getElementById('pa-new').value='';
+  document.getElementById('pa-conf').value='';
+  document.getElementById('strength-bar-pa').className='strength-bar';
+  document.getElementById('strength-label-pa').textContent='';
+}
+
+async function doFirstAccessPw(){
+  var nw=document.getElementById('pa-new').value;
+  var conf=document.getElementById('pa-conf').value;
+  if(!nw||!conf){toast('Preencha os dois campos.','err');return}
+  if(nw.length<8){toast('Mínimo 8 caracteres.','err');return}
+  if(nw!==conf){toast('As senhas não coincidem.','err');return}
+  if(nw===primeiroAcessoSenhaAtual){toast('A nova senha não pode ser igual à temporária.','err');return}
+  var btn=document.getElementById('btn-pa');
+  btn.disabled=true;btn.innerHTML='<span class="btn-spinner"></span> Salvando...';
+  try{
+    /* Usa o token já obtido no login */
+    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({
+      acao:'trocarSenha',
+      token:currentToken,
+      senhaAtual:primeiroAcessoSenhaAtual,
+      novaSenha:nw
+    })}).then(function(r){return r.json()});
+    if(!res.ok){toast(res.error||'Erro ao salvar senha.','err');btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';return}
+    /* Senha trocada — faz login novamente com a nova senha para obter token fresco */
+    var res2=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:currentUser,senha:nw})}).then(function(r){return r.json()});
+    if(!res2.ok){
+      toast('Senha definida! Faça login novamente.','ok');
+      document.getElementById('modal-primeiro-acesso').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      primeiroAcessoSenhaAtual='';currentToken='';
+      btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';
+      return;
+    }
+    currentToken=res2.token;
+    sessionStorage.setItem('ft_token',res2.token);
+    primeiroAcessoSenhaAtual='';
+    document.getElementById('modal-primeiro-acesso').classList.add('hidden');
+    await loginSuccess(res2.nome||currentUser,res2.perfil,res2.token);
+  }catch(e){toast('Erro de conexão.','err')}
+  btn.disabled=false;btn.innerHTML='🔐 Definir Senha e Entrar';
+}
+
+/* ══ TROCAR SENHA — tela de login (sem estar logado) ══ */
+async function doChangePwLogin(){
+  var user=document.getElementById('cp-user').value.trim();
+  var old=document.getElementById('cp-old').value;
+  var nw=document.getElementById('cp-new').value;
+  var conf=document.getElementById('cp-conf').value;
   hideErr();
   if(!user||!old||!nw||!conf){showErr('Preencha todos os campos.');return}
   if(nw!==conf){showErr('As senhas não coincidem.');return}
-  if(nw.length<6){showErr('Mínimo 6 caracteres.');return}
+  if(nw.length<8){showErr('Mínimo 8 caracteres.');return}
   var btn=document.getElementById('btn-change-pw');
   btn.innerHTML='<span class="btn-spinner"></span> Salvando...';btn.disabled=true;
   try{
-    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'trocarSenha',usuario:user,senhaAtual:old,novaSenha:nw})}).then(function(r){return r.json()});
-    if(res.ok){toast('Senha alterada! Faça login.');hideChangePw();['cp-user','cp-old','cp-new','cp-conf'].forEach(function(id){document.getElementById(id).value=''})}
-    else showErr(res.error||'Erro ao alterar senha.');
+    /* 1. faz login para obter token */
+    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'login',usuario:user,senha:old})}).then(function(r){return r.json()});
+    if(!res.ok){showErr(res.error||'Usuário ou senha atual inválidos.');btn.innerHTML='💾 Salvar Nova Senha';btn.disabled=false;return}
+    /* 2. troca senha com o token obtido */
+    var res2=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({acao:'trocarSenha',token:res.token,senhaAtual:old,novaSenha:nw})}).then(function(r){return r.json()});
+    if(res2.ok){
+      toast('Senha alterada! Faça login com a nova senha.');
+      hideChangePw();
+      ['cp-user','cp-old','cp-new','cp-conf'].forEach(function(id){document.getElementById(id).value=''});
+    }else{showErr(res2.error||'Erro ao alterar senha.')}
   }catch(e){showErr('Sem conexão.')}
   btn.innerHTML='💾 Salvar Nova Senha';btn.disabled=false;
 }
 
-async function loginSuccess(user,perfil){
-  currentUser=user;currentPerfil=perfil;
-  sessionStorage.setItem('ft_user',user);sessionStorage.setItem('ft_perfil',perfil);
+/* ══ LOGIN SUCCESS ══ */
+async function loginSuccess(user,perfil,token){
+  currentUser=user;currentPerfil=perfil;currentToken=token||currentToken;
+  sessionStorage.setItem('ft_user',user);
+  sessionStorage.setItem('ft_perfil',perfil);
+  sessionStorage.setItem('ft_token',currentToken);
   showLoading('Iniciando sistema...','Abrindo banco de dados local');
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
@@ -760,10 +803,22 @@ async function loginSuccess(user,perfil){
   toast('Bem-vindo, '+user+'! 👋');
 }
 
-function doLogout(){
+/* ══ LOGOUT ══ */
+async function doLogout(){
   if(!confirm('Deseja sair?'))return;
   stopAutoRefresh();
-  sessionStorage.clear();currentUser='';currentPerfil='';isOnline=false;db=null;
+  if(isOnline&&currentToken){
+    try{await apiPost({acao:'logout'})}catch(e){}
+  }
+  _limparSessao();
+}
+function forceLogout(){
+  toast('Sessão expirada. Faça login novamente.','warn');
+  stopAutoRefresh();_limparSessao();
+}
+function _limparSessao(){
+  sessionStorage.clear();
+  currentUser='';currentPerfil='';currentToken='';isOnline=false;db=null;
   isSubmitting=false;isUserTyping=false;editingId=null;duplicatingId=null;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
@@ -771,29 +826,13 @@ function doLogout(){
   hideErr();hideChangePw();
 }
 
+/* ══ Restaurar sessão ao recarregar ══ */
 window.addEventListener('load',async function(){
-  var u=sessionStorage.getItem('ft_user'),p=sessionStorage.getItem('ft_perfil');
-  if(u&&p)await loginSuccess(u,p);
+  var u=sessionStorage.getItem('ft_user');
+  var p=sessionStorage.getItem('ft_perfil');
+  var t=sessionStorage.getItem('ft_token');
+  if(u&&p&&t){currentToken=t;await loginSuccess(u,p,t)}
 });
-
-/* ══ API ══ */
-async function apiGet(params){
-  params=params||{};
-  var url=new URL(APPS_SCRIPT_URL);
-  Object.entries(params).forEach(function(e){url.searchParams.set(e[0],e[1])});
-  var res=await fetch(url.toString());return res.json();
-}
-async function apiPost(body){
-  var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(Object.assign({},body,{usuario:currentUser}))});
-  return res.json();
-}
-function setSyncBar(show,msg){document.getElementById('sync-bar').classList.toggle('show',show);if(msg)document.getElementById('sync-msg').textContent=msg}
-function setDbStatus(state){
-  var dot=document.getElementById('db-dot'),lbl=document.getElementById('db-label');
-  var map={ok:{cls:'ok',txt:'Sheets conectado'},sync:{cls:'sync',txt:'Sincronizando...'},offline:{cls:'err',txt:'Offline (cache)'},local:{cls:'ok',txt:'Modo local'},err:{cls:'err',txt:'Erro'}};
-  var s=map[state]||{cls:'err',txt:'Erro'};
-  dot.className='db-dot '+s.cls;lbl.textContent=s.txt;
-}
 
 /* ══ Sync ══ */
 async function syncFromSheets(silent){
@@ -831,19 +870,13 @@ function populatePostoFilter(){
 }
 
 function applyFilters(){
-  var de  = getDateInputISO('fil-de');        // ✅
-  var ate = getDateInputISO('fil-ate');        // ✅
-  var lDe = getDateInputISO('fil-lanc-de');   // ✅
-  var lAte= getDateInputISO('fil-lanc-ate');  // ✅
-  var mes=document.getElementById('fil-mes').value;
-  var ano=document.getElementById('fil-ano').value;
-  var mot=document.getElementById('fil-motivo').value;
-  var posto=document.getElementById('fil-posto').value;
+  var de=getDateInputISO('fil-de'),ate=getDateInputISO('fil-ate');
+  var lDe=getDateInputISO('fil-lanc-de'),lAte=getDateInputISO('fil-lanc-ate');
+  var mes=document.getElementById('fil-mes').value,ano=document.getElementById('fil-ano').value;
+  var mot=document.getElementById('fil-motivo').value,posto=document.getElementById('fil-posto').value;
   var busca=document.getElementById('fil-busca').value.toLowerCase().trim();
-
   filtered=records.filter(function(r){
-    if(de&&r.data<de)return false;
-    if(ate&&r.data>ate)return false;
+    if(de&&r.data<de)return false;if(ate&&r.data>ate)return false;
     if(lDe||lAte){var l=r.lancamentoISO||'';if(lDe&&l<lDe)return false;if(lAte&&l>lAte)return false}
     if(mes&&parseInt((r.data||'').split('-')[1]||0)!==parseInt(mes))return false;
     if(ano&&(r.data||'').split('-')[0]!==ano)return false;
@@ -853,12 +886,7 @@ function applyFilters(){
     if(busca){var blob=[r.func,r.posto,r.postoft,r.faltante,r.motivo,r.obs,r.lancadoPor].join(' ').toLowerCase();if(!blob.includes(busca))return false}
     return true;
   });
-
-  filtered.sort(function(a,b){
-    var la=a.lancamentoISO||'',lb=b.lancamentoISO||'';
-    if(lb!==la)return lb.localeCompare(la);
-    return b.id.localeCompare(a.id);
-  });
+  filtered.sort(function(a,b){var la=a.lancamentoISO||'',lb=b.lancamentoISO||'';if(lb!==la)return lb.localeCompare(la);return b.id.localeCompare(a.id)});
   currentPage=1;renderStats();renderTable();
 }
 
@@ -922,24 +950,15 @@ function renderStats(){
   document.getElementById('stat-valor').textContent='R$ '+total.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 }
 
-/* ══ Validação com destaque ══ */
+/* ══ Validação ══ */
 function validateForm(){
   var errors=[];
-  var fields=[
-    {id:'f-func',label:'Funcionário'},
-    {id:'f-posto',label:'Posto Fixo'},
-    {id:'f-data',label:'Data'},
-    {id:'f-postoft',label:'Posto da FT'},
-    {id:'f-valor',label:'Valor'},
-    {id:'f-motivo',label:'Motivo'}
-  ];
-  /* Valida horários juntos */
+  var fields=[{id:'f-func',label:'Funcionário'},{id:'f-posto',label:'Posto Fixo'},{id:'f-data',label:'Data'},{id:'f-postoft',label:'Posto da FT'},{id:'f-valor',label:'Valor'},{id:'f-motivo',label:'Motivo'}];
   var hi=document.getElementById('f-hi').value,hf=document.getElementById('f-hf').value;
   fields.forEach(function(f){
     var el=document.getElementById(f.id);
-    if(!el.value||el.value.trim()===''){
-      el.classList.add('field-error');errors.push(f.label);
-    }else{el.classList.remove('field-error')}
+    if(!el.value||el.value.trim()===''){el.classList.add('field-error');errors.push(f.label)}
+    else{el.classList.remove('field-error')}
   });
   if(!hi||!hf){
     document.getElementById('f-hi').classList.add('field-error');
@@ -957,7 +976,7 @@ async function addRecord(){
   if(!can('form'))return;
   if(isSubmitting){toast('Aguarde, processando...','warn');return}
   var errors=validateForm();
-  if(errors.length){toast('Preencha: '+errors.join(', ')+'','err');return}
+  if(errors.length){toast('Preencha: '+errors.join(', '),'err');return}
   isSubmitting=true;
   var isDup=!!duplicatingId,isEditing=!!editingId&&!isDup;
   var btn=document.getElementById('btn-add');
@@ -975,7 +994,7 @@ async function addRecord(){
       id:isEditing?editingId:Date.now().toString(),
       func:document.getElementById('f-func').value,
       posto:document.getElementById('f-posto').value,
-      data:document.getElementById('f-data').value,
+      data:getDateInputISO('f-data'),
       lancamento:lancamento,lancamentoISO:lancamentoISO,
       hi:document.getElementById('f-hi').value,
       hf:document.getElementById('f-hf').value,
@@ -1002,26 +1021,14 @@ async function addRecord(){
     toast(isEditing?'Registro atualizado! ✅':(isDup?'Duplicata salva! ✅':'Registro adicionado! ✅'));
     editingId=null;duplicatingId=null;clearForm();renderAll();
   }finally{
-    isSubmitting=false;
-    btn.disabled=false;
-    btn.innerHTML='➕ Adicionar Registro';
+    isSubmitting=false;btn.disabled=false;btn.innerHTML='➕ Adicionar Registro';
   }
 }
 
 function clearForm(){
-  document.getElementById('f-func').value='';
-  document.getElementById('f-posto').value='';
-  document.getElementById('f-data').value='';
-  document.getElementById('f-hi').value='';
-  document.getElementById('f-hf').value='';
-  document.getElementById('f-postoft').value='';
-  document.getElementById('f-valor').value='';
-  document.getElementById('f-motivo').value='';
-  document.getElementById('f-faltante').value='';
-  document.getElementById('f-obs').value='';
-  ['f-func','f-posto','f-data','f-hi','f-hf','f-postoft','f-valor','f-motivo'].forEach(function(id){
-    document.getElementById(id).classList.remove('field-error');
-  });
+  ['f-func','f-posto','f-hi','f-hf','f-postoft','f-valor','f-motivo','f-faltante','f-obs'].forEach(function(id){document.getElementById(id).value=''});
+  setDateInput('f-data','');
+  ['f-func','f-posto','f-data','f-hi','f-hf','f-postoft','f-valor','f-motivo'].forEach(function(id){document.getElementById(id).classList.remove('field-error')});
   editingId=null;duplicatingId=null;
   var btn=document.getElementById('btn-add');
   btn.innerHTML='➕ Adicionar Registro';btn.disabled=false;btn.className='btn btn-primary';
@@ -1034,7 +1041,7 @@ function editRecord(id){
   editingId=id;duplicatingId=null;
   document.getElementById('f-func').value=r.func||'';
   document.getElementById('f-posto').value=r.posto||'';
-  setDateInput('f-data', r.data||'');                    // ✅ sem "document."
+  setDateInput('f-data',r.data||'');
   document.getElementById('f-hi').value=r.hi||'';
   document.getElementById('f-hf').value=r.hf||'';
   document.getElementById('f-postoft').value=r.postoft||'';
@@ -1055,7 +1062,7 @@ function duplicateRecord(id){
   editingId=null;duplicatingId=id;
   document.getElementById('f-func').value=r.func||'';
   document.getElementById('f-posto').value=r.posto||'';
-  document.getElementById('f-data').value='';
+  setDateInput('f-data','');
   document.getElementById('f-hi').value=r.hi||'';
   document.getElementById('f-hf').value=r.hf||'';
   document.getElementById('f-postoft').value=r.postoft||'';
@@ -1090,22 +1097,25 @@ async function doMyPwChange(){
   var old=document.getElementById('mypw-old').value,nw=document.getElementById('mypw-new').value,conf=document.getElementById('mypw-conf').value;
   if(!old||!nw||!conf){toast('Preencha todos os campos.','err');return}
   if(nw!==conf){toast('As senhas não coincidem.','err');return}
-  if(nw.length<6){toast('Mínimo 6 caracteres.','err');return}
+  if(nw.length<8){toast('Mínimo 8 caracteres.','err');return}
   if(!isOnline){toast('Sem conexão ao Sheets.','err');return}
   showLoading('Alterando senha...','');
-  var res=await apiPost({acao:'trocarSenha',usuario:currentUser,senhaAtual:old,novaSenha:nw});
+  var res=await apiPost({acao:'trocarSenha',senhaAtual:old,novaSenha:nw});
   hideLoading();
-  if(res.ok){toast('Senha alterada!');closeMyPwModal()}else toast(res.error||'Erro.','err');
+  if(res.ok){toast('Senha alterada! Faça login novamente.');closeMyPwModal();setTimeout(forceLogout,1500)}
+  else toast(res.error||'Erro.','err');
 }
+
 async function openUsuariosModal(){
   if(!can('usuarios'))return;
   document.getElementById('modal-usuarios').classList.add('open');
   await loadUsuarios();
 }
 function closeUsuariosModal(){document.getElementById('modal-usuarios').classList.remove('open')}
+
 async function loadUsuarios(){
   var el=document.getElementById('usuarios-content');
-  el.innerHTML='<div class="skeleton" style="height:12px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:70%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:50%"></div>';
+  el.innerHTML='<div class="skeleton" style="height:12px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:70%"></div>';
   if(!isOnline){el.innerHTML='<div style="color:var(--muted);padding:10px">⚠️ Disponível apenas com conexão.</div>';return}
   try{
     var res=await apiGet({acao:'getUsuarios'});if(!res.ok)throw new Error();
@@ -1116,14 +1126,19 @@ async function loadUsuarios(){
     el.innerHTML='<table class="usr-table"><thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }catch(e){el.innerHTML='<div style="color:var(--primary);padding:10px">Erro ao carregar.</div>'}
 }
+
 async function changePerfilUsuario(user,perfil){
   if(!isOnline){toast('Sem conexão.','err');return}
   var res=await apiPost({acao:'editUsuario',novoUsuario:user,novoPerfil:perfil,novoAtivo:'sim'});
   if(res.ok)toast('Perfil atualizado!');else toast(res.error||'Erro.','err');
 }
+
 async function addUsuario(){
-  var user=document.getElementById('nu-user').value.trim(),pass=document.getElementById('nu-pass').value.trim(),perfil=document.getElementById('nu-perfil').value;
+  var user=document.getElementById('nu-user').value.trim();
+  var pass=document.getElementById('nu-pass').value.trim();
+  var perfil=document.getElementById('nu-perfil').value;
   if(!user||!pass){toast('Informe nome e senha.','err');return}
+  if(pass.length<8){toast('Senha mínimo 8 caracteres.','err');return}
   if(!isOnline){toast('Sem conexão.','err');return}
   showLoading('Criando usuário...','');
   var res=await apiPost({acao:'addUsuario',novoUsuario:user,novaSenha:pass,novoPerfil:perfil});
@@ -1131,6 +1146,7 @@ async function addUsuario(){
   if(res.ok){toast('"'+user+'" adicionado!');document.getElementById('nu-user').value='';document.getElementById('nu-pass').value='';await loadUsuarios()}
   else toast(res.error||'Erro.','err');
 }
+
 async function removeUsuario(user){
   if(user===currentUser){toast('Não pode remover seu próprio acesso.','err');return}
   if(!confirm('Remover "'+user+'"?'))return;
@@ -1139,22 +1155,26 @@ async function removeUsuario(user){
   hideLoading();
   if(res.ok){toast('"'+user+'" removido.');await loadUsuarios()}else toast(res.error||'Erro.','err');
 }
+
 function openResetModal(user){resetTargetUser=user;document.getElementById('reset-username').textContent=user;document.getElementById('reset-pw').value='';document.getElementById('modal-reset').classList.add('open')}
 function closeResetModal(){document.getElementById('modal-reset').classList.remove('open');resetTargetUser=''}
+
 async function doResetSenha(){
   var pw=document.getElementById('reset-pw').value.trim();
   if(!pw){toast('Informe a nova senha.','err');return}
+  if(pw.length<8){toast('Mínimo 8 caracteres.','err');return}
   showLoading('Resetando senha...','');
   var res=await apiPost({acao:'resetSenha',novoUsuario:resetTargetUser,novaSenha:pw});
   hideLoading();
-  if(res.ok){toast('Senha resetada!');closeResetModal()}else toast(res.error||'Erro.','err');
+  if(res.ok){toast('Senha resetada! Usuário deverá trocar no próximo acesso.');closeResetModal()}
+  else toast(res.error||'Erro.','err');
 }
 
 /* ══ Log ══ */
 async function openLogModal(){
   if(!can('log'))return;
   document.getElementById('modal-log').classList.add('open');
-  document.getElementById('log-content').innerHTML='<div class="skeleton" style="height:12px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:60%"></div>';
+  document.getElementById('log-content').innerHTML='<div class="skeleton" style="height:12px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:80%"></div>';
   if(!isOnline){document.getElementById('log-content').innerHTML='<div style="color:var(--muted);padding:20px;text-align:center">⚠️ Disponível apenas com conexão.</div>';return}
   try{
     var data=await apiGet({acao:'getLog'});
@@ -1168,134 +1188,35 @@ async function openLogModal(){
 }
 function closeLogModal(){document.getElementById('modal-log').classList.remove('open')}
 
-/* ── EXCEL EXPORT — HTML/XLS style ── */
-
-function getHeaders(){
-  return ['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações'];
+/* ══ Excel / CSV ══ */
+function getHeaders(){return['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações']}
+function recToRow(r,i){
+  return[i+1,r.func||'—',r.posto||'—',fmtDate(r.data),r.lancamento||'—',r.hi&&r.hf?(r.hi+'–'+r.hf):(r.hi||r.hf||'—'),r.postoft||'—',r.valor?parseFloat(r.valor):'',r.motivo||'—',r.faltante||'—',r.lancadoPor||'—',r.obs||'—'];
 }
-
-function recToRow(r, i){
-  return [
-    i + 1,
-    r.func       || '—',
-    r.posto      || '—',
-    fmtDate(r.data),
-    r.lancamento || '—',
-    r.hi && r.hf ? (r.hi + '–' + r.hf) : (r.hi || r.hf || '—'),
-    r.postoft    || '—',
-    r.valor      ? parseFloat(r.valor) : '',
-    r.motivo     || '—',
-    r.faltante   || '—',
-    r.lancadoPor || '—',
-    r.obs        || '—'
-  ];
-}
-
-function buildExcelHTML(data, title){
-  const now      = new Date().toLocaleString('pt-BR');
-  const totalVal = data.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
-  const headers  = getHeaders();
-
-  const headerCells = headers.map(h =>
-    `<td style="padding:12px 14px;border:1px solid #7a0015;color:#fff;font-weight:700;font-size:10pt;background:#c0303a;">${h}</td>`
-  ).join('');
-
-  let rows = '';
-  data.forEach((r, i) => {
-    const row  = recToRow(r, i);
-    const bg   = i % 2 === 0 ? '#111111' : '#1a1a1a';
-    const cells = row.map((val, ci) => {
-      let style = `padding:10px 14px;border:1px solid #2a2a2a;color:#ffffff;font-size:9.5pt;`;
-      if (ci === 0) style += 'color:#666;text-align:center;';           // #
-      if (ci === 7) style += 'text-align:right;font-weight:700;color:#ff5b76;'; // Valor
-      if (ci === 1) style += 'font-weight:700;';                         // Funcionário
-      return `<td style="${style}">${val === '' ? '' : val}</td>`;
+function buildExcelHTML(data,title){
+  var now=new Date().toLocaleString('pt-BR');
+  var totalVal=data.reduce(function(s,r){return s+(parseFloat(r.valor)||0)},0);
+  var headerCells=getHeaders().map(function(h){return'<td style="padding:12px 14px;border:1px solid #7a0015;color:#fff;font-weight:700;font-size:10pt;background:#c0303a;">'+h+'</td>'}).join('');
+  var rows='';
+  data.forEach(function(r,i){
+    var row=recToRow(r,i);var bg=i%2===0?'#111111':'#1a1a1a';
+    var cells=row.map(function(val,ci){
+      var style='padding:10px 14px;border:1px solid #2a2a2a;color:#ffffff;font-size:9.5pt;';
+      if(ci===0)style+='color:#666;text-align:center;';
+      if(ci===7)style+='text-align:right;font-weight:700;color:#ff5b76;';
+      if(ci===1)style+='font-weight:700;';
+      return'<td style="'+style+'">'+(val===''?'':val)+'</td>';
     }).join('');
-    rows += `<tr style="background:${bg};">${cells}</tr>`;
+    rows+='<tr style="background:'+bg+';">'+cells+'</tr>';
   });
-
-  const html = `
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:x="urn:schemas-microsoft-com:office:excel"
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="UTF-8"></head>
-<body>
-<table border="0" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;width:100%;">
-
-  <!-- CABEÇALHO TÍTULO -->
-  <tr style="background:#0a0a0a;">
-    <td colspan="12" style="padding:22px;text-align:center;color:#fff;font-weight:800;font-size:16pt;border:1px solid #2a2a2a;">
-      📋 ${title}
-      <div style="font-size:9pt;margin-top:6px;color:#777;font-weight:400;">
-        Gestão de Folgas e Trocas · FT Diária
-      </div>
-    </td>
-  </tr>
-
-  <!-- SUBTÍTULO -->
-  <tr style="background:#0a0a0a;">
-    <td colspan="12" style="padding:8px 22px 16px;text-align:center;color:#555;font-size:9pt;border:1px solid #2a2a2a;border-top:none;">
-      Gerado em: ${now} &nbsp;·&nbsp; Total: ${data.length} registro(s)
-    </td>
-  </tr>
-
-  <!-- HEADERS -->
-  <tr style="background:#c0303a;">
-    ${headerCells}
-  </tr>
-
-  <!-- DADOS -->
-  ${rows}
-
-  <!-- RODAPÉ TOTAL -->
-  <tr style="background:#0f0f0f;">
-    <td colspan="7" style="padding:13px 14px;color:#aaa;font-weight:700;border:1px solid #2a2a2a;font-size:9pt;">
-      TOTAL: ${data.length} registro(s)
-    </td>
-    <td style="padding:13px 14px;text-align:right;color:#ff5b76;font-weight:800;border:1px solid #2a2a2a;font-size:10pt;">
-      ${totalVal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}
-    </td>
-    <td colspan="4" style="border:1px solid #2a2a2a;"></td>
-  </tr>
-
-  <!-- ASSINATURA -->
-  <tr style="background:#0a0a0a;">
-    <td colspan="12" style="padding:10px;text-align:center;color:#444;font-size:8pt;border:none;">
-      Exportado via FT Diária · ${now}
-    </td>
-  </tr>
-
-</table>
-</body>
-</html>`;
-
-  return html;
+  return'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="0" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;width:100%;"><tr style="background:#0a0a0a;"><td colspan="12" style="padding:22px;text-align:center;color:#fff;font-weight:800;font-size:16pt;border:1px solid #2a2a2a;">📋 '+title+'<div style="font-size:9pt;margin-top:6px;color:#777;font-weight:400;">Gestão de Folgas e Trocas · FT Diária</div></td></tr><tr style="background:#0a0a0a;"><td colspan="12" style="padding:8px 22px 16px;text-align:center;color:#555;font-size:9pt;border:1px solid #2a2a2a;border-top:none;">Gerado em: '+now+' · Total: '+data.length+' registro(s)</td></tr><tr style="background:#c0303a;">'+headerCells+'</tr>'+rows+'<tr style="background:#0f0f0f;"><td colspan="7" style="padding:13px 14px;color:#aaa;font-weight:700;border:1px solid #2a2a2a;font-size:9pt;">TOTAL: '+data.length+' registro(s)</td><td style="padding:13px 14px;text-align:right;color:#ff5b76;font-weight:800;border:1px solid #2a2a2a;font-size:10pt;">'+totalVal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td colspan="4" style="border:1px solid #2a2a2a;"></td></tr><tr style="background:#0a0a0a;"><td colspan="12" style="padding:10px;text-align:center;color:#444;font-size:8pt;border:none;">Exportado via FT Diária · '+now+'</td></tr></table></body></html>';
 }
-
-function exportExcelView(){
-  const html    = buildExcelHTML(filtered, 'FT Diária — Filtrados');
-  const blob    = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-  const link    = document.createElement('a');
-  link.href     = URL.createObjectURL(blob);
-  link.download = `FT_exibicao_${new Date().toISOString().slice(0,10)}.xls`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(link.href);
+function _downloadExcel(data,filename,title){
+  var blob=new Blob([buildExcelHTML(data,title)],{type:'application/vnd.ms-excel;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
 }
-
-function exportExcelAll(){
-  const html    = buildExcelHTML(records, 'FT Diária — Base Completa');
-  const blob    = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-  const link    = document.createElement('a');
-  link.href     = URL.createObjectURL(blob);
-  link.download = `FT_completo_${new Date().toISOString().slice(0,10)}.xls`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(link.href);
-  closeSaveModal();
-}
+function exportExcelView(){_downloadExcel(filtered,'FT_exibicao_'+new Date().toISOString().slice(0,10)+'.xls','FT Diária — Filtrados')}
+function exportExcelAll(){_downloadExcel(records,'FT_completo_'+new Date().toISOString().slice(0,10)+'.xls','FT Diária — Base Completa');closeSaveModal()}
 function exportCSV(data){
   var rows=[getHeaders()].concat(data.map(function(r,i){return recToRow(r,i)}));
   var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c==null?'':c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
@@ -1305,6 +1226,7 @@ function exportCSVAll(){exportCSV(records);closeSaveModal()}
 function openSaveModal(){document.getElementById('modal-save').classList.add('open')}
 function closeSaveModal(){document.getElementById('modal-save').classList.remove('open')}
 function saveBackup(){if(!can('backup'))return;download('FT_backup.json',JSON.stringify({records:records,names:names,postos:postos},null,2),'application/json');closeSaveModal()}
+
 async function restoreBackup(e){
   if(!can('backup'))return;var file=e.target.files[0];if(!file)return;
   var reader=new FileReader();
@@ -1329,83 +1251,46 @@ async function restoreBackup(e){
 function migrateRecord(r){
   if(r.id===undefined||r.id===null)r.id=Date.now().toString()+Math.random();
   r.id=String(r.id);
-
-  /* ✅ Converte qualquer formato de data para ISO yyyy-mm-dd */
   function toISO(val){
-    if(!val)return'';
-    var s=String(val).trim();
-    /* Já está correto */
+    if(!val)return'';var s=String(val).trim();
     if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
-    /* dd/mm/yyyy — formato que o Sheets retorna */
-    if(/^\d{2}\/\d{2}\/\d{4}/.test(s)){
-      var p=s.split('/');
-      return p[2].slice(0,4)+'-'+p[1]+'-'+p[0];
-    }
-    /* Formato longo: "Sun Sep 07 2026 00:00:00 GMT-0300" */
-    var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
-                Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+    if(/^\d{2}\/\d{2}\/\d{4}/.test(s)){var p=s.split('/');return p[2].slice(0,4)+'-'+p[1]+'-'+p[0]}
+    var months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
     var m=s.match(/\w{3}\s(\w{3})\s(\d{2})\s(\d{4})/);
     if(m&&months[m[1]])return m[3]+'-'+months[m[1]]+'-'+m[2];
-    /* Fallback seguro */
     var d=new Date(s+'T12:00:00');
-    if(!isNaN(d))return d.getFullYear()+'-'+
-      String(d.getMonth()+1).padStart(2,'0')+'-'+
-      String(d.getDate()).padStart(2,'0');
+    if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     return'';
   }
-
   function toTime(val){
     if(!val)return'';var s=String(val);
     if(/^\d{2}:\d{2}$/.test(s))return s;
     if(/^\d{2}:\d{2}:\d{2}$/.test(s))return s.slice(0,5);
     var d=new Date(s);
-    if(!isNaN(d))return String(d.getHours()).padStart(2,'0')+':'+
-      String(d.getMinutes()).padStart(2,'0');
+    if(!isNaN(d))return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
     return'';
   }
-
-  /* ✅ Normaliza data principal */
   r.data=toISO(r.data);
-
-  /* ✅ Normaliza lancamentoISO — aceita dd/mm/yyyy que vem do Sheets */
-  if(r.lancamentoISO){
-    r.lancamentoISO=toISO(String(r.lancamentoISO));
-  }
-
-  /* ✅ Normaliza lancamento (exibição pt-BR dd/mm/yyyy) */
+  if(r.lancamentoISO)r.lancamentoISO=toISO(String(r.lancamentoISO));
   if(r.lancamento){
     var lStr=String(r.lancamento).trim();
-    /* Se vier dd/mm/yyyy está OK */
     if(/^\d{2}\/\d{2}\/\d{4}$/.test(lStr)){
       r.lancamento=lStr;
-      /* Garante lancamentoISO */
-      if(!r.lancamentoISO||r.lancamentoISO===''){
-        var lp=lStr.split('/');
-        r.lancamentoISO=lp[2]+'-'+lp[1]+'-'+lp[0];
-      }
+      if(!r.lancamentoISO||r.lancamentoISO===''){var lp=lStr.split('/');r.lancamentoISO=lp[2]+'-'+lp[1]+'-'+lp[0]}
     }else{
-      /* Qualquer outro formato — converte para ISO e reconstrói pt-BR */
       var liso=toISO(lStr);
-      if(liso){
-        var lparts=liso.split('-');
-        r.lancamento=lparts[2]+'/'+lparts[1]+'/'+lparts[0];
-        if(!r.lancamentoISO)r.lancamentoISO=liso;
-      }else{r.lancamento=''}
+      if(liso){var lparts=liso.split('-');r.lancamento=lparts[2]+'/'+lparts[1]+'/'+lparts[0];if(!r.lancamentoISO)r.lancamentoISO=liso}
+      else{r.lancamento=''}
     }
   }else{r.lancamento=''}
-
-  /* ✅ Fallback lancamentoISO */
   if(!r.lancamentoISO)r.lancamentoISO=r.data||'';
-
   r.hi=toTime(r.hi);r.hf=toTime(r.hf);
   r.postoft=r.postoft||r.postoFT||r['Posto FT']||'';
   r.faltante=r.faltante||r.funcFaltante||'';
   r.obs=r.obs||r.observacoes||'';
   r.posto=r.posto||r.postoFixo||'';
   r.func=r.func||r.funcionario||'';
-  r.motivo=r.motivo||'';
-  r.valor=r.valor||'';
-  r.lancadoPor=r.lancadoPor||'';
+  r.motivo=r.motivo||'';r.valor=r.valor||'';r.lancadoPor=r.lancadoPor||'';
   return r;
 }
 
@@ -1413,8 +1298,7 @@ function migrateRecord(r){
 function download(filename,content,type){var blob=new Blob([content],{type:type});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();URL.revokeObjectURL(a.href)}
 var toastTimer=null;
 function toast(msg,type){
-  type=type||'ok';
-  var el=document.getElementById('toast');el.textContent=msg;
+  type=type||'ok';var el=document.getElementById('toast');el.textContent=msg;
   el.style.borderLeftColor=type==='err'?'#ff4444':type==='warn'?'#f5a623':'var(--primary)';
   el.classList.add('show');if(toastTimer)clearTimeout(toastTimer);
   toastTimer=setTimeout(function(){el.classList.remove('show')},3400);
@@ -1423,3 +1307,4 @@ function fmtDate(d){if(!d)return'—';var p=d.split('-');if(!p[0]||!p[1]||!p[2])
 </script>
 </body>
 </html>
+    
