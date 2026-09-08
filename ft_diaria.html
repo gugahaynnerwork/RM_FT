@@ -624,6 +624,40 @@ function getTodayISO(){
 }
 function updateLancamento(){document.getElementById('lancamento-display').textContent=getTodayStr()}
 
+/* ══ ✅ Normaliza valor de input[type=date] — cross-browser/mobile ══ */
+function getDateInputISO(id){
+  var val = document.getElementById(id).value;
+  if(!val) return '';
+  val = val.trim();
+  // yyyy-mm-dd — padrão HTML5 (desktop e Android)
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+  // dd/mm/yyyy — alguns browsers mobile antigos
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){
+    var p=val.split('/'); return p[2]+'-'+p[1]+'-'+p[0];
+  }
+  // mm/dd/yyyy — Safari iOS em algumas regiões
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)){
+    var p=val.split('/'); return p[2]+'-'+p[0]+'-'+p[1];
+  }
+  // Fallback: tenta parsear com hora do meio-dia para evitar UTC
+  var d=new Date(val+'T12:00:00');
+  if(!isNaN(d)) return d.getFullYear()+'-'+
+    String(d.getMonth()+1).padStart(2,'0')+'-'+
+    String(d.getDate()).padStart(2,'0');
+  return val;
+}
+
+/* ══ ✅ Preenche input[type=date] de forma segura ══ */
+function setDateInput(id, isoVal){
+  var el = document.getElementById(id);
+  if(!isoVal){ el.value=''; return; }
+  // Garante formato yyyy-mm-dd para o input
+  var iso = isoVal;
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(isoVal)){
+    var p=isoVal.split('/'); iso=p[2]+'-'+p[1]+'-'+p[0];
+  }
+  el.value = iso;
+}
 /* ══ Auto-refresh ══ */
 function startAutoRefresh(){
   stopAutoRefresh();
@@ -1116,7 +1150,8 @@ async function openLogModal(){
 }
 function closeLogModal(){document.getElementById('modal-log').classList.remove('open')}
 
-/* ══ Export ══ */
+/* ── EXCEL EXPORT — HTML/XLS style ── */
+
 function getHeaders(){
   return ['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações'];
 }
