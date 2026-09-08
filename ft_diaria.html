@@ -1117,19 +1117,132 @@ async function openLogModal(){
 function closeLogModal(){document.getElementById('modal-log').classList.remove('open')}
 
 /* ══ Export ══ */
-function getHeaders(){return['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações']}
-function recToRow(r,i){return[i+1,r.func||'',r.posto||'',fmtDate(r.data),r.lancamento||'',r.hi&&r.hf?(r.hi+'–'+r.hf):(r.hi||r.hf||''),r.postoft||'',r.valor?parseFloat(r.valor):'',r.motivo||'',r.faltante||'',r.lancadoPor||'',r.obs||'']}
-function buildExcelPro(data,title){
-  var wb=XLSX.utils.book_new();var now=new Date().toLocaleDateString('pt-BR');
-  var totalVal=data.reduce(function(s,r){return s+(parseFloat(r.valor)||0)},0);
-  var aoa=[[title,'','','','','','','','','','',''],['Gerado em: '+now+' · Total: '+data.length+' registros','','','','','','','','','','',''],['','','','','','','','','','','',''],getHeaders()].concat(data.map(function(r,i){return recToRow(r,i)})).concat([['','','','','','','','','','','',''],['','','','','','','Total:',totalVal,'','','','']]);
-  var ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols']=[5,26,26,13,15,15,26,12,26,26,20,36].map(function(w){return{wch:w}});
-  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:11}},{s:{r:1,c:0},e:{r:1,c:11}}];
-  XLSX.utils.book_append_sheet(wb,ws,'FT Diária');return wb;
+function getHeaders(){
+  return ['#','Funcionário','Posto Fixo','Data','Dt. Lançamento','Horário','Posto FT','Valor','Motivo','Func. Faltante','Lançado por','Observações'];
 }
-function exportExcelView(){XLSX.writeFile(buildExcelPro(filtered,'FT Diária — Filtrados'),'FT_exibicao.xlsx')}
-function exportExcelAll(){XLSX.writeFile(buildExcelPro(records,'FT Diária — Base Completa'),'FT_completo.xlsx');closeSaveModal()}
+
+function recToRow(r, i){
+  return [
+    i + 1,
+    r.func       || '—',
+    r.posto      || '—',
+    fmtDate(r.data),
+    r.lancamento || '—',
+    r.hi && r.hf ? (r.hi + '–' + r.hf) : (r.hi || r.hf || '—'),
+    r.postoft    || '—',
+    r.valor      ? parseFloat(r.valor) : '',
+    r.motivo     || '—',
+    r.faltante   || '—',
+    r.lancadoPor || '—',
+    r.obs        || '—'
+  ];
+}
+
+function buildExcelHTML(data, title){
+  const now      = new Date().toLocaleString('pt-BR');
+  const totalVal = data.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const headers  = getHeaders();
+
+  const headerCells = headers.map(h =>
+    `<td style="padding:12px 14px;border:1px solid #7a0015;color:#fff;font-weight:700;font-size:10pt;background:#c0303a;">${h}</td>`
+  ).join('');
+
+  let rows = '';
+  data.forEach((r, i) => {
+    const row  = recToRow(r, i);
+    const bg   = i % 2 === 0 ? '#111111' : '#1a1a1a';
+    const cells = row.map((val, ci) => {
+      let style = `padding:10px 14px;border:1px solid #2a2a2a;color:#ffffff;font-size:9.5pt;`;
+      if (ci === 0) style += 'color:#666;text-align:center;';           // #
+      if (ci === 7) style += 'text-align:right;font-weight:700;color:#ff5b76;'; // Valor
+      if (ci === 1) style += 'font-weight:700;';                         // Funcionário
+      return `<td style="${style}">${val === '' ? '' : val}</td>`;
+    }).join('');
+    rows += `<tr style="background:${bg};">${cells}</tr>`;
+  });
+
+  const html = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8"></head>
+<body>
+<table border="0" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;width:100%;">
+
+  <!-- CABEÇALHO TÍTULO -->
+  <tr style="background:#0a0a0a;">
+    <td colspan="12" style="padding:22px;text-align:center;color:#fff;font-weight:800;font-size:16pt;border:1px solid #2a2a2a;">
+      📋 ${title}
+      <div style="font-size:9pt;margin-top:6px;color:#777;font-weight:400;">
+        Gestão de Folgas e Trocas · FT Diária
+      </div>
+    </td>
+  </tr>
+
+  <!-- SUBTÍTULO -->
+  <tr style="background:#0a0a0a;">
+    <td colspan="12" style="padding:8px 22px 16px;text-align:center;color:#555;font-size:9pt;border:1px solid #2a2a2a;border-top:none;">
+      Gerado em: ${now} &nbsp;·&nbsp; Total: ${data.length} registro(s)
+    </td>
+  </tr>
+
+  <!-- HEADERS -->
+  <tr style="background:#c0303a;">
+    ${headerCells}
+  </tr>
+
+  <!-- DADOS -->
+  ${rows}
+
+  <!-- RODAPÉ TOTAL -->
+  <tr style="background:#0f0f0f;">
+    <td colspan="7" style="padding:13px 14px;color:#aaa;font-weight:700;border:1px solid #2a2a2a;font-size:9pt;">
+      TOTAL: ${data.length} registro(s)
+    </td>
+    <td style="padding:13px 14px;text-align:right;color:#ff5b76;font-weight:800;border:1px solid #2a2a2a;font-size:10pt;">
+      ${totalVal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}
+    </td>
+    <td colspan="4" style="border:1px solid #2a2a2a;"></td>
+  </tr>
+
+  <!-- ASSINATURA -->
+  <tr style="background:#0a0a0a;">
+    <td colspan="12" style="padding:10px;text-align:center;color:#444;font-size:8pt;border:none;">
+      Exportado via FT Diária · ${now}
+    </td>
+  </tr>
+
+</table>
+</body>
+</html>`;
+
+  return html;
+}
+
+function exportExcelView(){
+  const html    = buildExcelHTML(filtered, 'FT Diária — Filtrados');
+  const blob    = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const link    = document.createElement('a');
+  link.href     = URL.createObjectURL(blob);
+  link.download = `FT_exibicao_${new Date().toISOString().slice(0,10)}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+function exportExcelAll(){
+  const html    = buildExcelHTML(records, 'FT Diária — Base Completa');
+  const blob    = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const link    = document.createElement('a');
+  link.href     = URL.createObjectURL(blob);
+  link.download = `FT_completo_${new Date().toISOString().slice(0,10)}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+  closeSaveModal();
+}
 function exportCSV(data){
   var rows=[getHeaders()].concat(data.map(function(r,i){return recToRow(r,i)}));
   var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c==null?'':c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
