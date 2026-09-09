@@ -10,12 +10,6 @@
     --t-red-dark:   #b01515;
     --t-red-soft:   #c0392b;
     --t-black:      #111111;
-    --t-black-2:    #222222;
-    --t-black-3:    #333333;
-    --t-black-4:    #444444;
-    --t-black-5:    #666666;
-    --t-grey:       #888888;
-    --t-white:      #ffffff;
     --t-gold:       #b8860b;
     --t-orange:     #c05a00;
     --bg-body:      #f2f2f2;
@@ -54,12 +48,11 @@
   .db-dot.ok  { background:#43a047; }
   .db-dot.err { background:var(--t-red); }
   .db-dot.loading { background:#ff9800; animation:pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
   /* SESSION BANNER */
   .session-banner { background:#fff5f5; border:1px solid rgba(224,32,32,0.3); border-radius:10px; padding:10px 18px; margin-bottom:20px; display:none; align-items:center; justify-content:space-between; font-size:0.8rem; color:var(--t-red); flex-wrap:wrap; gap:8px; }
   .session-banner.show { display:flex; }
-  .session-banner strong { color:var(--t-black); }
 
   /* TABS */
   .tabs { display:flex; gap:0; margin-bottom:28px; border-bottom:2px solid var(--border-main); }
@@ -109,13 +102,23 @@
   .func-actions { display:flex; gap:6px; flex-shrink:0; }
   .func-empty { text-align:center; padding:40px; color:var(--text-muted); font-size:0.88rem; grid-column:1/-1; }
 
+  /* ALERTA CESTA — indicador visual */
+  .cesta-alert { display:inline-flex; align-items:center; gap:4px; background:#fff3cd; border:1px solid #ffc107; color:#856404; padding:2px 8px; border-radius:12px; font-size:0.67rem; font-weight:700; margin-left:6px; }
+  .cesta-alert.perda { background:#fde8e8; border-color:var(--t-red); color:var(--t-red); }
+
   /* FILTROS */
   .filter-section { background:var(--bg-card); border:1px solid var(--border-main); border-radius:14px; padding:20px 24px; margin-bottom:28px; box-shadow:var(--shadow); }
   .filter-top-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
   .filter-field { display:flex; flex-direction:column; gap:6px; }
   .filter-field label { font-size:0.7rem; color:var(--t-red); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; }
-  .filter-field input, .filter-field select { background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-main); padding:9px 14px; border-radius:8px; font-size:0.88rem; }
-  .filter-field input:focus, .filter-field select:focus { outline:none; border-color:var(--t-red); }
+  .filter-field input,.filter-field select { background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-main); padding:9px 14px; border-radius:8px; font-size:0.88rem; }
+  .filter-field input:focus,.filter-field select:focus { outline:none; border-color:var(--t-red); }
+
+  /* BUSCA GLOBAL */
+  .busca-global-wrap { position:relative; flex:1; min-width:200px; }
+  .busca-global-wrap input { width:100%; padding-left:34px; }
+  .busca-global-wrap .icon-search { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.9rem; pointer-events:none; }
+  .busca-highlight { background:#fff3cd; border-radius:2px; }
 
   /* CHIPS */
   .chips-section { margin-top:4px; }
@@ -139,12 +142,11 @@
   .resumo-card .r-val.gold   { color:var(--t-gold); }
   .resumo-card .r-val.orange { color:var(--t-orange); }
   .resumo-card .r-val.grey   { color:#666; }
-  .resumo-card .r-val.soft   { color:var(--t-red-soft); }
   .resumo-card .r-label { font-size:0.68rem; color:var(--text-muted); margin-top:5px; text-transform:uppercase; letter-spacing:0.05em; }
   .cesta-resultado { margin-top:16px; background:var(--bg-card2); border-radius:10px; padding:16px; display:grid; grid-template-columns:1fr 1fr; gap:16px; border:1px solid var(--border-main); }
   .cesta-bloco { border-radius:8px; padding:14px; }
   .cesta-bloco.ci  { background:rgba(184,134,11,0.06); border:1px solid rgba(184,134,11,0.25); }
-  .cesta-bloco.cii { background:rgba(192,90,0,0.06);   border:1px solid rgba(192,90,0,0.25); }
+  .cesta-bloco.cii { background:rgba(192,90,0,0.06); border:1px solid rgba(192,90,0,0.25); }
   .cesta-bloco .cb-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; }
   .cesta-bloco.ci  .cb-title { color:var(--t-gold); }
   .cesta-bloco.cii .cb-title { color:var(--t-orange); }
@@ -158,9 +160,9 @@
   .btn { border:none; padding:10px 22px; border-radius:8px; font-size:0.88rem; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:7px; }
   .btn:hover { transform:translateY(-1px); opacity:0.88; }
   .btn:active { transform:translateY(0); }
-  .btn-primary { background:var(--t-red);      color:#fff; }
-  .btn-gold    { background:var(--t-gold);     color:#fff; }
-  .btn-orange  { background:var(--t-orange);   color:#fff; }
+  .btn-primary { background:var(--t-red); color:#fff; }
+  .btn-gold    { background:var(--t-gold); color:#fff; }
+  .btn-orange  { background:var(--t-orange); color:#fff; }
   .btn-danger  { background:var(--t-red-dark); color:#fff; }
   .btn-ghost { background:transparent; border:1px solid var(--t-red); color:var(--t-red); padding:5px 10px; font-size:0.76rem; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.2s; }
   .btn-ghost:hover { background:rgba(224,32,32,0.08); }
@@ -183,15 +185,24 @@
   .table-header-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .table-wrapper { overflow-x:auto; }
   table { width:100%; border-collapse:collapse; font-size:0.79rem; }
-  thead th { background:var(--table-head); color:var(--t-red); padding:10px; text-align:left; font-weight:700; text-transform:uppercase; font-size:0.64rem; letter-spacing:0.05em; white-space:nowrap; border-bottom:2px solid var(--t-red); }
+
+  /* ORDENAÇÃO */
+  thead th { background:var(--table-head); color:var(--t-red); padding:10px; text-align:left; font-weight:700; text-transform:uppercase; font-size:0.64rem; letter-spacing:0.05em; white-space:nowrap; border-bottom:2px solid var(--t-red); cursor:pointer; user-select:none; position:relative; transition:background 0.15s; }
+  thead th:hover { background:#fdeaea; }
+  thead th.sort-asc::after  { content:' ▲'; font-size:0.6rem; color:var(--t-red); }
+  thead th.sort-desc::after { content:' ▼'; font-size:0.6rem; color:var(--t-red); }
+  thead th.no-sort { cursor:default; }
+  thead th.no-sort:hover { background:var(--table-head); }
   thead th.th-ci  { color:var(--t-gold); }
   thead th.th-cii { color:var(--t-orange); }
   thead th.th-dsr { color:var(--text-muted); }
+
   tbody tr { border-bottom:1px solid var(--border-main); transition:background 0.15s; }
   tbody tr:hover { background:#fff5f5; }
   tbody tr:nth-child(even) { background:var(--bg-card2); }
   tbody tr:nth-child(even):hover { background:#fff5f5; }
   tbody tr.tr-highlighted { background:#fff0f0; border-left:3px solid var(--t-red); }
+  tbody tr.tr-sem-ocorrencia-highlight { background:#fffde7; }
   tbody td { padding:9px 10px; color:var(--text-main); white-space:nowrap; }
   tbody td:first-child { color:var(--text-muted); font-size:0.72rem; }
   .td-name  { font-weight:700; color:var(--t-black) !important; }
@@ -210,6 +221,11 @@
   .badge-dsr      { background:#f5f5f5; color:#555;            padding:2px 9px; border-radius:20px; font-size:0.68rem; font-weight:700; border:1px solid #ddd; }
   .badge-mes      { background:#fde8e8; color:var(--t-red);    padding:2px 9px; border-radius:20px; font-size:0.68rem; font-weight:700; border:1px solid rgba(224,32,32,0.2); }
 
+  /* INDICADOR CESTA NA TABELA */
+  .badge-cesta-ok   { background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:12px; font-size:0.65rem; font-weight:700; border:1px solid rgba(46,125,50,0.25); }
+  .badge-cesta-warn { background:#fff3cd; color:#856404; padding:2px 8px; border-radius:12px; font-size:0.65rem; font-weight:700; border:1px solid #ffc107; }
+  .badge-cesta-perda{ background:#fde8e8; color:var(--t-red); padding:2px 8px; border-radius:12px; font-size:0.65rem; font-weight:700; border:1px solid rgba(224,32,32,0.3); }
+
   /* LEGEND */
   .legend { display:flex; gap:16px; flex-wrap:wrap; padding:12px 24px; border-top:1px solid var(--border-main); background:var(--bg-card2); }
   .legend-item { display:flex; align-items:center; gap:6px; font-size:0.69rem; color:var(--text-muted); }
@@ -218,16 +234,17 @@
   /* MODAL */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:16px; }
   .modal-overlay.active { display:flex; }
-  .modal { background:var(--bg-card); border:1px solid var(--border-main); border-radius:16px; padding:28px; width:100%; max-width:580px; position:relative; animation:slideIn 0.25s ease; max-height:92vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
-  @keyframes slideIn { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+  .modal { background:var(--bg-card); border:1px solid var(--border-main); border-radius:16px; padding:28px; width:100%; max-width:600px; position:relative; animation:slideIn 0.25s ease; max-height:92vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
+  @keyframes slideIn { from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)} }
   .modal h3 { color:var(--t-red); font-size:0.93rem; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.07em; font-weight:700; }
   .modal-close { position:absolute; top:14px; right:18px; background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; }
   .modal-close:hover { color:var(--t-red); }
   .modal-field { margin-bottom:13px; }
   .modal-field label { display:block; font-size:0.69rem; color:var(--t-red); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; }
-  .modal-field input, .modal-field select { width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-main); padding:9px 12px; border-radius:7px; font-size:0.9rem; }
+  .modal-field input,.modal-field select,.modal-field textarea { width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-main); padding:9px 12px; border-radius:7px; font-size:0.9rem; font-family:inherit; }
+  .modal-field textarea { resize:vertical; min-height:70px; }
   .modal-field input[type="date"] { cursor:pointer; }
-  .modal-field input:focus, .modal-field select:focus { outline:none; border-color:var(--t-red); box-shadow:0 0 0 2px rgba(224,32,32,0.12); }
+  .modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus { outline:none; border-color:var(--t-red); box-shadow:0 0 0 2px rgba(224,32,32,0.12); }
   .modal-row  { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .modal-row4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
   .modal-divider { border:none; border-top:1px solid var(--border-main); margin:14px 0; }
@@ -249,16 +266,26 @@
   .toggle input:checked + .slider { background:var(--t-red); }
   .toggle input:checked + .slider:before { transform:translateX(18px); }
   .info-box { border-radius:8px; padding:9px 13px; font-size:0.75rem; margin-bottom:10px; line-height:1.5; }
-  .info-box.warn { background:#fff5f5; border:1px solid rgba(224,32,32,0.3); color:var(--t-red); }
+  .info-box.warn  { background:#fff5f5; border:1px solid rgba(224,32,32,0.3); color:var(--t-red); }
+  .info-box.dup   { background:#fff3cd; border:1px solid #ffc107; color:#856404; }
+  .info-box.info  { background:#e8f0fe; border:1px solid #90a4e0; color:#1a3a8a; }
   .modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:18px; }
   .confirm-info { background:var(--bg-card2); border-radius:8px; padding:12px 16px; border:1px solid var(--border-main); margin:12px 0; font-size:0.82rem; color:var(--text-sub); line-height:1.6; }
   .confirm-info strong { color:var(--text-main); }
 
+  /* MODAL FECHAR COM DADOS */
+  .modal-dirty-overlay { display:none; position:absolute; inset:0; background:rgba(255,255,255,0.92); border-radius:16px; z-index:10; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:28px; text-align:center; }
+  .modal-dirty-overlay.show { display:flex; }
+  .modal-dirty-overlay p { font-size:0.9rem; color:var(--text-sub); line-height:1.6; }
+  .modal-dirty-overlay strong { color:var(--t-red); font-size:1rem; }
+  .modal-dirty-btns { display:flex; gap:12px; }
+
   /* TOAST */
-  .toast { position:fixed; bottom:28px; right:28px; background:var(--t-black); border-left:4px solid var(--t-orange); color:#fff; padding:12px 18px; border-radius:10px; font-size:0.85rem; font-weight:600; z-index:2000; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; max-width:340px; }
+  .toast { position:fixed; bottom:28px; right:28px; background:var(--t-black); border-left:4px solid var(--t-orange); color:#fff; padding:12px 18px; border-radius:10px; font-size:0.85rem; font-weight:600; z-index:2000; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; max-width:360px; line-height:1.4; }
   .toast.show  { opacity:1; transform:translateY(0); }
   .toast.error { border-left-color:var(--t-red); }
   .toast.warn  { border-left-color:var(--t-gold); }
+  .toast.green { border-left-color:#43a047; }
 
   .empty-state { text-align:center; padding:40px; color:var(--text-muted); font-size:0.88rem; }
 
@@ -272,9 +299,13 @@
   footer { text-align:center; padding:20px; color:var(--text-muted); font-size:0.75rem; margin-top:32px; border-top:1px solid var(--border-main); background:var(--bg-card); }
   footer a { color:var(--t-red); font-weight:700; }
 
+  /* TOOLTIP */
+  [data-tip] { position:relative; }
+  [data-tip]:hover::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:#222; color:#fff; padding:5px 10px; border-radius:6px; font-size:0.72rem; white-space:nowrap; z-index:999; pointer-events:none; }
+
   @media (max-width:768px) {
     header { flex-direction:column; text-align:center; }
-    .modal-row, .modal-row4 { grid-template-columns:1fr 1fr; }
+    .modal-row,.modal-row4 { grid-template-columns:1fr 1fr; }
     .filter-top-row { flex-direction:column; }
     .cesta-resultado { grid-template-columns:1fr; }
     .header-actions { justify-content:center; }
@@ -306,7 +337,6 @@
     <span>📁 Sessão carregada: <strong id="session-info"></strong></span>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="mudarTab('tab-lancamentos',this)">📋 Lançamentos</button>
     <button class="tab-btn" onclick="mudarTab('tab-funcionarios',this)">👥 Funcionários</button>
@@ -334,6 +364,13 @@
           <label>📆 Ano</label>
           <input type="number" id="filtro-ano" value="2026" min="2020" max="2099" oninput="atualizarChips();aplicarFiltros();" style="width:100px;">
         </div>
+        <div class="filter-field" style="flex:1;min-width:200px;">
+          <label>🔍 Busca Global</label>
+          <div class="busca-global-wrap">
+            <span class="icon-search">🔍</span>
+            <input type="text" id="busca-global" placeholder="Nome, função, tipo, datas..." oninput="aplicarFiltros()" style="padding-left:34px;">
+          </div>
+        </div>
         <button class="btn btn-orange" onclick="limparFiltros()" style="align-self:flex-end;padding:9px 18px;font-size:0.84rem;">✕ Limpar</button>
       </div>
       <div class="chips-section">
@@ -354,7 +391,7 @@
         <div class="resumo-card"><div class="r-val gold"   id="r-vt">0</div><div class="r-label">Dias VT</div></div>
         <div class="resumo-card"><div class="r-val gold"   id="r-vr">0</div><div class="r-label">Dias VR</div></div>
         <div class="resumo-card"><div class="r-val grey"   id="r-horas">0h</div><div class="r-label">Horas Descontadas</div></div>
-        <div class="resumo-card"><div class="r-val soft"   id="r-lancamentos">0</div><div class="r-label">Lançamentos</div></div>
+        <div class="resumo-card"><div class="r-val"        id="r-lancamentos">0</div><div class="r-label">Lançamentos</div></div>
       </div>
       <div class="cesta-resultado">
         <div class="cesta-bloco ci">
@@ -390,15 +427,27 @@
       </div>
       <div class="table-wrapper">
         <table>
-          <thead>
+          <thead id="thead-principal">
             <tr>
-              <th>#</th><th>Funcionário</th><th>Função</th><th>Mês/Ano</th>
-              <th>Status</th><th>Tipo</th><th>Datas</th>
-              <th>Faltas</th><th class="th-dsr">DSR</th><th>Atestados</th>
-              <th>Declarações</th><th>Hrs Desc.</th><th>Dias VT</th><th>Dias VR</th>
-              <th class="th-ci">Cesta I</th>
-              <th class="th-cii">Cesta II</th>
-              <th>Ações</th>
+              <th class="no-sort">#</th>
+              <th onclick="sortTable('nome')">Funcionário</th>
+              <th onclick="sortTable('funcao')">Função</th>
+              <th onclick="sortTable('mes')">Mês/Ano</th>
+              <th onclick="sortTable('status')">Status</th>
+              <th onclick="sortTable('tipo')">Tipo</th>
+              <th class="no-sort">Datas</th>
+              <th onclick="sortTable('faltas')">Faltas</th>
+              <th class="th-dsr no-sort">DSR</th>
+              <th onclick="sortTable('atestados')">Atestados</th>
+              <th onclick="sortTable('decl')">Declarações</th>
+              <th onclick="sortTable('horas')">Hrs Desc.</th>
+              <th onclick="sortTable('vtDesc')">Dias VT</th>
+              <th onclick="sortTable('vrDesc')">Dias VR</th>
+              <th class="th-ci no-sort">Cesta I</th>
+              <th class="th-cii no-sort">Cesta II</th>
+              <th class="no-sort">Limite</th>
+              <th class="no-sort">Obs.</th>
+              <th class="no-sort">Ações</th>
             </tr>
           </thead>
           <tbody id="tabela-body"></tbody>
@@ -409,6 +458,8 @@
         <div class="legend-item"><div class="legend-dot" style="background:var(--t-red)"></div> Falta</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--t-gold)"></div> Declaração</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--t-orange)"></div> Atestado</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffc107"></div> Atenção (2 ocorrências)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--t-red)"></div> Perda de cesta (3+)</div>
       </div>
     </div>
   </div>
@@ -419,13 +470,11 @@
       <div class="func-header">
         <h2>👥 Cadastro de Funcionários <span style="color:#aaa;font-size:0.78rem;font-weight:400;" id="func-total-label"></span></h2>
         <div class="func-search">
-          <input type="text" id="func-busca" placeholder="🔍 Buscar funcionário..." oninput="renderizarFuncionarios()">
+          <input type="text" id="func-busca" placeholder="🔍 Buscar..." oninput="renderizarFuncionarios()">
           <button class="btn btn-primary" onclick="abrirModalFunc()" style="padding:8px 16px;font-size:0.84rem;">＋ Novo Funcionário</button>
         </div>
       </div>
-      <div class="func-grid" id="func-grid">
-        <div class="func-empty">Carregando...</div>
-      </div>
+      <div class="func-grid" id="func-grid"><div class="func-empty">Carregando...</div></div>
     </div>
   </div>
 
@@ -435,43 +484,17 @@
       <h2>⚙️ Configuração de Valores Base</h2>
       <div class="cesta-section-title ci">🟡 Cesta Básica I</div>
       <div class="cesta-grid">
-        <div class="cesta-card ci">
-          <label>Valor Base (0 ocorrências)</label>
-          <input type="number" id="ci_0" value="0" step="1" oninput="calcularTudo();salvarConfigDB()">
-          <div class="hint">Valor integral da Cesta I</div>
-        </div>
-        <div class="cesta-card ci">
-          <label>Com 1 Ocorrência</label>
-          <input type="number" id="ci_1" value="0" step="1" oninput="calcularTudo();salvarConfigDB()">
-        </div>
-        <div class="cesta-card ci">
-          <label>Com 2 Ocorrências</label>
-          <input type="number" id="ci_2" value="0" step="1" oninput="calcularTudo();salvarConfigDB()">
-        </div>
-        <div class="cesta-card dis">
-          <label>3+ / Falta → R$ 0,00</label>
-          <input type="number" value="0" disabled>
-          <div class="hint">Automático</div>
-        </div>
+        <div class="cesta-card ci"><label>Valor Base (0 ocorrências)</label><input type="number" id="ci_0" value="0" step="1" oninput="calcularTudo();salvarConfigDB()"><div class="hint">Valor integral da Cesta I</div></div>
+        <div class="cesta-card ci"><label>Com 1 Ocorrência</label><input type="number" id="ci_1" value="0" step="1" oninput="calcularTudo();salvarConfigDB()"></div>
+        <div class="cesta-card ci"><label>Com 2 Ocorrências</label><input type="number" id="ci_2" value="0" step="1" oninput="calcularTudo();salvarConfigDB()"></div>
+        <div class="cesta-card dis"><label>3+ / Falta → R$ 0,00</label><input type="number" value="0" disabled><div class="hint">Automático</div></div>
       </div>
       <div class="cesta-section-title cii">🟠 Cesta Básica II</div>
       <div class="cesta-grid">
-        <div class="cesta-card cii">
-          <label>Valor Base (0 ocorrências)</label>
-          <input type="number" id="cii_0" value="252" step="1" oninput="calcularTudo();salvarConfigDB()">
-        </div>
-        <div class="cesta-card cii">
-          <label>Com 1 Ocorrência</label>
-          <input type="number" id="cii_1" value="192" step="1" oninput="calcularTudo();salvarConfigDB()">
-        </div>
-        <div class="cesta-card cii">
-          <label>Com 2 Ocorrências</label>
-          <input type="number" id="cii_2" value="112" step="1" oninput="calcularTudo();salvarConfigDB()">
-        </div>
-        <div class="cesta-card dis">
-          <label>3+ / Falta → R$ 0,00</label>
-          <input type="number" value="0" disabled>
-        </div>
+        <div class="cesta-card cii"><label>Valor Base (0 ocorrências)</label><input type="number" id="cii_0" value="252" step="1" oninput="calcularTudo();salvarConfigDB()"></div>
+        <div class="cesta-card cii"><label>Com 1 Ocorrência</label><input type="number" id="cii_1" value="192" step="1" oninput="calcularTudo();salvarConfigDB()"></div>
+        <div class="cesta-card cii"><label>Com 2 Ocorrências</label><input type="number" id="cii_2" value="112" step="1" oninput="calcularTudo();salvarConfigDB()"></div>
+        <div class="cesta-card dis"><label>3+ / Falta → R$ 0,00</label><input type="number" value="0" disabled></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="calcularTudo()">▶ Recalcular</button>
@@ -479,26 +502,16 @@
       </div>
     </div>
   </div>
-
-</div><!-- /container -->
+</div>
 
 <!-- MODAL FUNCIONÁRIO -->
 <div class="modal-overlay" id="modal-func">
   <div class="modal" style="max-width:440px;">
     <button class="modal-close" onclick="fecharModal('modal-func')">✕</button>
     <h3 id="modal-func-titulo">＋ Novo Funcionário</h3>
-    <div class="modal-field">
-      <label>Nome Completo *</label>
-      <input type="text" id="f-nome" placeholder="Ex: Maria Silva">
-    </div>
-    <div class="modal-field">
-      <label>Função / Cargo</label>
-      <input type="text" id="f-funcao" placeholder="Ex: Agente, Supervisor...">
-    </div>
-    <div class="modal-field">
-      <label>Observação (opcional)</label>
-      <input type="text" id="f-obs" placeholder="Ex: Turno noturno...">
-    </div>
+    <div class="modal-field"><label>Nome Completo *</label><input type="text" id="f-nome" placeholder="Ex: Maria Silva"></div>
+    <div class="modal-field"><label>Função / Cargo</label><input type="text" id="f-funcao" placeholder="Ex: Agente, Supervisor..."></div>
+    <div class="modal-field"><label>Observação (opcional)</label><input type="text" id="f-obs" placeholder="Ex: Turno noturno..."></div>
     <div class="modal-actions">
       <button class="btn-ghost-neutral" onclick="fecharModal('modal-func')">Cancelar</button>
       <button class="btn btn-primary" onclick="confirmarSalvarFunc()">✓ Salvar Funcionário</button>
@@ -512,7 +525,7 @@
     <button class="modal-close" onclick="fecharModal('modal-remover-func')">✕</button>
     <h3>🗑️ Remover Funcionário</h3>
     <p style="color:#777;font-size:0.88rem;margin-bottom:6px;">Remover <strong id="nome-remover-func" style="color:var(--t-red);"></strong> do cadastro?</p>
-    <p style="font-size:0.75rem;color:#999;margin-bottom:20px;">Os lançamentos deste funcionário <strong>não</strong> serão removidos.</p>
+    <p style="font-size:0.75rem;color:#999;margin-bottom:20px;">Os lançamentos não serão removidos.</p>
     <div class="modal-actions">
       <button class="btn-ghost-neutral" onclick="fecharModal('modal-remover-func')">Cancelar</button>
       <button class="btn btn-danger" onclick="confirmarRemoverFunc()">🗑️ Remover</button>
@@ -522,15 +535,28 @@
 
 <!-- MODAL LANÇAMENTO -->
 <div class="modal-overlay" id="modal-adicionar">
-  <div class="modal">
-    <button class="modal-close" onclick="fecharModal('modal-adicionar')">✕</button>
+  <div class="modal" style="position:relative;">
+    <!-- overlay de confirmação de fechar -->
+    <div class="modal-dirty-overlay" id="dirty-overlay">
+      <strong>⚠️ Deseja descartar as alterações?</strong>
+      <p>Você preencheu dados no formulário.<br>Se fechar, as informações serão perdidas.</p>
+      <div class="modal-dirty-btns">
+        <button class="btn-ghost-neutral" onclick="hideDirtyOverlay()">← Voltar a editar</button>
+        <button class="btn btn-danger"    onclick="forcarFecharModal()">Descartar e fechar</button>
+      </div>
+    </div>
+
+    <button class="modal-close" onclick="tentarFecharModal()">✕</button>
     <h3 id="modal-titulo">➕ Novo Lançamento</h3>
+
+    <!-- ALERTA DUPLICADO -->
+    <div id="alerta-duplicado" class="info-box dup" style="display:none;"></div>
 
     <div class="modal-section-title red">👤 Identificação</div>
     <div class="modal-row">
       <div class="modal-field">
         <label>Nome do Funcionário *</label>
-        <input type="text" id="m-nome" placeholder="Digite ou selecione..." list="lista-nomes" oninput="autoFuncao()">
+        <input type="text" id="m-nome" placeholder="Digite ou selecione..." list="lista-nomes" oninput="autoFuncao();verificarDuplicado()">
         <datalist id="lista-nomes"></datalist>
       </div>
       <div class="modal-field">
@@ -541,7 +567,7 @@
     <div class="modal-row">
       <div class="modal-field">
         <label>Mês de Referência *</label>
-        <select id="m-mes">
+        <select id="m-mes" onchange="verificarDuplicado()">
           <option value="01">Janeiro</option><option value="02">Fevereiro</option>
           <option value="03">Março</option><option value="04">Abril</option>
           <option value="05">Maio</option><option value="06">Junho</option>
@@ -552,7 +578,7 @@
       </div>
       <div class="modal-field">
         <label>Ano de Referência *</label>
-        <input type="number" id="m-ano" value="2026" min="2020" max="2099">
+        <input type="number" id="m-ano" value="2026" min="2020" max="2099" oninput="verificarDuplicado()">
       </div>
     </div>
 
@@ -578,22 +604,10 @@
       <input type="text" id="m-datas" placeholder="Ex: 03/06, 05/06">
     </div>
     <div class="modal-row4">
-      <div class="modal-field">
-        <label>Dias de Falta</label>
-        <input type="number" id="m-faltas" value="0" min="0" max="31" oninput="atualizarInfoCI()">
-      </div>
-      <div class="modal-field">
-        <label>Dias de DSR</label>
-        <input type="number" id="m-dsr" value="0" min="0" max="31">
-      </div>
-      <div class="modal-field">
-        <label>Dias Atestado</label>
-        <input type="number" id="m-atestados" value="0" min="0" max="31">
-      </div>
-      <div class="modal-field">
-        <label>Dias Declaração</label>
-        <input type="number" id="m-decl" value="0" min="0" max="31">
-      </div>
+      <div class="modal-field"><label>Dias de Falta</label><input type="number" id="m-faltas" value="0" min="0" max="31" oninput="atualizarInfoCI()"></div>
+      <div class="modal-field"><label>Dias de DSR</label><input type="number" id="m-dsr" value="0" min="0" max="31"></div>
+      <div class="modal-field"><label>Dias Atestado</label><input type="number" id="m-atestados" value="0" min="0" max="31"></div>
+      <div class="modal-field"><label>Dias Declaração</label><input type="number" id="m-decl" value="0" min="0" max="31"></div>
     </div>
 
     <hr class="modal-divider">
@@ -602,48 +616,38 @@
       <span>Funcionário trabalhou no período?</span>
       <div style="display:flex;align-items:center;gap:10px;">
         <span class="toggle-status nao" id="trabalhou-label">Não trabalhou</span>
-        <label class="toggle">
-          <input type="checkbox" id="m-trabalhou" onchange="toggleTrabalhou()">
-          <span class="slider"></span>
-        </label>
+        <label class="toggle"><input type="checkbox" id="m-trabalhou" onchange="toggleTrabalhou()"><span class="slider"></span></label>
       </div>
     </div>
     <div id="bloco-jornada" style="opacity:0.4;pointer-events:none;">
-      <div class="modal-field">
-        <label>Horas a Descontar</label>
-        <input type="number" id="m-horas" value="0" min="0" step="0.5">
-      </div>
+      <div class="modal-field"><label>Horas a Descontar</label><input type="number" id="m-horas" value="0" min="0" step="0.5"></div>
     </div>
 
     <hr class="modal-divider">
     <div class="modal-section-title red">🚌 Vale Transporte & Refeição</div>
     <div class="modal-row">
-      <div class="modal-field">
-        <label>Dias de VT a Descontar</label>
-        <input type="number" id="m-vt" value="0" min="0" max="31">
-      </div>
-      <div class="modal-field">
-        <label>Dias de VR a Descontar</label>
-        <input type="number" id="m-vr" value="0" min="0" max="31">
-      </div>
+      <div class="modal-field"><label>Dias de VT a Descontar</label><input type="number" id="m-vt" value="0" min="0" max="31"></div>
+      <div class="modal-field"><label>Dias de VR a Descontar</label><input type="number" id="m-vr" value="0" min="0" max="31"></div>
     </div>
 
     <hr class="modal-divider">
     <div class="modal-section-title gold">🟡 Cesta Básica I</div>
-    <div id="info-ci-falta" class="info-box warn" style="display:none;">
-      ⚠️ Falta detectada: Cesta Básica I será R$ 0,00 automaticamente.
-    </div>
+    <div id="info-ci-falta" class="info-box warn" style="display:none;">⚠️ Falta detectada: Cesta Básica I será R$ 0,00 automaticamente.</div>
     <div class="modal-toggle-row">
       <span>Aplicar desconto manual na Cesta Básica I?</span>
-      <label class="toggle">
-        <input type="checkbox" id="m-desc-ci">
-        <span class="slider"></span>
-      </label>
+      <label class="toggle"><input type="checkbox" id="m-desc-ci"><span class="slider"></span></label>
+    </div>
+
+    <hr class="modal-divider">
+    <div class="modal-section-title grey">📝 Observação do Lançamento</div>
+    <div class="modal-field">
+      <label>Observação (visível na tabela)</label>
+      <textarea id="m-obs" placeholder="Ex: Aguardando CID, Falta justificada verbalmente, Atestado entregue em 05/06..."></textarea>
     </div>
 
     <div class="modal-actions">
-      <button class="btn-ghost-neutral" onclick="fecharModal('modal-adicionar')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-salvar-lancamento" onclick="confirmarAdicionar()">✓ Salvar Lançamento</button>
+      <button class="btn-ghost-neutral" onclick="tentarFecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarAdicionar()">✓ Salvar Lançamento</button>
     </div>
   </div>
 </div>
@@ -669,7 +673,6 @@
     <h3>📂 Carregar Sessão</h3>
     <p style="color:#777;font-size:0.86rem;margin-bottom:10px;">Os dados atuais serão substituídos pelos dados do arquivo.</p>
     <div class="confirm-info" id="confirm-info-preview"></div>
-    <p style="font-size:0.74rem;color:#999;">Deseja continuar?</p>
     <div class="modal-actions">
       <button class="btn-ghost-neutral" onclick="fecharModal('modal-confirmar-carregar')">Cancelar</button>
       <button class="btn btn-primary" onclick="confirmarCarregar()">✓ Carregar</button>
@@ -681,597 +684,373 @@
 
 <footer>
   <p>© 2026 Criado por <a href="https://www.instagram.com/gugahaynner/">gugahaynner</a> · Para uso exclusivo de Barbara Moreira</p>
-  <p style="margin-top:6px;font-size:0.7rem;color:#bbb;">💾 Dados salvos automaticamente no navegador via IndexedDB</p>
+  <p style="margin-top:6px;font-size:0.7rem;color:#bbb;">💾 Dados salvos automaticamente via IndexedDB · Clique nos cabeçalhos da tabela para ordenar</p>
 </footer>
 
 <script>
 'use strict';
 
-// ═══════════════════════════════════════════════════════
-//  INDEXEDDB — implementação robusta e sem async/await
-// ═══════════════════════════════════════════════════════
-var DB_NAME    = 'RM_FolhaPonto_v3';
+// ══════════════════════════════════════════════
+//  INDEXEDDB
+// ══════════════════════════════════════════════
+var DB_NAME    = 'RM_FolhaPonto_v4';
 var DB_VERSION = 1;
 var db         = null;
 var dbReady    = false;
 
 function initDB(callback) {
-  if (!window.indexedDB) {
-    setDBStatus('err', 'IndexedDB não suportado neste navegador.');
-    if (callback) callback(false);
-    return;
-  }
-
-  var request = window.indexedDB.open(DB_NAME, DB_VERSION);
-
-  request.onupgradeneeded = function(e) {
+  if (!window.indexedDB) { setDBStatus('err','IndexedDB não suportado.'); if(callback) callback(false); return; }
+  var req = window.indexedDB.open(DB_NAME, DB_VERSION);
+  req.onupgradeneeded = function(e) {
     var d = e.target.result;
-    if (!d.objectStoreNames.contains('lancamentos')) {
-      d.createObjectStore('lancamentos', { keyPath: 'id' });
-    }
-    if (!d.objectStoreNames.contains('funcionarios')) {
-      d.createObjectStore('funcionarios', { keyPath: 'id' });
-    }
-    if (!d.objectStoreNames.contains('config')) {
-      d.createObjectStore('config', { keyPath: 'chave' });
-    }
+    if (!d.objectStoreNames.contains('lancamentos'))  d.createObjectStore('lancamentos',  {keyPath:'id'});
+    if (!d.objectStoreNames.contains('funcionarios')) d.createObjectStore('funcionarios', {keyPath:'id'});
+    if (!d.objectStoreNames.contains('config'))       d.createObjectStore('config',       {keyPath:'chave'});
   };
-
-  request.onsuccess = function(e) {
-    db = e.target.result;
-    dbReady = true;
-    setDBStatus('ok', 'IndexedDB conectado — dados salvos automaticamente.');
+  req.onsuccess = function(e) {
+    db = e.target.result; dbReady = true;
+    setDBStatus('ok','IndexedDB conectado.');
     if (callback) callback(true);
   };
-
-  request.onerror = function(e) {
+  req.onerror = function(e) {
     dbReady = false;
-    setDBStatus('err', 'Erro ao abrir IndexedDB: ' + (e.target.error ? e.target.error.message : 'desconhecido'));
+    setDBStatus('err','Erro IndexedDB: '+(e.target.error?e.target.error.message:'desconhecido'));
     if (callback) callback(false);
   };
-
-  request.onblocked = function() {
-    setDBStatus('err', 'IndexedDB bloqueado — feche outras abas do sistema e recarregue.');
-    if (callback) callback(false);
-  };
+  req.onblocked = function() { setDBStatus('err','IndexedDB bloqueado — feche outras abas.'); if(callback) callback(false); };
 }
 
-function dbGetAll(store, callback) {
-  if (!dbReady || !db) { if (callback) callback([]); return; }
-  try {
-    var tx  = db.transaction(store, 'readonly');
-    var req = tx.objectStore(store).getAll();
-    req.onsuccess = function() { if (callback) callback(req.result || []); };
-    req.onerror   = function() { if (callback) callback([]); };
-  } catch(e) { if (callback) callback([]); }
+function dbGetAll(store, cb) {
+  if (!dbReady||!db) { if(cb) cb([]); return; }
+  try { var tx=db.transaction(store,'readonly'); var r=tx.objectStore(store).getAll(); r.onsuccess=function(){if(cb)cb(r.result||[]);}; r.onerror=function(){if(cb)cb([]); }; } catch(e){if(cb)cb([]);}
 }
-
-function dbPut(store, obj, callback) {
-  if (!dbReady || !db) { if (callback) callback(false); return; }
-  try {
-    var tx  = db.transaction(store, 'readwrite');
-    var req = tx.objectStore(store).put(obj);
-    req.onsuccess = function() { if (callback) callback(true); };
-    req.onerror   = function() { if (callback) callback(false); };
-  } catch(e) { if (callback) callback(false); }
+function dbPut(store, obj, cb) {
+  if (!dbReady||!db) { if(cb) cb(false); return; }
+  try { var tx=db.transaction(store,'readwrite'); var r=tx.objectStore(store).put(obj); r.onsuccess=function(){if(cb)cb(true);}; r.onerror=function(){if(cb)cb(false);}; } catch(e){if(cb)cb(false);}
 }
-
-function dbDelete(store, id, callback) {
-  if (!dbReady || !db) { if (callback) callback(false); return; }
-  try {
-    var tx  = db.transaction(store, 'readwrite');
-    var req = tx.objectStore(store).delete(id);
-    req.onsuccess = function() { if (callback) callback(true); };
-    req.onerror   = function() { if (callback) callback(false); };
-  } catch(e) { if (callback) callback(false); }
+function dbDelete(store, id, cb) {
+  if (!dbReady||!db) { if(cb) cb(false); return; }
+  try { var tx=db.transaction(store,'readwrite'); var r=tx.objectStore(store).delete(id); r.onsuccess=function(){if(cb)cb(true);}; r.onerror=function(){if(cb)cb(false);}; } catch(e){if(cb)cb(false);}
 }
-
-function dbClearAll(stores, callback) {
-  if (!dbReady || !db) { if (callback) callback(); return; }
-  var remaining = stores.length;
-  if (remaining === 0) { if (callback) callback(); return; }
-  stores.forEach(function(store) {
-    try {
-      var tx  = db.transaction(store, 'readwrite');
-      var req = tx.objectStore(store).clear();
-      req.onsuccess = function() { remaining--; if (remaining === 0 && callback) callback(); };
-      req.onerror   = function() { remaining--; if (remaining === 0 && callback) callback(); };
-    } catch(e) { remaining--; if (remaining === 0 && callback) callback(); }
+function dbClearAll(stores, cb) {
+  if (!dbReady||!db) { if(cb) cb(); return; }
+  var rem = stores.length;
+  if (!rem) { if(cb) cb(); return; }
+  stores.forEach(function(store){
+    try { var tx=db.transaction(store,'readwrite'); var r=tx.objectStore(store).clear(); r.onsuccess=r.onerror=function(){rem--;if(rem<=0&&cb)cb();}; } catch(e){rem--;if(rem<=0&&cb)cb();}
   });
 }
 
 function setDBStatus(type, msg) {
-  var dot  = document.getElementById('db-dot');
-  var text = document.getElementById('db-status-text');
-  dot.className  = 'db-dot ' + type;
-  text.textContent = msg;
+  document.getElementById('db-dot').className  = 'db-dot '+type;
+  document.getElementById('db-status-text').textContent = msg;
 }
-
 function salvarConfigDB() {
   if (!dbReady) return;
-  dbPut('config', {
-    chave: 'valores',
-    ci_0 : document.getElementById('ci_0').value,
-    ci_1 : document.getElementById('ci_1').value,
-    ci_2 : document.getElementById('ci_2').value,
-    cii_0: document.getElementById('cii_0').value,
-    cii_1: document.getElementById('cii_1').value,
-    cii_2: document.getElementById('cii_2').value
-  });
+  dbPut('config',{ chave:'valores', ci_0:document.getElementById('ci_0').value, ci_1:document.getElementById('ci_1').value, ci_2:document.getElementById('ci_2').value, cii_0:document.getElementById('cii_0').value, cii_1:document.getElementById('cii_1').value, cii_2:document.getElementById('cii_2').value });
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  ESTADO GLOBAL
-// ═══════════════════════════════════════════════════════
-var idCounter     = 1;
-var funcIdCounter = 1;
-var removerIdx    = null;
-var editarIdx     = null;
-var editarFuncId  = null;
-var removerFuncId = null;
-var chipAtivo     = null;
-var lancamentos   = [];
-var funcionarios  = [];
-var sessaoPendente= null;
+// ══════════════════════════════════════════════
+var idCounter      = 1;
+var funcIdCounter  = 1;
+var removerIdx     = null;
+var editarIdx      = null;
+var editarFuncId   = null;
+var removerFuncId  = null;
+var chipAtivo      = null;
+var lancamentos    = [];
+var funcionarios   = [];
+var sessaoPendente = null;
+var sortCol        = 'nome';
+var sortDir        = 'asc';
 
 var MESES = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
-function formatBRL(v) {
-  return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
-}
+function formatBRL(v) { return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function hojeISO() { var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 
-function hojeISO() {
-  var d  = new Date();
-  var y  = d.getFullYear();
-  var m  = String(d.getMonth()+1).padStart(2,'0');
-  var dd = String(d.getDate()).padStart(2,'0');
-  return y + '-' + m + '-' + dd;
-}
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  TABS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function mudarTab(tabId, btn) {
-  document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById(tabId).classList.add('active');
   btn.classList.add('active');
-  if (tabId === 'tab-funcionarios') renderizarFuncionarios();
+  if (tabId==='tab-funcionarios') renderizarFuncionarios();
 }
 
-// ═══════════════════════════════════════════════════════
-//  FUNCIONÁRIOS
-// ═══════════════════════════════════════════════════════
-function iniciais(nome) {
-  var p = nome.trim().split(' ').filter(Boolean);
-  if (!p.length) return '?';
-  if (p.length === 1) return p[0][0].toUpperCase();
-  return (p[0][0] + p[p.length-1][0]).toUpperCase();
-}
-
-function getLancamentosDoFunc(nome) {
-  return lancamentos.filter(function(l){ return l.nome.toLowerCase() === nome.toLowerCase(); }).length;
-}
-
-function renderizarFuncionarios() {
-  var grid  = document.getElementById('func-grid');
-  var busca = (document.getElementById('func-busca').value || '').toLowerCase().trim();
-  var label = document.getElementById('func-total-label');
-  var lista = funcionarios.filter(function(f){
-    return !busca || f.nome.toLowerCase().includes(busca) || (f.funcao||'').toLowerCase().includes(busca);
+// ══════════════════════════════════════════════
+//  ORDENAÇÃO
+// ══════════════════════════════════════════════
+function sortTable(col) {
+  if (sortCol === col) { sortDir = sortDir==='asc'?'desc':'asc'; }
+  else { sortCol = col; sortDir = 'asc'; }
+  // atualizar visuais dos headers
+  document.querySelectorAll('#thead-principal th').forEach(function(th){
+    th.classList.remove('sort-asc','sort-desc');
   });
-  label.textContent = '(' + funcionarios.length + ' cadastrado' + (funcionarios.length!==1?'s':'') + ')';
-  if (lista.length === 0) {
-    grid.innerHTML = '<div class="func-empty">' + (busca ? 'Nenhum resultado para "<strong>'+busca+'</strong>".' : 'Nenhum funcionário cadastrado. Clique em <strong>＋ Novo Funcionário</strong>.') + '</div>';
-    return;
-  }
-  grid.innerHTML = lista.map(function(f){
-    var qtd = getLancamentosDoFunc(f.nome);
-    return '<div class="func-card">' +
-      '<div class="func-avatar">' + iniciais(f.nome) + '</div>' +
-      '<div class="func-info">' +
-        '<div class="func-name" title="'+f.nome+'">' + f.nome + '</div>' +
-        '<div class="func-role">' + (f.funcao || '<span style="color:#ccc;">Sem função</span>') + '</div>' +
-        (f.obs ? '<div class="func-role" style="color:var(--t-gold);">' + f.obs + '</div>' : '') +
-        '<div class="func-lanc-count">' + qtd + ' lançamento' + (qtd!==1?'s':'') + '</div>' +
-      '</div>' +
-      '<div class="func-actions">' +
-        '<button class="btn-ghost" onclick="abrirModalEditarFunc(' + f.id + ')" style="font-size:0.74rem;padding:4px 8px;" title="Editar">✏️</button>' +
-        '<button class="btn-ghost" onclick="abrirModalRemoverFunc(' + f.id + ')" style="border-color:#ccc;color:#888;font-size:0.74rem;padding:4px 8px;" title="Remover">🗑️</button>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function abrirModalFunc() {
-  editarFuncId = null;
-  document.getElementById('f-nome').value   = '';
-  document.getElementById('f-funcao').value = '';
-  document.getElementById('f-obs').value    = '';
-  document.getElementById('modal-func-titulo').textContent = '＋ Novo Funcionário';
-  document.getElementById('modal-func').classList.add('active');
-  setTimeout(function(){ document.getElementById('f-nome').focus(); }, 100);
-}
-
-function abrirModalEditarFunc(id) {
-  var f = funcionarios.find(function(x){ return x.id === id; });
-  if (!f) return;
-  editarFuncId = id;
-  document.getElementById('f-nome').value   = f.nome;
-  document.getElementById('f-funcao').value = f.funcao || '';
-  document.getElementById('f-obs').value    = f.obs    || '';
-  document.getElementById('modal-func-titulo').textContent = '✏️ Editar Funcionário';
-  document.getElementById('modal-func').classList.add('active');
-}
-
-function confirmarSalvarFunc() {
-  var nome   = document.getElementById('f-nome').value.trim();
-  var funcao = document.getElementById('f-funcao').value.trim();
-  var obs    = document.getElementById('f-obs').value.trim();
-  if (!nome) { showToast('⚠️ Informe o nome do funcionário.','error'); return; }
-
-  var dup = funcionarios.find(function(f){ return f.nome.toLowerCase() === nome.toLowerCase() && f.id !== editarFuncId; });
-  if (dup) { showToast('⚠️ Já existe um funcionário com este nome.','warn'); return; }
-
-  var obj;
-  if (editarFuncId !== null) {
-    var idx = funcionarios.findIndex(function(f){ return f.id === editarFuncId; });
-    obj = { id: editarFuncId, nome: nome, funcao: funcao, obs: obs };
-    funcionarios[idx] = obj;
-    dbPut('funcionarios', obj);
-    showToast('✅ ' + nome + ' atualizado!');
-  } else {
-    obj = { id: funcIdCounter++, nome: nome, funcao: funcao, obs: obs };
-    funcionarios.push(obj);
-    dbPut('funcionarios', obj);
-    showToast('✅ ' + nome + ' cadastrado!');
-  }
-
-  atualizarDatalist();
-  renderizarFuncionarios();
-  fecharModal('modal-func');
-  atualizarStatusDB();
-}
-
-function abrirModalRemoverFunc(id) {
-  var f = funcionarios.find(function(x){ return x.id === id; });
-  if (!f) return;
-  removerFuncId = id;
-  document.getElementById('nome-remover-func').textContent = f.nome;
-  document.getElementById('modal-remover-func').classList.add('active');
-}
-
-function confirmarRemoverFunc() {
-  if (removerFuncId === null) return;
-  var f   = funcionarios.find(function(x){ return x.id === removerFuncId; });
-  var idx = funcionarios.findIndex(function(x){ return x.id === removerFuncId; });
-  funcionarios.splice(idx, 1);
-  dbDelete('funcionarios', removerFuncId);
-  removerFuncId = null;
-  fecharModal('modal-remover-func');
-  atualizarDatalist();
-  renderizarFuncionarios();
-  showToast('🗑️ ' + f.nome + ' removido do cadastro.');
-  atualizarStatusDB();
-}
-
-function autoFuncao() {
-  var nome = document.getElementById('m-nome').value.trim().toLowerCase();
-  var f    = funcionarios.find(function(x){ return x.nome.toLowerCase() === nome; });
-  if (f && f.funcao) document.getElementById('m-funcao').value = f.funcao;
-}
-
-function atualizarDatalist() {
-  var dl         = document.getElementById('lista-nomes');
-  var nomesFunc  = funcionarios.map(function(f){ return f.nome; });
-  var nomesLanc  = lancamentos.map(function(l){ return l.nome; });
-  var todos      = [];
-  var seen       = {};
-  nomesFunc.concat(nomesLanc).forEach(function(n){
-    var k = n.toLowerCase();
-    if (!seen[k]) { seen[k]=true; todos.push(n); }
+  // encontrar th clicado pelo onclick
+  document.querySelectorAll('#thead-principal th').forEach(function(th){
+    if (th.getAttribute('onclick')==="sortTable('"+col+"')") {
+      th.classList.add(sortDir==='asc'?'sort-asc':'sort-desc');
+    }
   });
-  todos.sort();
-  dl.innerHTML = todos.map(function(n){ return '<option value="'+n+'">'; }).join('');
+  calcularTudo();
 }
 
-function atualizarStatusDB() {
-  setDBStatus('ok', 'IndexedDB — ' + funcionarios.length + ' func. · ' + lancamentos.length + ' lanç.');
+function aplicarOrdenacao(lista) {
+  return lista.slice().sort(function(a,b){
+    var va, vb;
+    if      (sortCol==='nome')      { va=a.nome.toLowerCase();      vb=b.nome.toLowerCase(); }
+    else if (sortCol==='funcao')    { va=(a.funcao||'').toLowerCase(); vb=(b.funcao||'').toLowerCase(); }
+    else if (sortCol==='mes')       { va=a.ano+a.mes;                vb=b.ano+b.mes; }
+    else if (sortCol==='status')    { va=a.faltas>0?'falta':a.atestados>0?'atestado':a.decl>0?'decl':'ok'; vb=b.faltas>0?'falta':b.atestados>0?'atestado':b.decl>0?'decl':'ok'; }
+    else if (sortCol==='tipo')      { va=a.tipo; vb=b.tipo; }
+    else if (sortCol==='faltas')    { va=a.faltas;    vb=b.faltas;    return sortDir==='asc'?va-vb:vb-va; }
+    else if (sortCol==='atestados') { va=a.atestados; vb=b.atestados; return sortDir==='asc'?va-vb:vb-va; }
+    else if (sortCol==='decl')      { va=a.decl;      vb=b.decl;      return sortDir==='asc'?va-vb:vb-va; }
+    else if (sortCol==='horas')     { va=parseFloat(a.horas)||0; vb=parseFloat(b.horas)||0; return sortDir==='asc'?va-vb:vb-va; }
+    else if (sortCol==='vtDesc')    { va=a.vtDesc; vb=b.vtDesc; return sortDir==='asc'?va-vb:vb-va; }
+    else if (sortCol==='vrDesc')    { va=a.vrDesc; vb=b.vrDesc; return sortDir==='asc'?va-vb:vb-va; }
+    else { va=a.nome.toLowerCase(); vb=b.nome.toLowerCase(); }
+    var r = String(va).localeCompare(String(vb),'pt');
+    return sortDir==='asc'?r:-r;
+  });
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  BUSCA GLOBAL
+// ══════════════════════════════════════════════
+function getBuscaGlobal() {
+  return (document.getElementById('busca-global').value||'').toLowerCase().trim();
+}
+
+function lancamentoPassaBusca(l, busca) {
+  if (!busca) return true;
+  var campos = [
+    l.nome, l.funcao||'', l.tipo||'', l.datas||'',
+    MESES[parseInt(l.mes)], l.ano,
+    l.obs||''
+  ].join(' ').toLowerCase();
+  return campos.includes(busca);
+}
+
+// ══════════════════════════════════════════════
 //  CÁLCULOS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function getCIValor(totalOc, temFalta, descManual) {
-  if (temFalta || descManual) return 0;
-  var v0 = parseFloat(document.getElementById('ci_0').value)  || 0;
-  var v1 = parseFloat(document.getElementById('ci_1').value)  || 0;
-  var v2 = parseFloat(document.getElementById('ci_2').value)  || 0;
-  if (totalOc === 0) return v0;
-  if (totalOc === 1) return v1;
-  if (totalOc === 2) return v2;
-  return 0;
+  if (temFalta||descManual) return 0;
+  var v0=parseFloat(document.getElementById('ci_0').value)||0;
+  var v1=parseFloat(document.getElementById('ci_1').value)||0;
+  var v2=parseFloat(document.getElementById('ci_2').value)||0;
+  if(totalOc===0) return v0; if(totalOc===1) return v1; if(totalOc===2) return v2; return 0;
 }
-
 function getCIIValorMes(totalOcMes, temFaltaMes) {
-  if (temFaltaMes) return 0;
-  var v0 = parseFloat(document.getElementById('cii_0').value) || 252;
-  var v1 = parseFloat(document.getElementById('cii_1').value) || 192;
-  var v2 = parseFloat(document.getElementById('cii_2').value) || 112;
-  if (totalOcMes === 0) return v0;
-  if (totalOcMes === 1) return v1;
-  if (totalOcMes === 2) return v2;
-  return 0;
+  if(temFaltaMes) return 0;
+  var v0=parseFloat(document.getElementById('cii_0').value)||252;
+  var v1=parseFloat(document.getElementById('cii_1').value)||192;
+  var v2=parseFloat(document.getElementById('cii_2').value)||112;
+  if(totalOcMes===0) return v0; if(totalOcMes===1) return v1; if(totalOcMes===2) return v2; return 0;
 }
-
 function getConsolidadoMes(nomeLower, mes, ano) {
-  var grupo = lancamentos.filter(function(l){
-    return l.nome.toLowerCase() === nomeLower && l.mes === mes && l.ano === String(ano);
-  });
+  var grupo=lancamentos.filter(function(l){return l.nome.toLowerCase()===nomeLower&&l.mes===mes&&l.ano===String(ano);});
   var tf=0,ta=0,td=0,tdsr=0,tvt=0,tvr=0,th=0,temFalta=false,descCI=false;
-  grupo.forEach(function(l){
-    tf+=l.faltas; ta+=l.atestados; td+=l.decl; tdsr+=l.dsr;
-    tvt+=l.vtDesc; tvr+=l.vrDesc; th+=parseFloat(l.horas)||0;
-    if(l.faltas>0) temFalta=true;
-    if(l.descCI)   descCI=true;
-  });
-  var totalOcMes = tf+ta+td;
-  return { grupo:grupo,totalFaltas:tf,totalAtestados:ta,totalDecl:td,totalDSR:tdsr,
-    totalVT:tvt,totalVR:tvr,totalHoras:th,temFalta:temFalta,descCI:descCI,totalOcMes:totalOcMes,
-    ciValor:getCIValor(totalOcMes,temFalta,descCI),
-    ciiValor:getCIIValorMes(totalOcMes,temFalta) };
+  grupo.forEach(function(l){tf+=l.faltas;ta+=l.atestados;td+=l.decl;tdsr+=l.dsr;tvt+=l.vtDesc;tvr+=l.vrDesc;th+=parseFloat(l.horas)||0;if(l.faltas>0)temFalta=true;if(l.descCI)descCI=true;});
+  var totalOcMes=tf+ta+td;
+  return {grupo,totalFaltas:tf,totalAtestados:ta,totalDecl:td,totalDSR:tdsr,totalVT:tvt,totalVR:tvr,totalHoras:th,temFalta,descCI,totalOcMes,ciValor:getCIValor(totalOcMes,temFalta,descCI),ciiValor:getCIIValorMes(totalOcMes,temFalta)};
 }
-
 function calcularLinha(l) {
-  var con      = getConsolidadoMes(l.nome.toLowerCase(), l.mes, l.ano);
-  var temFalta = l.faltas > 0;
-  var totalOc  = l.faltas + l.atestados + l.decl;
-  return { temFalta:temFalta, totalOc:totalOc,
-    ciValor:getCIValor(totalOc,temFalta,l.descCI),
-    ciiValor:con.ciiValor };
+  var con=getConsolidadoMes(l.nome.toLowerCase(),l.mes,l.ano);
+  var temFalta=l.faltas>0; var totalOc=l.faltas+l.atestados+l.decl;
+  return {temFalta,totalOc,ciValor:getCIValor(totalOc,temFalta,l.descCI),ciiValor:con.ciiValor,totalOcMes:con.totalOcMes};
 }
 
-// ═══════════════════════════════════════════════════════
-//  SESSÃO JSON
-// ═══════════════════════════════════════════════════════
-function salvarSessao() {
-  if (lancamentos.length === 0 && funcionarios.length === 0) {
-    showToast('⚠️ Nenhum dado para salvar.','warn'); return;
-  }
-  var sessao = {
-    versao:'2.0', savedAt: new Date().toISOString(),
-    config:{
-      ci_0 :document.getElementById('ci_0').value,
-      ci_1 :document.getElementById('ci_1').value,
-      ci_2 :document.getElementById('ci_2').value,
-      cii_0:document.getElementById('cii_0').value,
-      cii_1:document.getElementById('cii_1').value,
-      cii_2:document.getElementById('cii_2').value
-    },
-    funcionarios: funcionarios,
-    lancamentos:  lancamentos
-  };
-  var blob = new Blob([JSON.stringify(sessao,null,2)],{type:'application/json'});
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href = url;
-  a.download = 'RM_Sessao_' + new Date().toISOString().slice(0,10) + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('💾 Sessão salva! ' + funcionarios.length + ' func. · ' + lancamentos.length + ' lanç.');
-}
-
-function carregarSessao(event) {
-  var file = event.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var dados = JSON.parse(e.target.result);
-      if (!dados.lancamentos || !Array.isArray(dados.lancamentos)) {
-        showToast('❌ Arquivo inválido.','error'); return;
-      }
-      sessaoPendente = dados;
-      var dt = dados.savedAt ? new Date(dados.savedAt).toLocaleString('pt-BR') : 'Desconhecida';
-      document.getElementById('confirm-info-preview').innerHTML =
-        '<strong>Arquivo:</strong> ' + file.name + '<br>' +
-        '<strong>Salvo em:</strong> ' + dt + '<br>' +
-        '<strong>Funcionários:</strong> ' + (dados.funcionarios||[]).length + '<br>' +
-        '<strong>Lançamentos:</strong> ' + dados.lancamentos.length;
-      document.getElementById('modal-confirmar-carregar').classList.add('active');
-    } catch(err) { showToast('❌ Erro ao ler o arquivo.','error'); }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-function confirmarCarregar() {
-  if (!sessaoPendente) return;
-  var dados = sessaoPendente;
-  if (dados.config) {
-    ['ci_0','ci_1','ci_2','cii_0','cii_1','cii_2'].forEach(function(id){
-      if (dados.config[id] !== undefined) document.getElementById(id).value = dados.config[id];
-    });
-  }
-  funcionarios = dados.funcionarios || [];
-  lancamentos  = dados.lancamentos  || [];
-  funcIdCounter = funcionarios.reduce(function(m,f){ return Math.max(m,f.id||0); }, 0) + 1;
-  idCounter     = lancamentos.reduce(function(m,l){ return Math.max(m,l.id||0); }, 0) + 1;
-  sessaoPendente = null;
-
-  dbClearAll(['funcionarios','lancamentos','config'], function(){
-    var pending = funcionarios.length + lancamentos.length + 1;
-    var done    = function(){ pending--; if(pending<=0) atualizarStatusDB(); };
-    funcionarios.forEach(function(f){ dbPut('funcionarios',f,done); });
-    lancamentos.forEach(function(l){ dbPut('lancamentos',l,done);   });
-    salvarConfigDB(); done();
+// ══════════════════════════════════════════════
+//  VERIFICAR DUPLICADO
+// ══════════════════════════════════════════════
+function verificarDuplicado() {
+  var nome = document.getElementById('m-nome').value.trim().toLowerCase();
+  var mes  = document.getElementById('m-mes').value;
+  var ano  = document.getElementById('m-ano').value.trim();
+  var box  = document.getElementById('alerta-duplicado');
+  if (!nome||!mes||!ano) { box.style.display='none'; return; }
+  var dup = lancamentos.filter(function(l){
+    return l.nome.toLowerCase()===nome && l.mes===mes && l.ano===ano && (editarIdx===null||lancamentos.indexOf(l)!==editarIdx);
   });
+  if (dup.length>0) {
+    box.style.display='block';
+    box.innerHTML='⚠️ Já existe <strong>'+dup.length+' lançamento(s)</strong> de <strong>'+capitalizar(nome)+'</strong> em '+MESES[parseInt(mes)]+'/'+ano+'. Verifique antes de salvar.';
+  } else {
+    box.style.display='none';
+  }
+}
 
-  var dt = dados.savedAt ? new Date(dados.savedAt).toLocaleString('pt-BR') : '—';
-  document.getElementById('session-info').textContent = lancamentos.length + ' lanç. · ' + funcionarios.length + ' func. · ' + dt;
+// ══════════════════════════════════════════════
+//  INDICADOR LIMITE CESTA
+// ══════════════════════════════════════════════
+function getLimiteBadge(totalOcMes, temFalta) {
+  if (temFalta || totalOcMes>=3) return '<span class="badge-cesta-perda" data-tip="3+ ocorrências: perde cesta">🔴 Perda</span>';
+  if (totalOcMes===2)            return '<span class="badge-cesta-warn"  data-tip="2 ocorrências: atenção!">⚠️ Atenção</span>';
+  if (totalOcMes===1)            return '<span class="badge-cesta-warn"  data-tip="1 ocorrência no mês"   style="background:#fff9e6;color:#8a6d00;">1 oc.</span>';
+  return '<span class="badge-cesta-ok" data-tip="Sem ocorrências">✓ OK</span>';
+}
+
+// ══════════════════════════════════════════════
+//  SESSÃO JSON
+// ══════════════════════════════════════════════
+function salvarSessao() {
+  if (!lancamentos.length&&!funcionarios.length){showToast('⚠️ Nenhum dado para salvar.','warn');return;}
+  var sessao={versao:'3.0',savedAt:new Date().toISOString(),
+    config:{ci_0:document.getElementById('ci_0').value,ci_1:document.getElementById('ci_1').value,ci_2:document.getElementById('ci_2').value,cii_0:document.getElementById('cii_0').value,cii_1:document.getElementById('cii_1').value,cii_2:document.getElementById('cii_2').value},
+    funcionarios:funcionarios,lancamentos:lancamentos};
+  var blob=new Blob([JSON.stringify(sessao,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob); var a=document.createElement('a');
+  a.href=url; a.download='RM_Sessao_'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(url);
+  showToast('💾 Sessão salva!','green');
+}
+function carregarSessao(event) {
+  var file=event.target.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var dados=JSON.parse(e.target.result);
+      if(!dados.lancamentos||!Array.isArray(dados.lancamentos)){showToast('❌ Arquivo inválido.','error');return;}
+      sessaoPendente=dados;
+      var dt=dados.savedAt?new Date(dados.savedAt).toLocaleString('pt-BR'):'Desconhecida';
+      document.getElementById('confirm-info-preview').innerHTML='<strong>Arquivo:</strong> '+file.name+'<br><strong>Salvo em:</strong> '+dt+'<br><strong>Funcionários:</strong> '+(dados.funcionarios||[]).length+'<br><strong>Lançamentos:</strong> '+dados.lancamentos.length;
+      document.getElementById('modal-confirmar-carregar').classList.add('active');
+    }catch(err){showToast('❌ Erro ao ler o arquivo.','error');}
+  };
+  reader.readAsText(file); event.target.value='';
+}
+function confirmarCarregar() {
+  if(!sessaoPendente)return;
+  var dados=sessaoPendente;
+  if(dados.config){['ci_0','ci_1','ci_2','cii_0','cii_1','cii_2'].forEach(function(id){if(dados.config[id]!==undefined)document.getElementById(id).value=dados.config[id];});}
+  funcionarios=dados.funcionarios||[]; lancamentos=dados.lancamentos||[];
+  funcIdCounter=funcionarios.reduce(function(m,f){return Math.max(m,f.id||0);},0)+1;
+  idCounter    =lancamentos.reduce(function(m,l){return Math.max(m,l.id||0);},0)+1;
+  sessaoPendente=null;
+  dbClearAll(['funcionarios','lancamentos','config'],function(){
+    funcionarios.forEach(function(f){dbPut('funcionarios',f);});
+    lancamentos.forEach(function(l){dbPut('lancamentos',l);});
+    salvarConfigDB();
+  });
+  var dt=dados.savedAt?new Date(dados.savedAt).toLocaleString('pt-BR'):'—';
+  document.getElementById('session-info').textContent=lancamentos.length+' lanç. · '+funcionarios.length+' func. · '+dt;
   document.getElementById('session-banner').classList.add('show');
   fecharModal('modal-confirmar-carregar');
   atualizarDatalist(); atualizarChips(); calcularTudo(); renderizarFuncionarios();
-  showToast('📂 Sessão carregada com sucesso!');
+  showToast('📂 Sessão carregada!','green');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  CHIPS / FILTROS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function atualizarChips() {
-  var mes       = document.getElementById('filtro-mes').value;
-  var ano       = document.getElementById('filtro-ano').value;
-  var container = document.getElementById('chips-container');
-  var countEl   = document.getElementById('chips-count');
-  var nomes;
-  if (mes) {
-    nomes = [];
-    var seen = {};
-    lancamentos.forEach(function(l){
-      if (l.mes===mes && l.ano===ano && !seen[l.nome]) { seen[l.nome]=true; nomes.push(l.nome); }
-    });
-    nomes.sort();
-  } else {
-    nomes = [];
-    var seen2 = {};
-    lancamentos.forEach(function(l){ if(!seen2[l.nome]){ seen2[l.nome]=true; nomes.push(l.nome); } });
-    nomes.sort();
-  }
-  countEl.textContent = nomes.length;
-  if (nomes.length === 0) {
-    container.innerHTML = '<span class="chips-empty">' + (mes?'Nenhum funcionário lançado neste mês.':'Nenhum lançamento cadastrado.') + '</span>';
-    chipAtivo = null; return;
-  }
-  if (chipAtivo && nomes.indexOf(chipAtivo) === -1) chipAtivo = null;
-  var html = '<span class="chip todos ' + (!chipAtivo?'active':'') + '" onclick="selecionarChip(null)">Todos</span>';
-  nomes.forEach(function(nome){
-    html += '<span class="chip ' + (chipAtivo===nome?'active':'') + '" onclick="selecionarChip(\'' + nome.replace(/'/g,"\\'") + '\')">' + nome + '</span>';
+  var mes=document.getElementById('filtro-mes').value;
+  var ano=document.getElementById('filtro-ano').value;
+  var container=document.getElementById('chips-container');
+  var countEl=document.getElementById('chips-count');
+  var nomes=[]; var seen={};
+  lancamentos.forEach(function(l){
+    if((!mes||(l.mes===mes&&l.ano===ano))&&!seen[l.nome]){seen[l.nome]=true;nomes.push(l.nome);}
   });
-  container.innerHTML = html;
+  nomes.sort();
+  countEl.textContent=nomes.length;
+  if(!nomes.length){container.innerHTML='<span class="chips-empty">'+(mes?'Nenhum funcionário lançado neste mês.':'Nenhum lançamento cadastrado.')+'</span>';chipAtivo=null;return;}
+  if(chipAtivo&&nomes.indexOf(chipAtivo)===-1) chipAtivo=null;
+  var html='<span class="chip todos '+((!chipAtivo)?'active':'')+'" onclick="selecionarChip(null)">Todos</span>';
+  nomes.forEach(function(n){html+='<span class="chip '+(chipAtivo===n?'active':'')+'" onclick="selecionarChip(\''+n.replace(/'/g,"\\'")+'\')">' +n+'</span>';});
+  container.innerHTML=html;
 }
+function selecionarChip(nome){chipAtivo=nome;atualizarChips();aplicarFiltros();}
+function getFiltros(){return{nome:chipAtivo?chipAtivo.toLowerCase():'',mes:document.getElementById('filtro-mes').value,ano:document.getElementById('filtro-ano').value.trim()};}
+function aplicarFiltros(){calcularTudo();}
+function limparFiltros(){document.getElementById('filtro-mes').value='';document.getElementById('filtro-ano').value='2026';document.getElementById('busca-global').value='';chipAtivo=null;atualizarChips();calcularTudo();}
+function lancamentoPassaFiltro(l,f){return(!f.nome||l.nome.toLowerCase()===f.nome)&&(!f.mes||l.mes===f.mes)&&(!f.ano||l.ano===f.ano);}
+function capitalizar(s){return s.split(' ').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1);}).join(' ');}
 
-function selecionarChip(nome) { chipAtivo = nome; atualizarChips(); aplicarFiltros(); }
-function getFiltros() {
-  return {
-    nome: chipAtivo ? chipAtivo.toLowerCase() : '',
-    mes:  document.getElementById('filtro-mes').value,
-    ano:  document.getElementById('filtro-ano').value.trim()
-  };
-}
-function aplicarFiltros() { calcularTudo(); }
-function limparFiltros() {
-  document.getElementById('filtro-mes').value = '';
-  document.getElementById('filtro-ano').value = '2026';
-  chipAtivo = null; atualizarChips(); calcularTudo();
-}
-function lancamentoPassaFiltro(l, f) {
-  return (!f.nome || l.nome.toLowerCase()===f.nome) &&
-         (!f.mes  || l.mes===f.mes) &&
-         (!f.ano  || l.ano===f.ano);
-}
-function capitalizar(s) {
-  return s.split(' ').map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1); }).join(' ');
-}
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  RESUMO CONSOLIDADO
-// ═══════════════════════════════════════════════════════
-function atualizarResumoConsolidado(filtrados, f) {
-  var box = document.getElementById('resumo-consolidado');
-  if ((!f.nome && !f.mes) || filtrados.length === 0) { box.style.display='none'; return; }
-  box.style.display = 'block';
-  var titulo = '📊 Resultado Consolidado';
-  if (f.nome && f.mes) titulo += ' — ' + capitalizar(f.nome) + ' · ' + MESES[parseInt(f.mes)] + '/' + f.ano;
-  else if (f.nome)     titulo += ' — ' + capitalizar(f.nome);
-  else if (f.mes)      titulo += ' — ' + MESES[parseInt(f.mes)] + '/' + f.ano;
-  document.getElementById('resumo-titulo').textContent = titulo;
+// ══════════════════════════════════════════════
+function atualizarResumoConsolidado(filtrados,f){
+  var box=document.getElementById('resumo-consolidado');
+  if((!f.nome&&!f.mes)||!filtrados.length){box.style.display='none';return;}
+  box.style.display='block';
+  var titulo='📊 Resultado Consolidado';
+  if(f.nome&&f.mes) titulo+=' — '+capitalizar(f.nome)+' · '+MESES[parseInt(f.mes)]+'/'+f.ano;
+  else if(f.nome)   titulo+=' — '+capitalizar(f.nome);
+  else if(f.mes)    titulo+=' — '+MESES[parseInt(f.mes)]+'/'+f.ano;
+  document.getElementById('resumo-titulo').textContent=titulo;
   var tf=0,ta=0,td=0,tdsr=0,tvt=0,tvr=0,th=0,temFaltaMes=false,descManualCI=false;
-  filtrados.forEach(function(l){
-    tf+=l.faltas; ta+=l.atestados; td+=l.decl; tdsr+=l.dsr; tvt+=l.vtDesc; tvr+=l.vrDesc;
-    th+=parseFloat(l.horas)||0;
-    if(l.faltas>0) temFaltaMes=true;
-    if(l.descCI)   descManualCI=true;
-  });
-  var totalOcMes = tf+ta+td;
-  var ciValor    = getCIValor(totalOcMes, temFaltaMes, descManualCI);
-  var ciiValor   = getCIIValorMes(totalOcMes, temFaltaMes);
-  document.getElementById('r-faltas').textContent      = tf;
-  document.getElementById('r-atestados').textContent   = ta;
-  document.getElementById('r-decl').textContent        = td;
-  document.getElementById('r-dsr').textContent         = tdsr;
-  document.getElementById('r-vt').textContent          = tvt;
-  document.getElementById('r-vr').textContent          = tvr;
-  document.getElementById('r-horas').textContent       = th+'h';
-  document.getElementById('r-lancamentos').textContent = filtrados.length;
-  var ciEl = document.getElementById('r-ci');
-  ciEl.textContent = formatBRL(ciValor);
-  ciEl.className   = 'cb-val' + (ciValor===0?' zero':'');
-  document.getElementById('r-ci-obs').textContent = temFaltaMes ? 'Falta no mês — R$ 0,00' : descManualCI ? 'Desconto manual aplicado' : totalOcMes===0 ? 'Sem ocorrências — valor integral' : totalOcMes+' ocorrência(s) no mês';
-  var ciiEl = document.getElementById('r-cii');
-  ciiEl.textContent = formatBRL(ciiValor);
-  ciiEl.className   = 'cb-val' + (ciiValor===0?' zero':'');
-  document.getElementById('r-cii-obs').textContent = temFaltaMes ? 'Falta detectada — R$ 0,00' : totalOcMes+' ocorrência(s) total';
+  filtrados.forEach(function(l){tf+=l.faltas;ta+=l.atestados;td+=l.decl;tdsr+=l.dsr;tvt+=l.vtDesc;tvr+=l.vrDesc;th+=parseFloat(l.horas)||0;if(l.faltas>0)temFaltaMes=true;if(l.descCI)descManualCI=true;});
+  var totalOcMes=tf+ta+td;
+  var ciValor=getCIValor(totalOcMes,temFaltaMes,descManualCI);
+  var ciiValor=getCIIValorMes(totalOcMes,temFaltaMes);
+  document.getElementById('r-faltas').textContent=tf;
+  document.getElementById('r-atestados').textContent=ta;
+  document.getElementById('r-decl').textContent=td;
+  document.getElementById('r-dsr').textContent=tdsr;
+  document.getElementById('r-vt').textContent=tvt;
+  document.getElementById('r-vr').textContent=tvr;
+  document.getElementById('r-horas').textContent=th+'h';
+  document.getElementById('r-lancamentos').textContent=filtrados.length;
+  var ciEl=document.getElementById('r-ci');
+  ciEl.textContent=formatBRL(ciValor); ciEl.className='cb-val'+(ciValor===0?' zero':'');
+  document.getElementById('r-ci-obs').textContent=temFaltaMes?'Falta no mês — R$ 0,00':descManualCI?'Desconto manual aplicado':totalOcMes===0?'Sem ocorrências — integral':totalOcMes+' ocorrência(s)';
+  var ciiEl=document.getElementById('r-cii');
+  ciiEl.textContent=formatBRL(ciiValor); ciiEl.className='cb-val'+(ciiValor===0?' zero':'');
+  document.getElementById('r-cii-obs').textContent=temFaltaMes?'Falta — R$ 0,00':totalOcMes+' ocorrência(s) total';
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  TABELA
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function renderizarTabela() {
-  var tbody    = document.getElementById('tabela-body');
-  var f        = getFiltros();
-  var filtrados= lancamentos.filter(function(l){ return lancamentoPassaFiltro(l,f); });
-  document.getElementById('contador-label').textContent = (f.nome||f.mes) ? '('+filtrados.length+' de '+lancamentos.length+')' : '('+lancamentos.length+')';
-  atualizarResumoConsolidado(filtrados, f);
-  if (lancamentos.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="17" class="empty-state">Nenhum lançamento cadastrado. Clique em <strong>＋ Novo Lançamento</strong>.</td></tr>';
-    atualizarSummary(); return;
-  }
-  if (filtrados.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="17" class="empty-state">Nenhum lançamento encontrado para o filtro selecionado.</td></tr>';
-    atualizarSummary(); return;
-  }
-  tbody.innerHTML = '';
-  var ordenados = filtrados.slice().sort(function(a,b){
-    var nc = a.nome.localeCompare(b.nome,'pt');
-    if (nc!==0) return nc;
-    if (a.ano!==b.ano) return a.ano.localeCompare(b.ano);
-    return a.mes.localeCompare(b.mes);
-  });
-  var num = 1;
+  var tbody=document.getElementById('tabela-body');
+  var f=getFiltros();
+  var busca=getBuscaGlobal();
+  var filtrados=lancamentos.filter(function(l){return lancamentoPassaFiltro(l,f)&&lancamentoPassaBusca(l,busca);});
+  document.getElementById('contador-label').textContent=(f.nome||f.mes||busca)?'('+filtrados.length+' de '+lancamentos.length+')':'('+lancamentos.length+')';
+  atualizarResumoConsolidado(filtrados,f);
+  if(!lancamentos.length){tbody.innerHTML='<tr><td colspan="19" class="empty-state">Nenhum lançamento cadastrado. Clique em <strong>＋ Novo Lançamento</strong>.</td></tr>';atualizarSummary();return;}
+  if(!filtrados.length){tbody.innerHTML='<tr><td colspan="19" class="empty-state">Nenhum resultado para o filtro/busca aplicado.</td></tr>';atualizarSummary();return;}
+  tbody.innerHTML='';
+  var ordenados=aplicarOrdenacao(filtrados);
+  var num=1;
   ordenados.forEach(function(l){
-    var idx       = lancamentos.indexOf(l);
-    var calc      = calcularLinha(l);
-    var ciValor   = calc.ciValor;
-    var ciiValor  = calc.ciiValor;
-    var highlighted = !!(f.nome || f.mes);
-    var statusBadge = '';
-    if (!l.trabalhou) statusBadge = '<span class="badge-falta">✗ Afastado</span>';
-    else if (l.faltas===0&&l.atestados===0&&l.decl===0) statusBadge = '<span class="badge-ok">✓ Presente</span>';
-    else if (l.faltas>0)    statusBadge = '<span class="badge-falta">✗ Falta</span>';
-    else if (l.atestados>0) statusBadge = '<span class="badge-atestado">📄 Atestado</span>';
-    else                    statusBadge = '<span class="badge-decl">📋 Declaração</span>';
-    var tipoBadge = '';
-    if      (l.tipo==='falta')    tipoBadge = '<span class="badge-falta">Falta</span>';
-    else if (l.tipo==='atestado') tipoBadge = '<span class="badge-atestado">Atestado</span>';
-    else if (l.tipo==='decl')     tipoBadge = '<span class="badge-decl">Declaração</span>';
-    else                          tipoBadge = '<span class="td-zero">—</span>';
-    var dsrBadge = l.dsr>0 ? '<span class="badge-dsr">'+l.dsr+'d</span>' : '<span class="td-zero">—</span>';
-    var mesBadge = '<span class="badge-mes">'+MESES[parseInt(l.mes)]+'/'+l.ano+'</span>';
-    var ciLabel  = '<span class="'+(ciValor>0?'td-warn':'td-cii-zero')+'">'  +formatBRL(ciValor) +'</span>';
-    var ciiLabel = '<span class="'+(ciiValor>0?'td-cii-final':'td-cii-zero')+'">'+formatBRL(ciiValor)+'</span>';
-    var dataFmt  = '—';
-    if (l.dataOcorrencia) { var p=l.dataOcorrencia.split('-'); dataFmt=p[2]+'/'+p[1]+'/'+p[0]; }
-    var datasExibir = l.datas ? (dataFmt!=='—' ? dataFmt+', '+l.datas : l.datas) : dataFmt;
-    var tr = document.createElement('tr');
-    if (highlighted) tr.classList.add('tr-highlighted');
-    tr.innerHTML =
+    var idx=lancamentos.indexOf(l);
+    var calc=calcularLinha(l);
+    var highlighted=!!(f.nome||f.mes||busca);
+    var statusBadge='';
+    if(!l.trabalhou)                          statusBadge='<span class="badge-falta">✗ Afastado</span>';
+    else if(!l.faltas&&!l.atestados&&!l.decl) statusBadge='<span class="badge-ok">✓ Presente</span>';
+    else if(l.faltas>0)                       statusBadge='<span class="badge-falta">✗ Falta</span>';
+    else if(l.atestados>0)                    statusBadge='<span class="badge-atestado">📄 Atestado</span>';
+    else                                      statusBadge='<span class="badge-decl">📋 Declaração</span>';
+    var tipoBadge=l.tipo==='falta'?'<span class="badge-falta">Falta</span>':l.tipo==='atestado'?'<span class="badge-atestado">Atestado</span>':l.tipo==='decl'?'<span class="badge-decl">Declaração</span>':'<span class="td-zero">—</span>';
+    var dsrBadge=l.dsr>0?'<span class="badge-dsr">'+l.dsr+'d</span>':'<span class="td-zero">—</span>';
+    var mesBadge='<span class="badge-mes">'+MESES[parseInt(l.mes)]+'/'+l.ano+'</span>';
+    var ciLabel='<span class="'+(calc.ciValor>0?'td-warn':'td-cii-zero')+'">'+formatBRL(calc.ciValor)+'</span>';
+    var ciiLabel='<span class="'+(calc.ciiValor>0?'td-cii-final':'td-cii-zero')+'">'+formatBRL(calc.ciiValor)+'</span>';
+    var dataFmt='—'; if(l.dataOcorrencia){var p=l.dataOcorrencia.split('-');dataFmt=p[2]+'/'+p[1]+'/'+p[0];}
+    var datasExibir=l.datas?(dataFmt!=='—'?dataFmt+', '+l.datas:l.datas):dataFmt;
+    var limiteBadge=getLimiteBadge(calc.totalOcMes, calc.temFalta);
+    var obsExibir=l.obs?('<span style="max-width:160px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle;color:var(--text-sub);font-size:0.72rem;" title="'+l.obs+'">📝 '+l.obs+'</span>'):'<span class="td-zero">—</span>';
+    var tr=document.createElement('tr');
+    if(highlighted) tr.classList.add('tr-highlighted');
+    tr.innerHTML=
       '<td>'+num+'</td>'+
       '<td class="td-name">'+l.nome+'</td>'+
       '<td class="td-func">'+(l.funcao||'<span class="td-zero">—</span>')+'</td>'+
       '<td>'+mesBadge+'</td>'+
       '<td>'+statusBadge+'</td>'+
       '<td>'+tipoBadge+'</td>'+
-      '<td style="font-size:0.72rem;color:#888;max-width:130px;overflow:hidden;text-overflow:ellipsis;" title="'+datasExibir+'">'+(datasExibir||'—')+'</td>'+
+      '<td style="font-size:0.72rem;color:#888;max-width:120px;overflow:hidden;text-overflow:ellipsis;" title="'+datasExibir+'">'+datasExibir+'</td>'+
       '<td style="text-align:center;">'+(l.faltas>0?'<span class="badge-falta">'+l.faltas+'</span>':'<span class="td-zero">0</span>')+'</td>'+
       '<td style="text-align:center;">'+dsrBadge+'</td>'+
       '<td style="text-align:center;">'+(l.atestados>0?'<span class="badge-atestado">'+l.atestados+'</span>':'<span class="td-zero">0</span>')+'</td>'+
@@ -1281,10 +1060,12 @@ function renderizarTabela() {
       '<td style="text-align:center;">'+(l.vrDesc>0?'<span class="td-desc">'+l.vrDesc+'d</span>':'<span class="td-zero">—</span>')+'</td>'+
       '<td style="text-align:right;">'+ciLabel+'</td>'+
       '<td style="text-align:right;">'+ciiLabel+'</td>'+
-      '<td><div style="display:flex;gap:4px;flex-wrap:wrap;">'+
-        '<button class="btn-ghost" onclick="abrirModalEditar('+idx+')" style="border-color:#ccc;color:#555;font-size:0.7rem;padding:4px 8px;" title="Editar">✏️</button>'+
-        '<button class="btn-ghost" onclick="duplicarLancamento('+idx+')" style="border-color:var(--t-gold);color:var(--t-gold);font-size:0.7rem;padding:4px 8px;" title="Duplicar">📋</button>'+
-        '<button class="btn-ghost" onclick="abrirModalRemover('+idx+')" style="font-size:0.7rem;padding:4px 8px;" title="Remover">🗑️</button>'+
+      '<td style="text-align:center;">'+limiteBadge+'</td>'+
+      '<td>'+obsExibir+'</td>'+
+      '<td><div style="display:flex;gap:4px;">'+
+        '<button class="btn-ghost" onclick="abrirModalEditar('+idx+')" style="border-color:#ccc;color:#555;font-size:0.7rem;padding:4px 7px;" title="Editar">✏️</button>'+
+        '<button class="btn-ghost" onclick="duplicarLancamento('+idx+')" style="border-color:var(--t-gold);color:var(--t-gold);font-size:0.7rem;padding:4px 7px;" title="Duplicar">📋</button>'+
+        '<button class="btn-ghost" onclick="abrirModalRemover('+idx+')" style="font-size:0.7rem;padding:4px 7px;" title="Remover">🗑️</button>'+
       '</div></td>';
     num++;
     tbody.appendChild(tr);
@@ -1293,307 +1074,296 @@ function renderizarTabela() {
 }
 
 function atualizarSummary() {
-  var nomes = {};
-  var tf=0,ta=0,td=0,tvt=0,tvr=0,tdsr=0;
-  lancamentos.forEach(function(l){
-    nomes[l.nome.toLowerCase()] = true;
-    tf+=l.faltas; ta+=l.atestados; td+=l.decl; tvt+=l.vtDesc; tvr+=l.vrDesc; tdsr+=l.dsr;
-  });
-  document.getElementById('sum-total-lanc').textContent      = lancamentos.length;
-  document.getElementById('sum-total-func').textContent      = Object.keys(nomes).length;
-  document.getElementById('sum-total-faltas').textContent    = tf;
-  document.getElementById('sum-total-atestados').textContent = ta;
-  document.getElementById('sum-total-decl').textContent      = td;
-  document.getElementById('sum-desc-vt').textContent         = tvt;
-  document.getElementById('sum-desc-vr').textContent         = tvr;
-  document.getElementById('sum-dsr').textContent             = tdsr;
+  var nomes={}; var tf=0,ta=0,td=0,tvt=0,tvr=0,tdsr=0;
+  lancamentos.forEach(function(l){nomes[l.nome.toLowerCase()]=true;tf+=l.faltas;ta+=l.atestados;td+=l.decl;tvt+=l.vtDesc;tvr+=l.vrDesc;tdsr+=l.dsr;});
+  document.getElementById('sum-total-lanc').textContent=lancamentos.length;
+  document.getElementById('sum-total-func').textContent=Object.keys(nomes).length;
+  document.getElementById('sum-total-faltas').textContent=tf;
+  document.getElementById('sum-total-atestados').textContent=ta;
+  document.getElementById('sum-total-decl').textContent=td;
+  document.getElementById('sum-desc-vt').textContent=tvt;
+  document.getElementById('sum-desc-vr').textContent=tvr;
+  document.getElementById('sum-dsr').textContent=tdsr;
+}
+function calcularTudo(){renderizarTabela();}
+
+// ══════════════════════════════════════════════
+//  FUNCIONÁRIOS
+// ══════════════════════════════════════════════
+function iniciais(nome){var p=nome.trim().split(' ').filter(Boolean);if(!p.length)return'?';if(p.length===1)return p[0][0].toUpperCase();return(p[0][0]+p[p.length-1][0]).toUpperCase();}
+function getLancamentosDoFunc(nome){return lancamentos.filter(function(l){return l.nome.toLowerCase()===nome.toLowerCase();}).length;}
+
+function renderizarFuncionarios() {
+  var grid=document.getElementById('func-grid');
+  var busca=(document.getElementById('func-busca').value||'').toLowerCase().trim();
+  var label=document.getElementById('func-total-label');
+  var lista=funcionarios.filter(function(f){return!busca||f.nome.toLowerCase().includes(busca)||(f.funcao||'').toLowerCase().includes(busca);});
+  label.textContent='('+funcionarios.length+' cadastrado'+(funcionarios.length!==1?'s':'')+')';
+  if(!lista.length){grid.innerHTML='<div class="func-empty">'+(busca?'Nenhum resultado para "<strong>'+busca+'</strong>".':'Nenhum funcionário cadastrado. Clique em <strong>＋ Novo Funcionário</strong>.')+'</div>';return;}
+  grid.innerHTML=lista.map(function(f){
+    var qtd=getLancamentosDoFunc(f.nome);
+    return '<div class="func-card">'+
+      '<div class="func-avatar">'+iniciais(f.nome)+'</div>'+
+      '<div class="func-info">'+
+        '<div class="func-name" title="'+f.nome+'">'+f.nome+'</div>'+
+        '<div class="func-role">'+(f.funcao||'<span style="color:#ccc;">Sem função</span>')+'</div>'+
+        (f.obs?'<div class="func-role" style="color:var(--t-gold);">'+f.obs+'</div>':'')+
+        '<div class="func-lanc-count">'+qtd+' lançamento'+(qtd!==1?'s':'')+'</div>'+
+      '</div>'+
+      '<div class="func-actions">'+
+        '<button class="btn-ghost" onclick="abrirModalEditarFunc('+f.id+')" style="font-size:0.74rem;padding:4px 8px;">✏️</button>'+
+        '<button class="btn-ghost" onclick="abrirModalRemoverFunc('+f.id+')" style="border-color:#ccc;color:#888;font-size:0.74rem;padding:4px 8px;">🗑️</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 
-function calcularTudo() { renderizarTabela(); }
+function abrirModalFunc(){editarFuncId=null;document.getElementById('f-nome').value='';document.getElementById('f-funcao').value='';document.getElementById('f-obs').value='';document.getElementById('modal-func-titulo').textContent='＋ Novo Funcionário';document.getElementById('modal-func').classList.add('active');setTimeout(function(){document.getElementById('f-nome').focus();},100);}
+function abrirModalEditarFunc(id){var f=funcionarios.find(function(x){return x.id===id;});if(!f)return;editarFuncId=id;document.getElementById('f-nome').value=f.nome;document.getElementById('f-funcao').value=f.funcao||'';document.getElementById('f-obs').value=f.obs||'';document.getElementById('modal-func-titulo').textContent='✏️ Editar Funcionário';document.getElementById('modal-func').classList.add('active');}
+function confirmarSalvarFunc(){
+  var nome=document.getElementById('f-nome').value.trim();
+  var funcao=document.getElementById('f-funcao').value.trim();
+  var obs=document.getElementById('f-obs').value.trim();
+  if(!nome){showToast('⚠️ Informe o nome.','error');return;}
+  var dup=funcionarios.find(function(f){return f.nome.toLowerCase()===nome.toLowerCase()&&f.id!==editarFuncId;});
+  if(dup){showToast('⚠️ Nome já cadastrado.','warn');return;}
+  var obj;
+  if(editarFuncId!==null){var idx=funcionarios.findIndex(function(f){return f.id===editarFuncId;});obj={id:editarFuncId,nome,funcao,obs};funcionarios[idx]=obj;dbPut('funcionarios',obj);showToast('✅ '+nome+' atualizado!');}
+  else{obj={id:funcIdCounter++,nome,funcao,obs};funcionarios.push(obj);dbPut('funcionarios',obj);showToast('✅ '+nome+' cadastrado!','green');}
+  atualizarDatalist();renderizarFuncionarios();fecharModal('modal-func');atualizarStatusDB();
+}
+function abrirModalRemoverFunc(id){var f=funcionarios.find(function(x){return x.id===id;});if(!f)return;removerFuncId=id;document.getElementById('nome-remover-func').textContent=f.nome;document.getElementById('modal-remover-func').classList.add('active');}
+function confirmarRemoverFunc(){if(removerFuncId===null)return;var f=funcionarios.find(function(x){return x.id===removerFuncId;});var idx=funcionarios.findIndex(function(x){return x.id===removerFuncId;});funcionarios.splice(idx,1);dbDelete('funcionarios',removerFuncId);removerFuncId=null;fecharModal('modal-remover-func');atualizarDatalist();renderizarFuncionarios();showToast('🗑️ '+f.nome+' removido.');atualizarStatusDB();}
 
-// ═══════════════════════════════════════════════════════
+function autoFuncao(){var nome=document.getElementById('m-nome').value.trim().toLowerCase();var f=funcionarios.find(function(x){return x.nome.toLowerCase()===nome;});if(f&&f.funcao)document.getElementById('m-funcao').value=f.funcao;}
+function atualizarDatalist(){var dl=document.getElementById('lista-nomes');var nf=funcionarios.map(function(f){return f.nome;});var nl=lancamentos.map(function(l){return l.nome;});var todos=[];var seen={};nf.concat(nl).forEach(function(n){var k=n.toLowerCase();if(!seen[k]){seen[k]=true;todos.push(n);}});todos.sort();dl.innerHTML=todos.map(function(n){return'<option value="'+n+'">';}).join('');}
+function atualizarStatusDB(){setDBStatus('ok','IndexedDB — '+funcionarios.length+' func. · '+lancamentos.length+' lanç.');}
+
+// ══════════════════════════════════════════════
+//  MODAL LANÇAMENTO — DIRTY CHECK
+// ══════════════════════════════════════════════
+function modalTemDados(){
+  return !!(document.getElementById('m-nome').value.trim()||
+            document.getElementById('m-datas').value.trim()||
+            parseInt(document.getElementById('m-faltas').value)||
+            parseInt(document.getElementById('m-atestados').value)||
+            parseInt(document.getElementById('m-decl').value)||
+            document.getElementById('m-obs').value.trim());
+}
+function tentarFecharModal(){
+  if(editarIdx===null&&modalTemDados()){
+    document.getElementById('dirty-overlay').classList.add('show');
+  } else {
+    fecharModal('modal-adicionar');
+  }
+}
+function hideDirtyOverlay(){document.getElementById('dirty-overlay').classList.remove('show');}
+function forcarFecharModal(){hideDirtyOverlay();fecharModal('modal-adicionar');}
+
+// ══════════════════════════════════════════════
 //  MODAL LANÇAMENTO
-// ═══════════════════════════════════════════════════════
-function toggleTrabalhou() {
-  var trab  = document.getElementById('m-trabalhou').checked;
-  var bloco = document.getElementById('bloco-jornada');
-  var label = document.getElementById('trabalhou-label');
-  bloco.style.opacity      = trab ? '1' : '0.4';
-  bloco.style.pointerEvents= trab ? 'auto' : 'none';
-  label.textContent  = trab ? 'Trabalhou' : 'Não trabalhou';
-  label.className    = 'toggle-status ' + (trab ? 'sim' : 'nao');
-}
+// ══════════════════════════════════════════════
+function toggleTrabalhou(){var trab=document.getElementById('m-trabalhou').checked;var bloco=document.getElementById('bloco-jornada');var label=document.getElementById('trabalhou-label');bloco.style.opacity=trab?'1':'0.4';bloco.style.pointerEvents=trab?'auto':'none';label.textContent=trab?'Trabalhou':'Não trabalhou';label.className='toggle-status '+(trab?'sim':'nao');}
+function atualizarInfoCI(){var f=parseInt(document.getElementById('m-faltas').value)||0;document.getElementById('info-ci-falta').style.display=f>0?'block':'none';}
 
-function atualizarInfoCI() {
-  var f = parseInt(document.getElementById('m-faltas').value) || 0;
-  document.getElementById('info-ci-falta').style.display = f > 0 ? 'block' : 'none';
-}
-
-function preencherModal(l) {
-  document.getElementById('m-nome').value           = l.nome;
-  document.getElementById('m-funcao').value         = l.funcao || '';
-  document.getElementById('m-mes').value            = l.mes;
-  document.getElementById('m-ano').value            = l.ano;
-  document.getElementById('m-tipo').value           = l.tipo;
-  document.getElementById('m-data-ocorrencia').value= l.dataOcorrencia || '';
-  document.getElementById('m-datas').value          = l.datas || '';
-  document.getElementById('m-faltas').value         = l.faltas;
-  document.getElementById('m-dsr').value            = l.dsr;
-  document.getElementById('m-atestados').value      = l.atestados;
-  document.getElementById('m-decl').value           = l.decl;
-  document.getElementById('m-trabalhou').checked    = l.trabalhou;
-  document.getElementById('m-horas').value          = l.horas;
-  document.getElementById('m-vt').value             = l.vtDesc;
-  document.getElementById('m-vr').value             = l.vrDesc;
-  document.getElementById('m-desc-ci').checked      = l.descCI;
+function preencherModal(l){
+  document.getElementById('m-nome').value=l.nome;
+  document.getElementById('m-funcao').value=l.funcao||'';
+  document.getElementById('m-mes').value=l.mes;
+  document.getElementById('m-ano').value=l.ano;
+  document.getElementById('m-tipo').value=l.tipo;
+  document.getElementById('m-data-ocorrencia').value=l.dataOcorrencia||'';
+  document.getElementById('m-datas').value=l.datas||'';
+  document.getElementById('m-faltas').value=l.faltas;
+  document.getElementById('m-dsr').value=l.dsr;
+  document.getElementById('m-atestados').value=l.atestados;
+  document.getElementById('m-decl').value=l.decl;
+  document.getElementById('m-trabalhou').checked=l.trabalhou;
+  document.getElementById('m-horas').value=l.horas;
+  document.getElementById('m-vt').value=l.vtDesc;
+  document.getElementById('m-vr').value=l.vrDesc;
+  document.getElementById('m-desc-ci').checked=l.descCI;
+  document.getElementById('m-obs').value=l.obs||'';
   toggleTrabalhou(); atualizarInfoCI();
 }
 
-function abrirModalAdicionar() {
-  editarIdx = null;
-  limparModal();
-  var agora = new Date();
-  document.getElementById('m-mes').value            = String(agora.getMonth()+1).padStart(2,'0');
-  document.getElementById('m-ano').value            = agora.getFullYear();
-  document.getElementById('m-data-ocorrencia').value= hojeISO();
-  document.getElementById('modal-titulo').textContent = '➕ Novo Lançamento';
+function abrirModalAdicionar(){
+  editarIdx=null; limparModal();
+  var agora=new Date();
+  document.getElementById('m-mes').value=String(agora.getMonth()+1).padStart(2,'0');
+  document.getElementById('m-ano').value=agora.getFullYear();
+  document.getElementById('m-data-ocorrencia').value=hojeISO();
+  document.getElementById('modal-titulo').textContent='➕ Novo Lançamento';
+  document.getElementById('alerta-duplicado').style.display='none';
   document.getElementById('modal-adicionar').classList.add('active');
-  setTimeout(function(){ document.getElementById('m-nome').focus(); }, 100);
+  setTimeout(function(){document.getElementById('m-nome').focus();},100);
 }
-
-function abrirModalEditar(idx) {
-  editarIdx = idx;
-  preencherModal(lancamentos[idx]);
-  document.getElementById('modal-titulo').textContent = '✏️ Editar Lançamento';
+function abrirModalEditar(idx){
+  editarIdx=idx; preencherModal(lancamentos[idx]);
+  document.getElementById('modal-titulo').textContent='✏️ Editar Lançamento';
+  document.getElementById('alerta-duplicado').style.display='none';
   document.getElementById('modal-adicionar').classList.add('active');
 }
-
-function duplicarLancamento(idx) {
-  editarIdx = null;
-  preencherModal(lancamentos[idx]);
-  document.getElementById('modal-titulo').textContent = '📋 Duplicar — edite e salve como novo';
+function duplicarLancamento(idx){
+  editarIdx=null; preencherModal(lancamentos[idx]);
+  document.getElementById('modal-titulo').textContent='📋 Duplicar — edite e salve como novo';
+  document.getElementById('alerta-duplicado').style.display='none';
   document.getElementById('modal-adicionar').classList.add('active');
   showToast('📋 Formulário preenchido — edite o que precisar e salve.','warn');
 }
-
-function limparModal() {
-  document.getElementById('m-nome').value            = '';
-  document.getElementById('m-funcao').value          = '';
-  document.getElementById('m-tipo').value            = 'nenhuma';
-  document.getElementById('m-data-ocorrencia').value = '';
-  document.getElementById('m-datas').value           = '';
-  document.getElementById('m-faltas').value          = '0';
-  document.getElementById('m-dsr').value             = '0';
-  document.getElementById('m-atestados').value       = '0';
-  document.getElementById('m-decl').value            = '0';
-  document.getElementById('m-trabalhou').checked     = false;
-  document.getElementById('m-horas').value           = '0';
-  document.getElementById('m-vt').value              = '0';
-  document.getElementById('m-vr').value              = '0';
-  document.getElementById('m-desc-ci').checked       = false;
-  document.getElementById('info-ci-falta').style.display = 'none';
+function limparModal(){
+  ['m-nome','m-funcao','m-datas','m-obs'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m-tipo').value='nenhuma';
+  document.getElementById('m-data-ocorrencia').value='';
+  ['m-faltas','m-dsr','m-atestados','m-decl','m-horas','m-vt','m-vr'].forEach(function(id){document.getElementById(id).value='0';});
+  document.getElementById('m-trabalhou').checked=false;
+  document.getElementById('m-desc-ci').checked=false;
+  document.getElementById('info-ci-falta').style.display='none';
+  document.getElementById('alerta-duplicado').style.display='none';
+  hideDirtyOverlay();
   toggleTrabalhou();
 }
 
-function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
+function fecharModal(id){document.getElementById(id).classList.remove('active');}
 
 document.querySelectorAll('.modal-overlay').forEach(function(o){
-  o.addEventListener('click', function(e){ if(e.target===o) o.classList.remove('active'); });
+  o.addEventListener('click',function(e){
+    if(e.target===o){
+      if(o.id==='modal-adicionar'){ tentarFecharModal(); }
+      else { o.classList.remove('active'); }
+    }
+  });
 });
 
-function confirmarAdicionar() {
-  var nome = document.getElementById('m-nome').value.trim();
-  var mes  = document.getElementById('m-mes').value;
-  var ano  = document.getElementById('m-ano').value.trim();
-  if (!nome) { showToast('⚠️ Informe o nome do funcionário.','error'); return; }
-  if (!ano)  { showToast('⚠️ Informe o ano de referência.','error');  return; }
-
-  var obj = {
-    id:             editarIdx !== null ? lancamentos[editarIdx].id : idCounter++,
-    nome:           nome,
-    funcao:         document.getElementById('m-funcao').value.trim(),
-    mes:            mes,
-    ano:            ano,
-    tipo:           document.getElementById('m-tipo').value,
-    dataOcorrencia: document.getElementById('m-data-ocorrencia').value || '',
-    datas:          document.getElementById('m-datas').value.trim(),
-    faltas:         Math.max(0, parseInt(document.getElementById('m-faltas').value)||0),
-    dsr:            Math.max(0, parseInt(document.getElementById('m-dsr').value)||0),
-    atestados:      Math.max(0, parseInt(document.getElementById('m-atestados').value)||0),
-    decl:           Math.max(0, parseInt(document.getElementById('m-decl').value)||0),
-    trabalhou:      document.getElementById('m-trabalhou').checked,
-    horas:          Math.max(0, parseFloat(document.getElementById('m-horas').value)||0),
-    vtDesc:         Math.max(0, parseInt(document.getElementById('m-vt').value)||0),
-    vrDesc:         Math.max(0, parseInt(document.getElementById('m-vr').value)||0),
-    descCI:         document.getElementById('m-desc-ci').checked
+function confirmarAdicionar(){
+  var nome=document.getElementById('m-nome').value.trim();
+  var mes=document.getElementById('m-mes').value;
+  var ano=document.getElementById('m-ano').value.trim();
+  if(!nome){showToast('⚠️ Informe o nome do funcionário.','error');return;}
+  if(!ano) {showToast('⚠️ Informe o ano de referência.','error');return;}
+  var obj={
+    id:      editarIdx!==null?lancamentos[editarIdx].id:idCounter++,
+    nome,    funcao:document.getElementById('m-funcao').value.trim(),
+    mes,     ano,
+    tipo:    document.getElementById('m-tipo').value,
+    dataOcorrencia:document.getElementById('m-data-ocorrencia').value||'',
+    datas:   document.getElementById('m-datas').value.trim(),
+    faltas:  Math.max(0,parseInt(document.getElementById('m-faltas').value)||0),
+    dsr:     Math.max(0,parseInt(document.getElementById('m-dsr').value)||0),
+    atestados:Math.max(0,parseInt(document.getElementById('m-atestados').value)||0),
+    decl:    Math.max(0,parseInt(document.getElementById('m-decl').value)||0),
+    trabalhou:document.getElementById('m-trabalhou').checked,
+    horas:   Math.max(0,parseFloat(document.getElementById('m-horas').value)||0),
+    vtDesc:  Math.max(0,parseInt(document.getElementById('m-vt').value)||0),
+    vrDesc:  Math.max(0,parseInt(document.getElementById('m-vr').value)||0),
+    descCI:  document.getElementById('m-desc-ci').checked,
+    obs:     document.getElementById('m-obs').value.trim()
   };
+  if(editarIdx!==null){lancamentos[editarIdx]=obj;showToast('✅ Lançamento de '+nome+' atualizado!','green');}
+  else{lancamentos.push(obj);showToast('✅ '+nome+' — '+MESES[parseInt(mes)]+'/'+ano+' adicionado!','green');}
+  var jaExiste=funcionarios.find(function(f){return f.nome.toLowerCase()===nome.toLowerCase();});
+  if(!jaExiste){var nf={id:funcIdCounter++,nome,funcao:obj.funcao,obs:''};funcionarios.push(nf);dbPut('funcionarios',nf);}
+  dbPut('lancamentos',obj,function(ok){if(ok)atualizarStatusDB();else showToast('⚠️ Salvo em memória — erro no IndexedDB.','warn');});
+  atualizarDatalist(); atualizarChips(); fecharModal('modal-adicionar'); calcularTudo();
+}
 
-  if (editarIdx !== null) {
-    lancamentos[editarIdx] = obj;
-    showToast('✅ Lançamento de ' + nome + ' atualizado!');
-  } else {
-    lancamentos.push(obj);
-    showToast('✅ ' + nome + ' — ' + MESES[parseInt(mes)] + '/' + ano + ' adicionado!');
-  }
+function abrirModalRemover(idx){removerIdx=idx;var l=lancamentos[idx];document.getElementById('nome-remover').textContent=l.nome+' ('+MESES[parseInt(l.mes)]+'/'+l.ano+')';document.getElementById('modal-remover').classList.add('active');}
+function confirmarRemover(){if(removerIdx===null)return;var l=lancamentos[removerIdx];lancamentos.splice(removerIdx,1);removerIdx=null;dbDelete('lancamentos',l.id,function(){atualizarStatusDB();});fecharModal('modal-remover');atualizarDatalist();atualizarChips();calcularTudo();showToast('🗑️ Lançamento de '+l.nome+' removido.');}
 
-  // Auto-cadastrar funcionário se não existir
-  var jaExiste = funcionarios.find(function(f){ return f.nome.toLowerCase() === nome.toLowerCase(); });
-  if (!jaExiste) {
-    var novoFunc = { id: funcIdCounter++, nome: nome, funcao: document.getElementById('m-funcao').value.trim(), obs: '' };
-    funcionarios.push(novoFunc);
-    dbPut('funcionarios', novoFunc);
-  }
-
-  // Salvar lançamento no IndexedDB
-  dbPut('lancamentos', obj, function(ok){
-    if (ok) {
-      atualizarStatusDB();
-    } else {
-      showToast('⚠️ Lançamento salvo na sessão, mas erro no IndexedDB.','warn');
+// ══════════════════════════════════════════════
+//  ATALHOS DE TECLADO
+// ══════════════════════════════════════════════
+document.addEventListener('keydown',function(e){
+  var modalAberto=document.querySelector('.modal-overlay.active');
+  if(e.key==='Escape'){
+    if(modalAberto){
+      if(modalAberto.id==='modal-adicionar') tentarFecharModal();
+      else modalAberto.classList.remove('active');
     }
-  });
+    return;
+  }
+  if(modalAberto) return;
+  if((e.key==='n'||e.key==='N')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    var tag=document.activeElement.tagName.toLowerCase();
+    if(tag!=='input'&&tag!=='textarea'&&tag!=='select') abrirModalAdicionar();
+  }
+});
 
-  atualizarDatalist();
-  atualizarChips();
-  fecharModal('modal-adicionar');
-  calcularTudo();
-}
-
-function abrirModalRemover(idx) {
-  removerIdx = idx;
-  var l = lancamentos[idx];
-  document.getElementById('nome-remover').textContent = l.nome + ' (' + MESES[parseInt(l.mes)] + '/' + l.ano + ')';
-  document.getElementById('modal-remover').classList.add('active');
-}
-
-function confirmarRemover() {
-  if (removerIdx === null) return;
-  var l    = lancamentos[removerIdx];
-  var nome = l.nome;
-  lancamentos.splice(removerIdx, 1);
-  removerIdx = null;
-  dbDelete('lancamentos', l.id, function(){ atualizarStatusDB(); });
-  fecharModal('modal-remover');
-  atualizarDatalist(); atualizarChips(); calcularTudo();
-  showToast('🗑️ Lançamento de ' + nome + ' removido.');
-}
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  TOAST
-// ═══════════════════════════════════════════════════════
-function showToast(msg, tipo) {
-  tipo = tipo || 'ok';
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className   = 'toast';
-  if (tipo === 'error') t.classList.add('error');
-  else if (tipo === 'warn') t.classList.add('warn');
+// ══════════════════════════════════════════════
+function showToast(msg,tipo){
+  tipo=tipo||'ok';
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast';
+  if(tipo==='error') t.classList.add('error');
+  else if(tipo==='warn') t.classList.add('warn');
+  else if(tipo==='green') t.classList.add('green');
   t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3400);
+  setTimeout(function(){t.classList.remove('show');},3500);
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  EXPORTAR EXCEL
-// ═══════════════════════════════════════════════════════
-function exportarExcel() {
-  var f     = getFiltros();
-  var lista = lancamentos.filter(function(l){ return lancamentoPassaFiltro(l,f); });
-  var titulo= f.mes ? MESES[parseInt(f.mes)]+'/'+f.ano : 'Todos os Meses';
-  var html  = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body>' +
-    '<table border="1" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;">' +
-    '<tr style="background:#e02020;color:#fff;font-weight:bold;font-size:12pt;"><td colspan="18" style="padding:12px;text-align:center;">RM — Controle de Faltas · '+titulo+(f.nome?' · '+capitalizar(f.nome):'')+'</td></tr>' +
-    '<tr style="background:#f5f5f5;color:#e02020;font-weight:bold;">' +
-    '<td>#</td><td>Funcionário</td><td>Função</td><td>Mês/Ano</td><td>Status</td><td>Tipo</td>' +
-    '<td>Data Ocorrência</td><td>Datas Adicionais</td><td>Faltas</td><td>DSR</td>' +
-    '<td>Atestados</td><td>Declarações</td><td>Hrs Desc.</td><td>Dias VT</td><td>Dias VR</td>' +
-    '<td>Cesta I (R$)</td><td>Cesta II (R$)</td><td>Obs.</td></tr>';
+// ══════════════════════════════════════════════
+function exportarExcel(){
+  var f=getFiltros(); var busca=getBuscaGlobal();
+  var lista=lancamentos.filter(function(l){return lancamentoPassaFiltro(l,f)&&lancamentoPassaBusca(l,busca);});
+  var titulo=f.mes?MESES[parseInt(f.mes)]+'/'+f.ano:'Todos os Meses';
+  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body>'+
+    '<table border="1" style="border-collapse:collapse;font-family:Calibri,sans-serif;font-size:10pt;">'+
+    '<tr style="background:#e02020;color:#fff;font-weight:bold;font-size:12pt;"><td colspan="19" style="padding:12px;text-align:center;">RM — Controle de Faltas · '+titulo+(f.nome?' · '+capitalizar(f.nome):'')+'</td></tr>'+
+    '<tr style="background:#f5f5f5;color:#e02020;font-weight:bold;"><td>#</td><td>Funcionário</td><td>Função</td><td>Mês/Ano</td><td>Status</td><td>Tipo</td><td>Data Ocorrência</td><td>Datas Adic.</td><td>Faltas</td><td>DSR</td><td>Atestados</td><td>Declarações</td><td>Hrs</td><td>VT</td><td>VR</td><td>Cesta I</td><td>Cesta II</td><td>Limite Cesta</td><td>Observação</td></tr>';
   lista.forEach(function(l,i){
-    var calc    = calcularLinha(l);
-    var rowBg   = i%2===0?'#f9f9f9':'#fff';
-    var status  = !l.trabalhou?'Afastado':l.faltas>0?'Falta':l.atestados>0?'Atestado':l.decl>0?'Declaração':'Presente';
-    var tipo    = l.tipo==='falta'?'Falta':l.tipo==='atestado'?'Atestado':l.tipo==='decl'?'Declaração':'—';
-    var dataFmt = '—';
-    if(l.dataOcorrencia){var p=l.dataOcorrencia.split('-');dataFmt=p[2]+'/'+p[1]+'/'+p[0];}
-    var obs=[]; if(calc.temFalta) obs.push('Falta'); if(l.descCI&&!calc.temFalta) obs.push('Desc. CI'); if(l.dsr>0) obs.push(l.dsr+'d DSR');
-    html += '<tr style="background:'+rowBg+';color:#111;">' +
-      '<td style="padding:6px;text-align:center;">'+(i+1)+'</td>' +
-      '<td style="padding:6px;font-weight:600;">'+l.nome+'</td>' +
-      '<td style="padding:6px;">'+(l.funcao||'—')+'</td>' +
-      '<td style="padding:6px;">'+MESES[parseInt(l.mes)]+'/'+l.ano+'</td>' +
-      '<td>'+status+'</td><td>'+tipo+'</td><td>'+dataFmt+'</td><td>'+(l.datas||'—')+'</td>' +
-      '<td style="text-align:center;">'+l.faltas+'</td>' +
-      '<td style="text-align:center;">'+(l.dsr||'—')+'</td>' +
-      '<td style="text-align:center;">'+l.atestados+'</td>' +
-      '<td style="text-align:center;">'+l.decl+'</td>' +
-      '<td style="text-align:center;">'+(l.horas>0?l.horas+'h':'—')+'</td>' +
-      '<td style="text-align:center;">'+(l.vtDesc||'—')+'</td>' +
-      '<td style="text-align:center;">'+(l.vrDesc||'—')+'</td>' +
-      '<td style="text-align:right;font-weight:700;color:'+(calc.ciValor>0?'#996600':'#cc0000')+';">'+formatBRL(calc.ciValor)+'</td>' +
-      '<td style="text-align:right;font-weight:700;color:'+(calc.ciiValor>0?'#884400':'#cc0000')+';">'+formatBRL(calc.ciiValor)+'</td>' +
-      '<td style="color:#666;">'+(obs.join(' | ')||'—')+'</td></tr>';
+    var calc=calcularLinha(l); var rowBg=i%2===0?'#f9f9f9':'#fff';
+    var status=!l.trabalhou?'Afastado':l.faltas>0?'Falta':l.atestados>0?'Atestado':l.decl>0?'Declaração':'Presente';
+    var tipo=l.tipo==='falta'?'Falta':l.tipo==='atestado'?'Atestado':l.tipo==='decl'?'Declaração':'—';
+    var dataFmt='—'; if(l.dataOcorrencia){var p=l.dataOcorrencia.split('-');dataFmt=p[2]+'/'+p[1]+'/'+p[0];}
+    var limite=calc.temFalta||calc.totalOcMes>=3?'Perda':calc.totalOcMes===2?'Atenção':calc.totalOcMes===1?'1 oc.':'OK';
+    html+='<tr style="background:'+rowBg+';color:#111;">'+
+      '<td style="padding:6px;text-align:center;">'+(i+1)+'</td>'+
+      '<td style="padding:6px;font-weight:600;">'+l.nome+'</td>'+
+      '<td style="padding:6px;">'+(l.funcao||'—')+'</td>'+
+      '<td style="padding:6px;">'+MESES[parseInt(l.mes)]+'/'+l.ano+'</td>'+
+      '<td>'+status+'</td><td>'+tipo+'</td><td>'+dataFmt+'</td><td>'+(l.datas||'—')+'</td>'+
+      '<td style="text-align:center;">'+l.faltas+'</td>'+
+      '<td style="text-align:center;">'+(l.dsr||'—')+'</td>'+
+      '<td style="text-align:center;">'+l.atestados+'</td>'+
+      '<td style="text-align:center;">'+l.decl+'</td>'+
+      '<td style="text-align:center;">'+(l.horas>0?l.horas+'h':'—')+'</td>'+
+      '<td style="text-align:center;">'+(l.vtDesc||'—')+'</td>'+
+      '<td style="text-align:center;">'+(l.vrDesc||'—')+'</td>'+
+      '<td style="text-align:right;font-weight:700;color:'+(calc.ciValor>0?'#996600':'#cc0000')+';">'+formatBRL(calc.ciValor)+'</td>'+
+      '<td style="text-align:right;font-weight:700;color:'+(calc.ciiValor>0?'#884400':'#cc0000')+';">'+formatBRL(calc.ciiValor)+'</td>'+
+      '<td style="text-align:center;">'+limite+'</td>'+
+      '<td style="color:#555;">'+(l.obs||'—')+'</td></tr>';
   });
-  var totFaltas=0,totDSR=0,totAtest=0,totDecl=0,totHoras=0,totVT=0,totVR=0;
-  lista.forEach(function(l){ totFaltas+=l.faltas;totDSR+=l.dsr;totAtest+=l.atestados;totDecl+=l.decl;totHoras+=parseFloat(l.horas)||0;totVT+=l.vtDesc;totVR+=l.vrDesc; });
-  html += '<tr style="background:#f5f5f5;color:#e02020;font-weight:bold;">' +
-    '<td colspan="8" style="padding:10px;">TOTAIS ('+lista.length+')</td>' +
-    '<td style="text-align:center;">'+totFaltas+'</td><td style="text-align:center;">'+totDSR+'</td>' +
-    '<td style="text-align:center;">'+totAtest+'</td><td style="text-align:center;">'+totDecl+'</td>' +
-    '<td style="text-align:center;">'+totHoras+'h</td><td style="text-align:center;">'+totVT+'</td>' +
-    '<td style="text-align:center;">'+totVR+'</td><td colspan="3"></td></tr>' +
-    '<tr style="background:#f0f0f0;color:#999;font-size:8pt;"><td colspan="18" style="padding:6px;text-align:center;">Criado por Gugahaynner · Para uso exclusivo de Barbara Moreira · '+new Date().toLocaleString('pt-BR')+'</td></tr>' +
+  var totF=0,totD=0,totA=0,totDec=0,totH=0,totVT=0,totVR=0;
+  lista.forEach(function(l){totF+=l.faltas;totD+=l.dsr;totA+=l.atestados;totDec+=l.decl;totH+=parseFloat(l.horas)||0;totVT+=l.vtDesc;totVR+=l.vrDesc;});
+  html+='<tr style="background:#f5f5f5;color:#e02020;font-weight:bold;"><td colspan="8" style="padding:10px;">TOTAIS ('+lista.length+')</td><td>'+totF+'</td><td>'+totD+'</td><td>'+totA+'</td><td>'+totDec+'</td><td>'+totH+'h</td><td>'+totVT+'</td><td>'+totVR+'</td><td colspan="4"></td></tr>'+
+    '<tr style="background:#f0f0f0;color:#999;font-size:8pt;"><td colspan="19" style="padding:6px;text-align:center;">Criado por Gugahaynner · Para uso exclusivo de Barbara Moreira · '+new Date().toLocaleString('pt-BR')+'</td></tr>'+
     '</table></body></html>';
-  var blob = new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href = url; a.download = 'RM_FolhaPonto_'+new Date().toISOString().slice(0,10)+'.xls';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('📥 Excel exportado com sucesso!');
+  var blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  var url=URL.createObjectURL(blob); var a=document.createElement('a');
+  a.href=url; a.download='RM_FolhaPonto_'+new Date().toISOString().slice(0,10)+'.xls'; a.click(); URL.revokeObjectURL(url);
+  showToast('📥 Excel exportado!','green');
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  INICIALIZAÇÃO
-// ═══════════════════════════════════════════════════════
-function inicializar() {
-  setDBStatus('loading', 'Conectando ao IndexedDB...');
-
-  initDB(function(ok) {
-    if (!ok) {
-      // Funciona sem IndexedDB (só memória)
-      atualizarDatalist(); atualizarChips(); calcularTudo();
-      return;
-    }
-
-    // 1. Carregar config
-    dbGetAll('config', function(configs) {
-      var cfg = null;
-      for (var i=0; i<configs.length; i++) {
-        if (configs[i].chave === 'valores') { cfg = configs[i]; break; }
-      }
-      if (cfg) {
-        ['ci_0','ci_1','ci_2','cii_0','cii_1','cii_2'].forEach(function(id){
-          if (cfg[id] !== undefined) document.getElementById(id).value = cfg[id];
-        });
-      }
-
-      // 2. Carregar funcionários
-      dbGetAll('funcionarios', function(funcs) {
-        if (funcs && funcs.length > 0) {
-          funcionarios = funcs;
-          funcIdCounter = funcs.reduce(function(m,f){ return Math.max(m,f.id||0); }, 0) + 1;
-        }
-
-        // 3. Carregar lançamentos
-        dbGetAll('lancamentos', function(lancs) {
-          if (lancs && lancs.length > 0) {
-            lancamentos = lancs;
-            idCounter   = lancs.reduce(function(m,l){ return Math.max(m,l.id||0); }, 0) + 1;
-            showToast('🗄️ ' + lancs.length + ' lançamento(s) e ' + funcionarios.length + ' funcionário(s) restaurados!');
-          }
-
-          atualizarStatusDB();
-          atualizarDatalist();
-          atualizarChips();
-          calcularTudo();
+// ══════════════════════════════════════════════
+function inicializar(){
+  setDBStatus('loading','Conectando ao IndexedDB...');
+  initDB(function(ok){
+    if(!ok){ atualizarDatalist(); atualizarChips(); calcularTudo(); return; }
+    dbGetAll('config',function(configs){
+      var cfg=null; for(var i=0;i<configs.length;i++){if(configs[i].chave==='valores'){cfg=configs[i];break;}}
+      if(cfg){['ci_0','ci_1','ci_2','cii_0','cii_1','cii_2'].forEach(function(id){if(cfg[id]!==undefined)document.getElementById(id).value=cfg[id];});}
+      dbGetAll('funcionarios',function(funcs){
+        if(funcs&&funcs.length){funcionarios=funcs;funcIdCounter=funcs.reduce(function(m,f){return Math.max(m,f.id||0);},0)+1;}
+        dbGetAll('lancamentos',function(lancs){
+          if(lancs&&lancs.length){lancamentos=lancs;idCounter=lancs.reduce(function(m,l){return Math.max(m,l.id||0);},0)+1;showToast('🗄️ '+lancs.length+' lançamento(s) e '+funcionarios.length+' funcionário(s) restaurados!','green');}
+          atualizarStatusDB(); atualizarDatalist(); atualizarChips(); calcularTudo();
         });
       });
     });
